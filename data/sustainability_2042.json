@@ -36,12 +36,12 @@
       "source": "AGUBC allocation, May 2026"
     },
     {
-      "polygon": "21N01E27D001M",
-      "well_label": "E21C001 (supplemental, inside 27D polygon)",
+      "polygon": "20N02E24C001M",
+      "well_label": "E24C001",
       "name": "Conjunctive use (surface water replaces groundwater)",
       "category": "conjunctive-use",
       "af_per_yr": 1250,
-      "source": "AGUBC allocation, May 2026 \u2014 physical well is 21N01E21C001M (supplemental), tagged to containing polygon 21N01E27D001M"
+      "source": "AGUBC allocation, May 2026"
     },
     {
       "polygon": "20N03E33L001M",
@@ -472,9 +472,9 @@
       "endpoint_cum_storage_AF": -17069.0,
       "avg_rate_AF_per_yr": -711.2,
       "hold_steady_need_AF_per_yr": 711.0,
-      "project_alloc_AF_per_yr": 0.0,
-      "project_name": "",
-      "coverage_net_AF_per_yr": -711.0,
+      "project_alloc_AF_per_yr": 1250.0,
+      "project_name": "Conjunctive use (surface water replaces groundwater)",
+      "coverage_net_AF_per_yr": 539.0,
       "crit_dry_share_of_drawdown_pct": 84.8,
       "crit_share_of_drawdown_pct": 50.9,
       "bucket_storage_AF": {
@@ -697,9 +697,9 @@
       "endpoint_cum_storage_AF": -15107.0,
       "avg_rate_AF_per_yr": -581.0,
       "hold_steady_need_AF_per_yr": 581.0,
-      "project_alloc_AF_per_yr": 1250.0,
-      "project_name": "Conjunctive use (surface water replaces groundwater)",
-      "coverage_net_AF_per_yr": 669.0,
+      "project_alloc_AF_per_yr": 0.0,
+      "project_name": "",
+      "coverage_net_AF_per_yr": -581.0,
       "crit_dry_share_of_drawdown_pct": 78.7,
       "crit_share_of_drawdown_pct": 45.0,
       "bucket_storage_AF": {

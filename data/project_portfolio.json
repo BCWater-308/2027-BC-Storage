@@ -1,6 +1,6 @@
 {
-  "version": "2026-05-15b",
-  "framing": "AGUBC project allocations (May 2026). 8 projects, 14,500 AF/yr total. One project — 1,250 AF/yr at supplemental well 21N01E21C001M — is tagged to polygon 21N01E27D001M because the well sits inside that polygon's footprint (21C is not an RMS well and has no Voronoi cell of its own).",
+  "version": "2026-05-15c",
+  "framing": "AGUBC project allocations (May 2026). 8 projects, 14,500 AF/yr total.",
   "total_AF_per_yr": 14500,
   "projects": [
     {
@@ -20,12 +20,12 @@
       "source": "AGUBC allocation, May 2026"
     },
     {
-      "polygon": "21N01E27D001M",
-      "well_label": "E21C001 (supplemental, inside 27D polygon)",
+      "polygon": "20N02E24C001M",
+      "well_label": "E24C001",
       "name": "Conjunctive use (surface water replaces groundwater)",
       "category": "conjunctive-use",
       "af_per_yr": 1250,
-      "source": "AGUBC allocation, May 2026 — physical well is 21N01E21C001M (supplemental), tagged to containing polygon 21N01E27D001M"
+      "source": "AGUBC allocation, May 2026"
     },
     {
       "polygon": "20N03E33L001M",

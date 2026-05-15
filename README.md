@@ -91,7 +91,7 @@ refresh allocations.
 |----|----|----:|
 | `20N02E08H003M` | Conjunctive use | 2,250 |
 | `20N02E09G001M` | Conjunctive use | 2,250 |
-| `21N01E27D001M` | Conjunctive use* | 1,250 |
+| `20N02E24C001M` | Conjunctive use | 1,250 |
 | `20N03E33L001M` | Conjunctive use | 1,250 |
 | `21N01E10B003M` | Comanche Creek recharge | 1,500 |
 | `23N01W36P001M` | Rock Creek recharge | 2,000 |
@@ -99,14 +99,11 @@ refresh allocations.
 | `23N01E33A001M` | Recharge project (TBD) | 2,000 |
 | **Total** |  | **14,500** |
 
-\* The physical conjunctive-use well at this site is `21N01E21C001M` — a
-supplemental (non-RMS) well. It sits inside the `21N01E27D001M` polygon, so
-its 1,250 AF/yr counts against that polygon's hold-steady need.
-
 After the portfolio is online, the largest residual shortfalls are:
 **`21N01E13L004M`** (~1,000 AF/yr), **`22N01E20K001M`** Chico-S (~858),
-**`20N02E24C001M`** (~711), and **`22N01E09B001M`** Chico-N (~622) —
-combined ~3,200 AF/yr deficit not covered by any current project. The
+**`22N01E09B001M`** Chico-N (~622), **`21N01E27D001M`** (~581), and
+**`21N02E26E006M`** (~536) — combined ~3,600 AF/yr deficit not covered by
+any current project. The
 project portfolio's basin-level recovery margin of **+8,178 AF/yr** means
 surplus capacity in over-allocated polygons more than offsets these
 shortfalls at basin scale; whether that holds at each RMS well depends on
