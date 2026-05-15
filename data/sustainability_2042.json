@@ -16,6 +16,11 @@
   },
   "basin_avg_loss_rate_AF_per_yr": 6322.0,
   "basin_polygon_summed_hold_need_AF_per_yr": 8122.0,
+  "basin_normalized_cum_2025_AF": -189209.0,
+  "basin_normalized_avg_loss_rate_AF_per_yr": 7277.0,
+  "basin_normalized_polygon_summed_hold_need_AF_per_yr": 8136.0,
+  "basin_normalized_portfolio_margin_AF_per_yr": 7223.0,
+  "normalization_method": "Year-type-weighted backcast: per polygon, avg \u0394Storage per SVI year-type using only the polygon's own observations; fallback to polygon's overall avg rate for any year-type not observed. Applied to the basin's WY 2000\u20132025 year-type mix (6 Wet, 4 AN, 5 BN, 6 Dry, 5 Critical = 26 transition years).",
   "project_portfolio_total_AF_per_yr": 14500,
   "project_portfolio_basin_margin_AF_per_yr": 8178.0,
   "project_portfolio": [

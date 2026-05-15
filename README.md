@@ -20,10 +20,19 @@ to the DWR B118 5-021.57 Vina Subbasin boundary.
 
 Loss is concentrated in drought years, not uniform. **Critical and Dry years
 remove about 442k AF** across WY 1999–2025; **Wet and Above-Normal years
-recover about 334k AF**. The basin net deficit through WY 2025 is
-**−145,732 AF** (about **0.91% of the 16+ MAF** in fresh groundwater storage
-per the 2022 Vina GSP, p. ES-5). The WY 2022 trough reaches **−285,567 AF**
-(≈1.78% of total storage).
+recover about 334k AF**. Two basin totals (see [Year-type-weighted normalization](#year-type-weighted-normalization) below for why both):
+
+- **Observed** basin net deficit through WY 2025: **−145,732 AF** — what the
+  data show directly, with late-baseline polygons contributing only the
+  years they observed.
+- **Normalized** basin net deficit through WY 2025: **−189,209 AF** — what
+  the basin would show if every polygon had a full WY 1999–2025 record,
+  computed by year-type-weighted backcast from each polygon's own data.
+
+Both are small relative to the **16+ MAF** of fresh groundwater storage in
+the subbasin (2022 Vina GSP, p. ES-5): observed is **0.91%** of total
+storage; normalized is **1.18%**. The observed WY 2022 trough reaches
+**−285,567 AF** (≈1.78% of total storage).
 
 | Condition                    | Years | Total ΔStorage (AF) | Avg per year |
 |------------------------------|------:|--------------------:|-------------:|
@@ -62,6 +71,127 @@ reasons:
 
 The shape of the curve (drought losses concentrated in Critical/Dry years,
 Wet/Above-Normal years recovering) is unchanged.
+
+## Year-type-weighted normalization
+
+### The problem this corrects
+
+Of the 28 polygons, only **11 have a Good-quality March measurement in WY
+1999** and can baseline there. The other 17 baseline later — between 2000
+and 2019 — because their 2027 GWL RMS well wasn't measured in 1999. Each
+polygon contributes year-over-year deltas only for the years it has a
+baseline-anchored record. Late-baseline polygons therefore cannot register
+their pre-baseline drawdown.
+
+| Baseline year cohort | Polygons |
+|---|---|
+| WY 1999 | 11 (e.g. 05M, 36P, 25C, 29P, 09E, 10M, 14R, 27L, 10B, 25K, 27D, 33L) |
+| 2000 | 24C, 32B |
+| 2002 | 02H, 09G, 10M |
+| 2003 | 33A |
+| 2008 | 08H |
+| 2009 | 28M, 31M, 32E |
+| 2011 | 18C |
+| 2012 | 03H, 13L |
+| 2019 | 07H |
+
+This creates a real bias: the basin's observed 1999–2025 cumulative
+*understates* the deficit because polygons that started drawing down before
+their first measurement get a "free pass" on their pre-baseline losses.
+The 18C surplus of +23,569 AF, for example, is partly an artifact of
+starting after the 2007–09 dry stretch.
+
+### The normalization method (Option A — year-type-weighted backcast)
+
+For each polygon, we use only its own observations to compute an average
+ΔStorage rate *per Sacramento Valley Index year type* (Wet, Above Normal,
+Below Normal, Dry, Critical):
+
+```
+rate_p,t = sum of polygon p's ΔStorage in years of type t / # years of
+           type t the polygon observed
+```
+
+We then synthesize what each polygon would have contributed across the
+full WY 1999–2025 record by applying its per-type rates to the basin's
+actual year-type mix:
+
+```
+normalized_cum_p = sum over t of (rate_p,t × N_t)
+```
+
+where `N_t` is the number of years of type t in WY 2000–2025:
+**6 Wet, 4 Above Normal, 5 Below Normal, 6 Dry, 5 Critical = 26
+transition years**.
+
+Summing across all 28 polygons gives the normalized basin total.
+
+### Why this is defensible
+
+- **Each polygon uses only its own observations.** No proxying from
+  neighboring wells, no model fill. The normalized rate at polygon X is
+  built entirely from what was measured at polygon X.
+- **Captures the dominant hydrologic signal.** Drought-year loss rates and
+  wet-year recovery rates are fundamentally different. Lumping them
+  together (as a simple "AF/yr × years" multiplier would) understates the
+  asymmetry. The year-type-weighted approach preserves it.
+- **Standard normalization in SGMA storage assessments.** The Vina GSP
+  itself uses water-year-type weighting for various basin-scale stats; this
+  is the same idea applied to per-polygon storage rates.
+- **The math is fully transparent.** Reviewers can audit every polygon's
+  rates_per_bucket in `data/condition_analysis.json` and re-derive the
+  basin total by hand if they want.
+
+### Fallback for unobserved year-types
+
+A late-baseline polygon may not have observed every SVI year type. The
+fallback rule: if polygon p never observed year-type t, use p's own
+overall average rate (sum of all its deltas ÷ its span years) as the
+rate for that year type. The dashboard flags any polygon using a fallback
+with "(fb)" in the per-polygon detail table.
+
+In practice this only affects **one polygon-type combination** in the
+current data: `23N01E07H001M` baselines in WY 2019 and has not observed a
+Below-Normal year (no BN years occurred in 2019–2025). Its overall avg
+rate is substituted for its BN-year rate. The effect on the basin total
+is small (~70 AF/yr at most).
+
+### Headline impact
+
+| | Observed | Normalized | Delta |
+|---|---:|---:|---:|
+| Basin cumulative WY 2025 | −145,732 AF | **−189,209 AF** | +43,477 AF more deficit |
+| Basin avg loss rate | 6,322 AF/yr | **7,277 AF/yr** | +955 AF/yr more loss |
+| Polygon-summed hold-steady need | 8,122 AF/yr | **8,136 AF/yr** | ~unchanged |
+| Recovery margin (vs. 14,500 AF/yr portfolio) | +8,178 AF/yr | **+7,223 AF/yr** | −955 AF/yr |
+
+The portfolio's recovery margin remains comfortably positive against
+either basis (+8,178 AF/yr observed, +7,223 AF/yr normalized — about
+3.1% of GSP-stated sustainable yield).
+
+The normalized basin cumulative (−189k AF) is very close to the original
+17-polygon analysis's −193k AF — strong validation that the late-baseline
+drag is real, that the normalization corrects it, and that the underlying
+hydrologic story is consistent across both polygon networks.
+
+### Limitations to disclose
+
+- **Stationarity assumption.** The normalization assumes each polygon's
+  year-type response is stationary — i.e., a Critical year in 2008 would
+  draw the polygon down at the same rate as a Critical year in 2014. This
+  is reasonable for short windows but may not hold over multi-decade
+  windows if pumping patterns or recharge sources shift.
+- **Small-sample noise on late-baseline polygons.** Polygons with short
+  records have noisier per-type rates. `23N01E07H001M` (baselines 2019)
+  has only 6 transition years observed across 4 of the 5 year types.
+  Other late-baseline polygons (baselines 2008–2012) have more years
+  observed and noise is lower.
+- **No spatial correction.** The normalization adjusts each polygon
+  individually; it doesn't reconcile across polygons (e.g., a recovering
+  18C area can't "lend" surplus to a draining Chico area). That's a
+  feature, not a bug — connectivity isn't modeled here anyway.
+- **Below-Normal-year coverage for `23N01E07H001M`.** As noted, the
+  fallback rule applies. Small numerical effect; flagged for transparency.
 
 ## 2042 sustainability target — hold the line, with the project portfolio
 

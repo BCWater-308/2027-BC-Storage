@@ -218,7 +218,12 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
                      basin_portfolio_margin, basin_annual,
                      polygon_map_svg, bar_svg, ts_svg, context_svg, sy_lookup,
                      trough_cum, trough_year, portfolio, project_total_afy,
-                     n_by_type):
+                     n_by_type,
+                     basin_normalized_cum_2025,
+                     basin_normalized_avg_rate,
+                     basin_normalized_summed_need,
+                     basin_normalized_margin,
+                     n_by_type_full):
     worst_year_deficit_int = int(round(abs(trough_cum)))
     abs_2022_cushion_int = int(round(abs(trough_cum) - abs(basin_net)))
     sorted_pols = sorted(pol_summaries,
@@ -245,6 +250,8 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
                      if s.get("sy_source", "") != "SVSim" else "")
         cum = s["endpoint_cum_storage_AF"]
         avg = s["avg_rate_AF_per_yr"]
+        norm_cum = s.get("normalized_cum_2025_AF", 0)
+        norm_avg = s.get("normalized_avg_rate_AF_per_yr", 0)
         hold = s["hold_steady_need_AF_per_yr"]
         proj = s["project_alloc_AF_per_yr"]
         net = s["coverage_net_AF_per_yr"]
@@ -252,12 +259,20 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
                    else (f'<span class="loss">{int(net):,}</span>' if net < 0 else "0"))
         proj_str = f"{int(proj):,}" if proj > 0 else "—"
         crit_dry_af = s["bucket_storage_AF"]["critical"] + s["bucket_storage_AF"]["dry"]
+        # Fallback indicator if any year-type was unobserved
+        fallback_types = [k for k, src in (s.get("rate_per_bucket_source") or {}).items()
+                          if "fallback" in src]
+        fallback_marker = (f' <span class="fallback" title="Year-type(s) not observed; '
+                          f'using polygon overall avg as fallback: {", ".join(fallback_types)}">'
+                          f'(fb)</span>' if fallback_types else "")
         detail_rows.append(f"""<tr>
       <td><strong>{s["zone_label"]}</strong> <span style="color:#8a8a8a;font-size:11px;">{s["ma"]}</span>{late_marker}</td>
       <td class="num">{s["span_years"]} yr ({s["baseline_year"]}–{s["endpoint_year"]})</td>
       <td class="num">{s["sy"]:.4f}{sy_marker}</td>
       <td class="num">{loss_or_gain_span(cum, 0)}</td>
       <td class="num">{loss_or_gain_span(avg, 0)}</td>
+      <td class="num">{loss_or_gain_span(norm_cum, 0)}{fallback_marker}</td>
+      <td class="num">{loss_or_gain_span(norm_avg, 0)}</td>
       <td class="num">{loss_or_gain_span(crit_dry_af, 0)}</td>
       <td class="num">{s["crit_dry_share_of_drawdown_pct"]:.0f}%</td>
       <td class="num">{int(hold):,}</td>
@@ -436,7 +451,9 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
 <div class="figcaption">Figure 1. Sum across all {n_polygons} polygons in the 2027 BC RMS network, gap-attributed by year, bucketed by official Sacramento Valley Index water-year type. Critical years alone average {crit_per_yr:,.0f} AF/yr of loss — about {(crit_per_yr/dry_per_yr if dry_per_yr else 0):.1f}× the per-year loss rate of Dry years.</div>
 
 <div class="figure">{ts_svg}</div>
-<div class="figcaption">Figure 2. Basin cumulative ΔStorage. Red-tinted vertical bands = Critical years; orange = Dry; light tan = Below Normal. Wet and Above-Normal years remain untinted. Almost every steep drop on the curve falls inside a tinted band; almost every recovery falls outside one. The 2017 Wet year and the 2023 Wet / 2024 Above Normal sequence are the two clearest examples of natural recovery.</div>
+<div class="figcaption">Figure 2. Basin cumulative ΔStorage. <strong>Solid blue line = observed</strong> (each polygon contributes only the years its RMS well actually measured). <strong>Dashed purple line = year-type-weighted normalized</strong> (corrects for late-baseline drag — see methodology section below). Red-tinted vertical bands = Critical years; orange = Dry; light tan = Below Normal. Wet and Above-Normal years remain untinted. Almost every steep drop falls inside a tinted band; almost every recovery falls outside one.</div>
+
+<div class="callout warn"><strong>Late-baseline drag and the year-type-weighted normalization.</strong> Of the 28 polygons, only 11 have a Good March measurement in WY 1999. The other 17 baseline later — between 2000 and 2019 — because their RMS well wasn't measured in 1999. Each polygon contributes year-over-year deltas only for the years it has a baseline-anchored record, which means the early-record buckets reflect fewer polygons than the late-record buckets. Late-baseline polygons cannot register their pre-baseline drawdown, so the <strong>observed</strong> basin cumulative ({basin_net:+,.0f} AF through 2025) <em>understates</em> what the basin would show if every polygon had a full record.<br><br>The <strong>year-type-weighted normalized</strong> series corrects this. For each polygon, we compute its average ΔStorage <em>per Sacramento Valley Index year type</em> (Wet, Above Normal, Below Normal, Dry, Critical) using <em>only its own observations</em>. We then synthesize what that polygon would have contributed across the full WY 1999–2025 record by applying its per-type rates to the basin's actual year-type mix ({n_by_type_full["wet"]} Wet, {n_by_type_full["an"]} AN, {n_by_type_full["bn"]} BN, {n_by_type_full["dry"]} Dry, {n_by_type_full["critical"]} Critical = 26 transition years). Summed across all 28 polygons, that gives the normalized basin total: <strong>{basin_normalized_cum_2025:+,.0f} AF</strong> through 2025 — an avg loss rate of <strong>{-basin_normalized_avg_rate:,.0f} AF/yr</strong>, vs. the observed {basin_loss_rate:,.0f} AF/yr. The late-baseline drag in the observed series is therefore worth ≈{abs(basin_normalized_cum_2025 - basin_net):,.0f} AF cumulative ({abs(basin_normalized_avg_rate + basin_loss_rate * -1 if basin_loss_rate else 0):,.0f} AF/yr rate equivalent — note: this is the bound from the polygon's own data and is independent of any neighboring-well proxying).</div>
 
 <h3>Putting the deficit in proportion</h3>
 <p>The cumulative deficit looks alarming on a chart that runs from 0 to almost −300k AF, but it is a small fraction of the fresh groundwater that exists in the subbasin. Panel 1 below shows the deficit at full scale (the small red sliver). Panel 2 zooms in so the deficit is actually visible.</p>
@@ -457,7 +474,8 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
   <div class="row">
     <div>
       <div class="num">{basin_loss_rate:,.0f} <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
-      <div class="lab">Basin avg loss rate (hold-steady need)</div>
+      <div class="lab">Basin avg loss rate — observed</div>
+      <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Normalized: <strong>{-basin_normalized_avg_rate:,.0f}</strong> AF/yr</div>
     </div>
     <div>
       <div class="num" style="color:var(--accent);">{project_total_afy:,} <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
@@ -465,9 +483,10 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
     </div>
     <div>
       <div class="num">+{basin_portfolio_margin:,.0f} <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
-      <div class="lab">Recovery margin (portfolio − loss)</div>
+      <div class="lab">Recovery margin (portfolio − observed loss)</div>
+      <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Against normalized loss: <strong>+{basin_normalized_margin:,.0f}</strong> AF/yr</div>
     </div>
-    <div class="desc">Portfolio = {portfolio_breakdown}. Portfolio at average yield exceeds the basin's avg loss rate, with a recovery cushion of ≈{basin_portfolio_margin:,.0f} AF/yr ({basin_portfolio_margin / SUSTAINABLE_YIELD_AFY * 100:+.1f}% of the {SUSTAINABLE_YIELD_AFY:,} AF/yr GSP-stated sustainable yield) starting ~{PROJECTS_ONLINE_YEAR}.</div>
+    <div class="desc">Portfolio = {portfolio_breakdown}. The portfolio's recovery margin remains comfortably positive against either the observed or the normalized loss rate, with a cushion of <strong>+{basin_normalized_margin:,.0f} AF/yr against the normalized rate</strong> ({basin_normalized_margin / SUSTAINABLE_YIELD_AFY * 100:+.1f}% of the {SUSTAINABLE_YIELD_AFY:,} AF/yr GSP-stated sustainable yield) starting ~{PROJECTS_ONLINE_YEAR}.</div>
   </div>
 </div>
 
@@ -523,8 +542,10 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
       <th>Polygon</th>
       <th class="num">Span</th>
       <th class="num">Sy</th>
-      <th class="num">Cum 2025 (AF)</th>
-      <th class="num">Avg rate (AF/yr)</th>
+      <th class="num">Cum 2025 obs (AF)</th>
+      <th class="num">Avg rate obs (AF/yr)</th>
+      <th class="num">Cum 2025 norm (AF)</th>
+      <th class="num">Avg rate norm (AF/yr)</th>
       <th class="num">Crit+Dry (AF)</th>
       <th class="num">Crit+Dry share</th>
       <th class="num">Hold need (AF/yr)</th>
@@ -542,6 +563,8 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
       <th class="num">—</th>
       <th class="num"><strong>{basin_net:+,.0f}</strong></th>
       <th class="num">{-basin_loss_rate:+,.0f}</th>
+      <th class="num"><strong>{basin_normalized_cum_2025:+,.0f}</strong></th>
+      <th class="num">{-basin_normalized_avg_rate:+,.0f}</th>
       <th class="num">{crit_dry_total:+,.0f}</th>
       <th class="num">—</th>
       <th class="num"><strong>{basin_polygon_summed_need:,.0f}</strong></th>

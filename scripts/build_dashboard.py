@@ -381,7 +381,9 @@ def render_bar_chart(buckets, n_by_type, basin_net):
 
 
 # --- cumulative time series chart -----------------------------------------
-def render_timeseries(ts):
+def render_timeseries(ts, ts_normalized=None):
+    """`ts` is the observed time series.  `ts_normalized` is the optional
+    year-type-weighted backcast series — drawn as a second line if provided."""
     width, height = 760, 380
     plot_x0, plot_y0 = 92, 32
     plot_x1, plot_y1 = 736, 324
@@ -391,9 +393,11 @@ def render_timeseries(ts):
                'width:100%;height:auto;display:block;">')
     out.append('<defs><clipPath id="ts-clip"><rect x="92" y="32" width="644" height="292"/></clipPath></defs>')
     out.append(f'<text x="{width/2}" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1612">'
-               'Basin cumulative ΔStorage (2027 BC RMS network — 28 polygons), shaded by hydrologic condition</text>')
+               'Basin cumulative ΔStorage (28-polygon network), shaded by hydrologic condition</text>')
 
     cum_vals = [t["cumulative_AF"] for t in ts]
+    if ts_normalized:
+        cum_vals = cum_vals + [t["cumulative_AF"] for t in ts_normalized]
     y_min = min(min(cum_vals), 0)
     y_max = max(max(cum_vals), 0)
     step = 50_000
@@ -437,6 +441,7 @@ def render_timeseries(ts):
     out.append(f'<text x="22" y="{(plot_y0+plot_y1)/2}" transform="rotate(-90,22,{(plot_y0+plot_y1)/2})" text-anchor="middle" '
                'font-size="11" fill="#5b5547" font-weight="600">Cumulative storage change (AF)</text>')
 
+    # Observed (solid) line
     pts = " ".join(f"{xscale(t['year']):.1f},{yscale(t['cumulative_AF']):.1f}" for t in ts)
     out.append(f'<polyline points="{pts}" fill="none" stroke="#1f3a5f" stroke-width="2.4" clip-path="url(#ts-clip)"/>')
     last = ts[-1]
@@ -445,14 +450,30 @@ def render_timeseries(ts):
                f'text-anchor="end" font-size="11" font-weight="700" fill="#1f3a5f">'
                f'{last["cumulative_AF"]:+,.0f} AF</text>')
 
-    legend_w, legend_h = 220, 102
+    # Normalized (dashed) line, if provided
+    if ts_normalized:
+        pts_n = " ".join(f"{xscale(t['year']):.1f},{yscale(t['cumulative_AF']):.1f}"
+                          for t in ts_normalized)
+        out.append(f'<polyline points="{pts_n}" fill="none" stroke="#7c4a86" stroke-width="2.0" '
+                   f'stroke-dasharray="6,4" clip-path="url(#ts-clip)"/>')
+        last_n = ts_normalized[-1]
+        out.append(f'<circle cx="{xscale(last_n["year"]):.1f}" cy="{yscale(last_n["cumulative_AF"]):.1f}" r="3.0" fill="#7c4a86"/>')
+        out.append(f'<text x="{xscale(last_n["year"]) - 6:.1f}" y="{yscale(last_n["cumulative_AF"]) + 14:.1f}" '
+                   f'text-anchor="end" font-size="11" font-weight="700" fill="#7c4a86">'
+                   f'{last_n["cumulative_AF"]:+,.0f} AF (normalized)</text>')
+
+    legend_w, legend_h = 260, 132 if ts_normalized else 102
     legend_x = plot_x0 + 8
     legend_y = plot_y1 - legend_h - 6
     out.append(f'<g transform="translate({legend_x},{legend_y + 22})">')
     out.append(f'<rect x="-8" y="-22" width="{legend_w}" height="{legend_h}" fill="#fafaf7" fill-opacity="0.92" stroke="#cfc9b8" stroke-width="0.5" rx="2"/>')
     out.append('<line x1="0" y1="-10" x2="22" y2="-10" stroke="#1f3a5f" stroke-width="2.4"/>')
-    out.append('<text x="28" y="-7" font-size="11" fill="#1a1612"><tspan font-weight="700">28-polygon cumulative</tspan></text>')
+    out.append('<text x="28" y="-7" font-size="11" fill="#1a1612"><tspan font-weight="700">Observed</tspan> (each polygon contributes only years it observed)</text>')
     swatch_y = 2
+    if ts_normalized:
+        out.append(f'<line x1="0" y1="{swatch_y+5}" x2="22" y2="{swatch_y+5}" stroke="#7c4a86" stroke-width="2.0" stroke-dasharray="6,4"/>')
+        out.append(f'<text x="28" y="{swatch_y+9}" font-size="11" fill="#1a1612"><tspan font-weight="700">Normalized</tspan> (year-type-weighted backcast — see methodology)</text>')
+        swatch_y += 18
     for full, color, opacity in [
         ("Critical",      "#a32d2d", 0.32),
         ("Dry",           "#c75a35", 0.26),
@@ -687,6 +708,15 @@ def main():
     basin_yoy = defaultdict(float)
     polygon_models = []     # for model_data.json
 
+    # Year-type counts in the full WY 2000–2025 transition window (26 years).
+    # Used in the year-type-weighted normalization (Option A).
+    N_BY_TYPE_FULL = {k: sum(1 for y in range(START_YEAR + 1, END_YEAR + 1)
+                              if classify_year(y) == k)
+                      for k in BUCKET_KEYS}
+    SPAN_YEARS_FULL = sum(N_BY_TYPE_FULL.values())  # = 26
+    basin_normalized_yoy = defaultdict(float)
+    basin_normalized_cumulative_2025 = 0.0
+
     for poly in polygons:
         zone = poly["zone_label"]
         rms_wells = [poly.get("rms_well_swn")] if poly.get("rms_well_swn") else []
@@ -743,6 +773,34 @@ def main():
         avg_rate = endpoint_cum / span_years if span_years > 0 else 0.0
         hold_steady_need = max(0.0, -avg_rate)
 
+        # --- year-type-weighted normalization (Option A) ---------------
+        # For each year type t the polygon observed, rate_t = sum of polygon's
+        # year-type-t deltas / count of year-type-t years observed.  If the
+        # polygon never observed a year-type (late-baseline edge cases like
+        # 07H001M never seeing a Below-Normal year), fall back to the polygon's
+        # *own* overall avg rate.  Then synthesize a full WY 1999–2025 record
+        # by applying the polygon's per-type rates to the basin's actual year-
+        # type mix (N_BY_TYPE_FULL).  This corrects the late-baseline drag:
+        # every polygon contributes to every year, using only its own data.
+        rate_per_bucket = {}
+        rate_source = {}
+        for k in BUCKET_KEYS:
+            if bucket_years[k] > 0:
+                rate_per_bucket[k] = buckets[k] / bucket_years[k]
+                rate_source[k] = "observed"
+            else:
+                rate_per_bucket[k] = avg_rate  # polygon's own overall avg
+                rate_source[k] = "fallback (polygon overall avg — type not observed)"
+        normalized_cum_2025 = sum(N_BY_TYPE_FULL[k] * rate_per_bucket[k]
+                                   for k in BUCKET_KEYS)
+        normalized_avg_rate = normalized_cum_2025 / SPAN_YEARS_FULL
+        normalized_hold_need = max(0.0, -normalized_avg_rate)
+
+        # Polygon contribution to basin normalized YoY series
+        for y in range(START_YEAR + 1, END_YEAR + 1):
+            basin_normalized_yoy[y] += rate_per_bucket[classify_year(y)]
+        basin_normalized_cumulative_2025 += normalized_cum_2025
+
         # Project allocation
         proj_info = project_by_zone.get(zone)
         project_afy = float(proj_info["af_per_yr"]) if proj_info else 0.0
@@ -788,6 +846,11 @@ def main():
             "coverage_net_AF_per_yr": round(coverage_net, 0),
             "sustainability_2042_need_AF_per_yr": round(hold_steady_need, 0),
             "pct_of_basin_SY": round(hold_steady_need / SUSTAINABLE_YIELD_AFY * 100, 3),
+            "rate_per_bucket_AF_per_yr": {k: round(v, 1) for k, v in rate_per_bucket.items()},
+            "rate_per_bucket_source": rate_source,
+            "normalized_cum_2025_AF": round(normalized_cum_2025, 0),
+            "normalized_avg_rate_AF_per_yr": round(normalized_avg_rate, 1),
+            "normalized_hold_need_AF_per_yr": round(normalized_hold_need, 0),
         })
         for k in basin_buckets:
             basin_buckets[k] += buckets[k]
@@ -813,9 +876,17 @@ def main():
     basin_loss_rate = -basin_avg_rate_sum  # positive when basin losing
     basin_portfolio_margin = project_total_afy - basin_loss_rate
 
+    # --- normalized basin totals (Option A) -------------------------
+    basin_normalized_avg_rate = -basin_normalized_cumulative_2025 / SPAN_YEARS_FULL
+    basin_normalized_polygon_summed_need = sum(s["normalized_hold_need_AF_per_yr"]
+                                                for s in pol_summaries)
+    basin_normalized_portfolio_margin = project_total_afy - basin_normalized_avg_rate
+
     # --- basin annual gap-attributed time series ----------------------
     basin_annual = {str(y): round(basin_yoy.get(y, 0.0), 0)
                     for y in range(START_YEAR + 1, END_YEAR + 1)}
+    basin_annual_normalized = {str(y): round(basin_normalized_yoy.get(y, 0.0), 0)
+                                for y in range(START_YEAR + 1, END_YEAR + 1)}
 
     # --- write JSON outputs --------------------------------------------
     condition_out = {
@@ -857,6 +928,15 @@ def main():
         "basin_buckets_AF": {k: round(v, 0) for k, v in basin_buckets.items()},
         "basin_avg_loss_rate_AF_per_yr": round(basin_loss_rate, 0),
         "basin_polygon_summed_hold_need_AF_per_yr": round(basin_polygon_summed_need, 0),
+        "basin_normalized_cum_2025_AF": round(basin_normalized_cumulative_2025, 0),
+        "basin_normalized_avg_loss_rate_AF_per_yr": round(basin_normalized_avg_rate, 0),
+        "basin_normalized_polygon_summed_hold_need_AF_per_yr": round(basin_normalized_polygon_summed_need, 0),
+        "basin_normalized_portfolio_margin_AF_per_yr": round(basin_normalized_portfolio_margin, 0),
+        "normalization_method": ("Year-type-weighted backcast: per polygon, avg ΔStorage per "
+                                  "SVI year-type using only the polygon's own observations; "
+                                  "fallback to polygon's overall avg rate for any year-type "
+                                  "not observed. Applied to the basin's WY 2000–2025 year-type "
+                                  "mix (6 Wet, 4 AN, 5 BN, 6 Dry, 5 Critical = 26 transition years)."),
         "project_portfolio_total_AF_per_yr": project_total_afy,
         "project_portfolio_basin_margin_AF_per_yr": round(basin_portfolio_margin, 0),
         "project_portfolio": portfolio.get("projects", []),
@@ -885,7 +965,14 @@ def main():
     }
     (DATA_DIR / "sustainability_2042.json").write_text(json.dumps(sustainability_out, indent=2))
 
-    (DATA_DIR / "basin_annual.json").write_text(json.dumps(basin_annual, indent=2))
+    (DATA_DIR / "basin_annual.json").write_text(json.dumps({
+        "observed": basin_annual,
+        "normalized_year_type_weighted": basin_annual_normalized,
+        "method_note": ("'observed' = each polygon contributes only years it observed. "
+                        "'normalized_year_type_weighted' = each polygon's avg ΔStorage per SVI "
+                        "year-type (using only its own observations) applied across the basin's full "
+                        "WY 2000–2025 year-type mix. See README §Year-type-weighted normalization.")
+    }, indent=2))
 
     # model_data.json (for downstream / debug use)
     (DATA_DIR / "model_data.json").write_text(json.dumps({
@@ -951,7 +1038,16 @@ def main():
         else:
             cum_running += basin_yoy.get(y, 0.0)
             ts.append({"year": y, "cumulative_AF": round(cum_running, 0)})
-    ts_svg = render_timeseries(ts)
+    # Normalized time series
+    cum_norm = 0.0
+    ts_norm = []
+    for y in range(START_YEAR, END_YEAR + 1):
+        if y == START_YEAR:
+            ts_norm.append({"year": y, "cumulative_AF": 0.0})
+        else:
+            cum_norm += basin_normalized_yoy.get(y, 0.0)
+            ts_norm.append({"year": y, "cumulative_AF": round(cum_norm, 0)})
+    ts_svg = render_timeseries(ts, ts_norm)
     (DATA_DIR / "basin_cumulative_chart.svg").write_text(ts_svg)
 
     trough_cum = 0.0
@@ -975,7 +1071,12 @@ def main():
                          basin_portfolio_margin, basin_annual,
                          polygon_map_svg, bar_svg, ts_svg, context_svg, sy_lookup,
                          trough_cum, trough_year, portfolio, project_total_afy,
-                         n_by_type)
+                         n_by_type,
+                         basin_normalized_cumulative_2025,
+                         basin_normalized_avg_rate,
+                         basin_normalized_polygon_summed_need,
+                         basin_normalized_portfolio_margin,
+                         N_BY_TYPE_FULL)
     except ImportError:
         print("(build_html.py not yet present; index.html skipped)")
 
@@ -991,12 +1092,20 @@ def main():
     print(f"  {'basin net':<14}: {basin_cumulative_2025:>+12,.0f} AF "
           f"({basin_cumulative_2025 / TOTAL_FRESH_STORAGE_AF * 100:+.2f}% of 16 MAF)")
     print()
-    print("=== Hold-current target & project portfolio ===")
+    print("=== Hold-current target & project portfolio (observed basis) ===")
     print(f"  Basin avg loss rate          : {basin_loss_rate:>+12,.0f} AF/yr")
     print(f"  Polygon-summed hold need     : {basin_polygon_summed_need:>+12,.0f} AF/yr")
     print(f"  Project portfolio (2032)     : {project_total_afy:>+12,.0f} AF/yr")
     print(f"  Basin recovery margin        : {basin_portfolio_margin:>+12,.0f} AF/yr "
           f"({basin_portfolio_margin / SUSTAINABLE_YIELD_AFY * 100:+.2f}% of SY)")
+    print()
+    print("=== Year-type-weighted normalization (Option A) ===")
+    print(f"  Basin normalized cum 2025    : {basin_normalized_cumulative_2025:>+12,.0f} AF "
+          f"({basin_normalized_cumulative_2025 / TOTAL_FRESH_STORAGE_AF * 100:+.2f}% of 16 MAF)")
+    print(f"  Basin normalized avg rate    : {basin_normalized_avg_rate:>+12,.0f} AF/yr")
+    print(f"  Normalized hold-steady need  : {basin_normalized_polygon_summed_need:>+12,.0f} AF/yr")
+    print(f"  Normalized recovery margin   : {basin_normalized_portfolio_margin:>+12,.0f} AF/yr "
+          f"({basin_normalized_portfolio_margin / SUSTAINABLE_YIELD_AFY * 100:+.2f}% of SY)")
     print()
     print("Per-polygon detail (sorted by avg loss):")
     print(f"  {'Zone':<18} {'MA':<6} {'Sy':>7} {'Src':<5} {'Cum2025':>10} "
