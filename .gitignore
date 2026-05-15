@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# Local Claude Code preview config
+.claude/
+
+# Local raw cache (downloads, not committed)
+raw/
+
+# Python
+__pycache__/
+*.pyc

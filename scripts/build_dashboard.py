@@ -1,0 +1,1014 @@
+#!/usr/bin/env python3
+"""
+Build the 28-polygon 2027 BC RMS drought-conditioned storage dashboard.
+
+Reads (from sibling 2027-BC-prop-network/, never modifies):
+  - js/polygons-data.js        28 Voronoi polygons (lat/lon rings)
+  - js/wells-data.js           79 wells, including site_code resolution
+  - js/measurements-data.js    DWR periodic GWL records, keyed by site_code
+
+Reads (local):
+  - data/polygon_sy_svsim.csv  Polygon-by-polygon Sy (from build_sy_svsim.py)
+  - data/project_portfolio.json (optional) Project allocations per polygon
+
+Computes per polygon:
+    GWE_p,y      = spring composite of the polygon's RMS well
+                   (March mean for SWN; Feb–Apr mean for CWSCH; Good QA)
+    Cum_p,y      = (GWE_p,y - GWE_p,baseline) × Sy_p × Area_p
+                   where baseline = first year with Good spring data
+    ΔStorage_p,y = year-over-year delta, gap-attributed evenly across DWR gaps
+    Bucket attribution by Sacramento Valley Index water-year type
+
+Writes:
+  - data/condition_analysis.json       per-polygon bucket totals + basin totals
+  - data/sustainability_2042.json      per-polygon and basin 2042 framing
+  - data/basin_annual.json             basin year-over-year ΔStorage
+  - data/polygon_storage_2025.csv      per-polygon WY 2025 detail
+  - data/storage_timeseries.csv        basin cumulative time series
+  - data/model_data.json               per-polygon annual GWE + storage
+  - data/polygon_map.svg               interactive map (coverage)
+  - data/basin_buckets_chart.svg       bar chart by water-year type
+  - data/basin_cumulative_chart.svg    cumulative time series with SVI bands
+  - data/storage_context.svg           proportion view vs 16 MAF total
+  - index.html                         single-file briefing
+"""
+
+from __future__ import annotations
+
+import csv
+import json
+import math
+import re
+import statistics
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+# --- paths ----------------------------------------------------------------
+HERE = Path(__file__).resolve().parent
+WORKTREE = HERE.parent
+DATA_DIR = WORKTREE / "data"
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+REF_REPO = (WORKTREE / ".." / "2027-BC-prop-network").resolve()
+POLY_JS  = REF_REPO / "js" / "polygons-data.js"
+WELLS_JS = REF_REPO / "js" / "wells-data.js"
+MEAS_JS  = REF_REPO / "js" / "measurements-data.js"
+
+# --- constants ------------------------------------------------------------
+START_YEAR = 1999
+END_YEAR = 2025
+PROJECTS_ONLINE_YEAR = 2032
+
+SUSTAINABLE_YIELD_AFY = 233_500       # GSP p. ES-5
+TOTAL_FRESH_STORAGE_AF = 16_000_000   # GSP, 16+ MAF estimate (BBGM-2020)
+SOURCE_GSP_LABEL = "Vina Subbasin GSP (Dec 15, 2021), p. ES-5"
+
+SY_DEFAULT = 0.10  # fallback only — see Sy lookup loader
+
+# Sacramento Valley Index water-year types (DWR Northern Sierra 8-Station Index).
+SVI_YEAR_TYPE = {
+    1999: "Wet",            2000: "Above Normal",   2001: "Dry",
+    2002: "Dry",            2003: "Above Normal",   2004: "Below Normal",
+    2005: "Above Normal",   2006: "Wet",            2007: "Dry",
+    2008: "Critical",       2009: "Dry",            2010: "Below Normal",
+    2011: "Wet",            2012: "Below Normal",   2013: "Dry",
+    2014: "Critical",       2015: "Critical",       2016: "Below Normal",
+    2017: "Wet",            2018: "Below Normal",   2019: "Wet",
+    2020: "Dry",            2021: "Critical",       2022: "Critical",
+    2023: "Wet",            2024: "Above Normal",   2025: "Wet",
+}
+SVI_TYPE_KEY = {
+    "Wet": "wet",            "Above Normal": "an",   "Below Normal": "bn",
+    "Dry": "dry",            "Critical": "critical",
+}
+SVI_TYPE_COLOR = {
+    "Wet":           "#2e6f3f",
+    "Above Normal":  "#7eb585",
+    "Below Normal":  "#d99a4f",
+    "Dry":           "#c75a35",
+    "Critical":      "#a32d2d",
+}
+SVI_SHADE = {
+    "Wet":           (None, 0.0),
+    "Above Normal":  (None, 0.0),
+    "Below Normal":  ("#d99a4f", 0.20),
+    "Dry":           ("#c75a35", 0.26),
+    "Critical":      ("#a32d2d", 0.32),
+}
+
+
+def classify_year(y: int) -> str:
+    return SVI_TYPE_KEY.get(SVI_YEAR_TYPE.get(y, "Wet"), "wet")
+
+
+def year_type_full(y: int) -> str:
+    return SVI_YEAR_TYPE.get(y, "Wet")
+
+
+# --- JS const loader ------------------------------------------------------
+def load_js_const(path: Path, name: str):
+    text = path.read_text()
+    m = re.search(rf"const\s+{name}\s*=\s*(.*?);\s*$", text, re.DOTALL | re.MULTILINE)
+    if not m:
+        raise RuntimeError(f"could not find const {name} in {path}")
+    return json.loads(m.group(1))
+
+
+# --- geometry -------------------------------------------------------------
+def ring_area_acres(ring, ref_lat: float) -> float:
+    M_PER_DEG_LAT = 110540.0
+    M_PER_DEG_LON = 111320.0 * math.cos(math.radians(ref_lat))
+    s = 0.0
+    n = len(ring)
+    for i in range(n):
+        lat1, lon1 = ring[i]
+        lat2, lon2 = ring[(i + 1) % n]
+        x1 = lon1 * M_PER_DEG_LON
+        y1 = lat1 * M_PER_DEG_LAT
+        x2 = lon2 * M_PER_DEG_LON
+        y2 = lat2 * M_PER_DEG_LAT
+        s += x1 * y2 - x2 * y1
+    return abs(s) * 0.5 / 4046.8564224
+
+
+def polygon_area_acres(rings) -> float:
+    if not rings:
+        return 0.0
+    flat = [pt for r in rings for pt in r]
+    ref_lat = sum(p[0] for p in flat) / len(flat)
+    return sum(ring_area_acres(r, ref_lat) for r in rings)
+
+
+def polygon_centroid(rings):
+    flat = [pt for r in rings for pt in r]
+    return (sum(p[0] for p in flat) / len(flat),
+            sum(p[1] for p in flat) / len(flat))
+
+
+# --- spring composites ---------------------------------------------------
+def is_cwsch(well_name: str) -> bool:
+    return well_name.upper().startswith("CWSCH")
+
+
+def well_spring_year(well_name: str, recs):
+    """{year: spring_GWE}.  SWN = March mean (Good); CWSCH = Feb–Apr mean (Good)."""
+    months = {2, 3, 4} if is_cwsch(well_name) else {3}
+    by_year = defaultdict(list)
+    for r in recs:
+        qa = (r.get("qa") or "").strip().lower()
+        if "good" not in qa:
+            continue
+        gwe = r.get("gwe")
+        if gwe is None:
+            continue
+        d = r.get("d") or ""
+        try:
+            y = int(d[:4])
+            m = int(d[5:7])
+        except ValueError:
+            continue
+        if m in months:
+            by_year[y].append(float(gwe))
+    return {y: statistics.fmean(v) for y, v in by_year.items() if v}
+
+
+def polygon_annual_gwe(well_year_maps):
+    yset = set()
+    for m in well_year_maps:
+        yset.update(m.keys())
+    out = {}
+    for y in yset:
+        vals = [m[y] for m in well_year_maps if y in m]
+        if vals:
+            out[y] = statistics.fmean(vals)
+    return out
+
+
+# --- gap-filled cumulative ------------------------------------------------
+def fill_cumulative(annual_storage: dict, baseline_year: int, end_year: int) -> dict:
+    if not annual_storage:
+        return {}
+    known = {int(y): float(v) for y, v in annual_storage.items()
+             if baseline_year <= int(y) <= end_year}
+    if not known:
+        return {}
+    known[baseline_year] = 0.0
+    years = sorted(known)
+    last_year = years[-1]
+    out = dict(known)
+    for i in range(len(years) - 1):
+        y1, y2 = years[i], years[i + 1]
+        v1, v2 = known[y1], known[y2]
+        if y2 - y1 > 1:
+            for y in range(y1 + 1, y2):
+                out[y] = v1 + (v2 - v1) * (y - y1) / (y2 - y1)
+    return {y: out[y] for y in range(baseline_year, last_year + 1)}
+
+
+def yoy_deltas(cumulative: dict) -> dict:
+    deltas = {}
+    for y in sorted(cumulative):
+        if (y - 1) in cumulative:
+            deltas[y] = cumulative[y] - cumulative[y - 1]
+    return deltas
+
+
+# --- Sy loader with fallback ---------------------------------------------
+def load_sy(csv_path: Path, polygons_meta: list) -> dict:
+    """Returns {zone_label: Sy}.
+
+    Polygons missing from polygon_sy_svsim.csv (or with empty Sy) get the
+    basin area-weighted mean of the polygons that DID resolve.  Prints which
+    polygons fell back so the user knows.
+    """
+    out = {}
+    if not csv_path.exists():
+        print(f"WARNING: {csv_path} missing — falling back to uniform Sy={SY_DEFAULT}")
+        return {p["zone_label"]: SY_DEFAULT for p in polygons_meta}
+    with csv_path.open() as f:
+        for row in csv.DictReader(f):
+            if row.get("sy"):
+                out[row["zone_label"]] = float(row["sy"])
+    # Compute basin area-weighted mean for fallback.
+    area_lookup = {p["zone_label"]: p.get("area_acres") or polygon_area_acres(p["rings"])
+                   for p in polygons_meta}
+    sum_sy_area = sum(out[z] * area_lookup[z] for z in out)
+    sum_area = sum(area_lookup[z] for z in out)
+    basin_mean = sum_sy_area / sum_area if sum_area else SY_DEFAULT
+    missing = [p["zone_label"] for p in polygons_meta if p["zone_label"] not in out]
+    if missing:
+        print(f"  fallback Sy={basin_mean:.4f} (area-weighted basin mean) for "
+              f"{len(missing)} polygons w/o SVSim borehole coverage:")
+        for z in missing:
+            print(f"    - {z}")
+            out[z] = basin_mean
+    return out
+
+
+# --- color ramp -----------------------------------------------------------
+def coverage_color(loss_rate_afy: float, project_afy: float) -> str:
+    if loss_rate_afy <= 0 and project_afy == 0:
+        return "#a8c8b0"
+    net = project_afy - loss_rate_afy
+    if loss_rate_afy <= 0:
+        return "#6b9479"
+    if net >= 1500:
+        return "#6b9479"
+    if net >= 0:
+        return "#a8c8b0"
+    if net >= -250:
+        return "#f0d9a8"
+    if net >= -750:
+        return "#e3a76f"
+    if net >= -1500:
+        return "#cb7740"
+    if net >= -2500:
+        return "#a84a2c"
+    return "#7c2820"
+
+
+# --- SVG projection -------------------------------------------------------
+def project_factory(rings_all, width: float, height: float, margin: float):
+    flat = [pt for r in rings_all for pt in r]
+    lats = [p[0] for p in flat]
+    lons = [p[1] for p in flat]
+    min_lat, max_lat = min(lats), max(lats)
+    min_lon, max_lon = min(lons), max(lons)
+    ref_lat = (min_lat + max_lat) / 2
+
+    def xy(lat, lon):
+        return ((lon - min_lon) * math.cos(math.radians(ref_lat)),
+                (max_lat - lat))
+
+    xs = [xy(*p)[0] for p in flat]
+    ys = [xy(*p)[1] for p in flat]
+    x_extent = max(xs) - min(xs)
+    y_extent = max(ys) - min(ys)
+    avail_w = width - 2 * margin
+    avail_h = height - 2 * margin
+    scale = min(avail_w / x_extent, avail_h / y_extent)
+    pad_x = (avail_w - x_extent * scale) / 2
+    pad_y = (avail_h - y_extent * scale) / 2
+
+    def proj(lat, lon):
+        x, y = xy(lat, lon)
+        return (margin + pad_x + x * scale, margin + pad_y + y * scale)
+
+    return proj
+
+
+def rings_to_path(rings, proj) -> str:
+    parts = []
+    for ring in rings:
+        coords = [proj(lat, lon) for lat, lon in ring]
+        parts.append("M " + " L ".join(f"{x:.1f},{y:.1f}" for x, y in coords) + " Z")
+    return " ".join(parts)
+
+
+# --- formatting -----------------------------------------------------------
+def fmt_int_signed(v):
+    if v is None:
+        return "n/a"
+    return f"{v:+,.0f}".replace("+-", "-")
+
+
+# --- bar chart ------------------------------------------------------------
+def render_bar_chart(buckets, n_by_type, basin_net):
+    width, height = 880, 420
+    zero_y = 200
+    bar_w = 110
+    layout = [
+        ("Wet",          "wet",      "#2e6f3f"),
+        ("Above Normal", "an",       "#7eb585"),
+        ("Below Normal", "bn",       "#d99a4f"),
+        ("Dry",          "dry",      "#c75a35"),
+        ("Critical",     "critical", "#a32d2d"),
+    ]
+    max_abs = max(abs(buckets[k]) for _, k, _ in layout) or 1.0
+    bar_max_h = 110.0
+    def bar_h(v):
+        return abs(v) * bar_max_h / max_abs
+
+    n_crit = n_by_type["critical"] or 1
+    n_wet_an = (n_by_type["wet"] + n_by_type["an"]) or 1
+    crit_per_yr = abs(buckets["critical"]) / n_crit
+    wet_per_yr = abs(buckets["wet"] + buckets["an"]) / n_wet_an
+    crit_x = crit_per_yr / wet_per_yr if wet_per_yr else 0
+
+    out = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+        'style="background:#fafaf7;font-family:\'Inter\',ui-sans-serif,system-ui;'
+        'width:100%;height:auto;display:block;">',
+        f'<text x="{width/2}" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1612">'
+        'Basin storage change since baseline, by Sacramento Valley Index year type</text>',
+        f'<text x="{width/2}" y="42" text-anchor="middle" font-size="11" fill="#5b5547" font-style="italic">'
+        f'Sum across all 28 polygons (WY 2000–2025). '
+        f'Critical years remove about {crit_x:.1f}× per year what Wet+Above-Normal years recover.</text>',
+        f'<line x1="60" y1="{zero_y}" x2="{width - 60}" y2="{zero_y}" stroke="#5b5547" stroke-width="0.9"/>',
+        f'<text x="{width - 52}" y="{zero_y + 4}" font-size="11" fill="#5b5547">0 AF</text>',
+    ]
+    n_centers = len(layout)
+    spacing = (width - 100) / n_centers
+    centers = [50 + spacing * (i + 0.5) for i in range(n_centers)]
+    for (label, key, color), cx in zip(layout, centers):
+        val = buckets[key]
+        n = n_by_type[key]
+        bh = bar_h(val)
+        x = cx - bar_w / 2
+        if val >= 0:
+            y = zero_y - bh
+            out.append(f'<rect x="{x}" y="{y}" width="{bar_w}" height="{bh}" '
+                       f'fill="{color}" stroke="#1a1612" stroke-width="0.6"/>')
+            out.append(f'<text x="{cx}" y="{y - 14}" text-anchor="middle" '
+                       f'font-size="14" font-weight="800" fill="#2e6f3f">{val:+,.0f}</text>')
+            out.append(f'<text x="{cx}" y="{y - 2}" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>')
+        else:
+            y = zero_y
+            out.append(f'<rect x="{x}" y="{y}" width="{bar_w}" height="{bh}" '
+                       f'fill="{color}" stroke="#1a1612" stroke-width="0.6"/>')
+            out.append(f'<text x="{cx}" y="{y + bh + 16}" text-anchor="middle" '
+                       f'font-size="14" font-weight="800" fill="#a32d2d">{val:+,.0f}</text>')
+            out.append(f'<text x="{cx}" y="{y + bh + 32}" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>')
+        out.append(f'<text x="{cx}" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">{label}</text>')
+        out.append(f'<text x="{cx}" y="376" text-anchor="middle" font-size="11" fill="#5b5547">({n} years)</text>')
+    out.append(f'<text x="{width/2}" y="406" text-anchor="middle" font-size="13" fill="#5b5547">'
+               f'Net basin total since baseline: '
+               f'<tspan font-weight="800" fill="#a32d2d">{basin_net:+,.0f} AF</tspan>'
+               '</text>')
+    out.append("</svg>")
+    return "\n".join(out)
+
+
+# --- cumulative time series chart -----------------------------------------
+def render_timeseries(ts):
+    width, height = 760, 380
+    plot_x0, plot_y0 = 92, 32
+    plot_x1, plot_y1 = 736, 324
+    out = []
+    out.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+               'style="background:#fafaf7;font-family:\'Inter\',ui-sans-serif,system-ui;'
+               'width:100%;height:auto;display:block;">')
+    out.append('<defs><clipPath id="ts-clip"><rect x="92" y="32" width="644" height="292"/></clipPath></defs>')
+    out.append(f'<text x="{width/2}" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1612">'
+               'Basin cumulative ΔStorage (2027 BC RMS network — 28 polygons), shaded by hydrologic condition</text>')
+
+    cum_vals = [t["cumulative_AF"] for t in ts]
+    y_min = min(min(cum_vals), 0)
+    y_max = max(max(cum_vals), 0)
+    step = 50_000
+    y_lo = math.floor(y_min / step) * step
+    y_hi = math.ceil(y_max / step) * step
+    if y_hi == y_lo:
+        y_hi = y_lo + step
+
+    def yscale(v):
+        return plot_y0 + (y_hi - v) * (plot_y1 - plot_y0) / (y_hi - y_lo)
+
+    def xscale(year):
+        years = [t["year"] for t in ts]
+        return plot_x0 + (year - years[0]) * (plot_x1 - plot_x0) / (years[-1] - years[0])
+
+    for y in range(START_YEAR, END_YEAR + 1):
+        full_type = SVI_YEAR_TYPE.get(y)
+        if full_type is None:
+            continue
+        color, opacity = SVI_SHADE.get(full_type, (None, 0.0))
+        if color is None:
+            continue
+        x_lo = xscale(y - 0.5)
+        x_hi = xscale(y + 0.5)
+        out.append(f'<rect x="{x_lo:.1f}" y="{plot_y0}" width="{x_hi-x_lo:.1f}" '
+                   f'height="{plot_y1-plot_y0}" fill="{color}" fill-opacity="{opacity}"/>')
+
+    v = y_lo
+    while v <= y_hi:
+        y_px = yscale(v)
+        out.append(f'<line x1="{plot_x0}" y1="{y_px:.1f}" x2="{plot_x1}" y2="{y_px:.1f}" stroke="#e7e1cf" stroke-width="0.5"/>')
+        out.append(f'<text x="{plot_x0 - 8}" y="{y_px + 3:.1f}" text-anchor="end" font-size="10" fill="#5b5547">{v:,}</text>')
+        v += step
+    out.append(f'<line x1="{plot_x0}" y1="{yscale(0):.1f}" x2="{plot_x1}" y2="{yscale(0):.1f}" stroke="#5b5547" stroke-width="0.8"/>')
+
+    for tick_year in [2000, 2005, 2010, 2015, 2020, 2025]:
+        x_px = xscale(tick_year)
+        out.append(f'<line x1="{x_px:.1f}" y1="{plot_y1}" x2="{x_px:.1f}" y2="{plot_y1+4}" stroke="#5b5547" stroke-width="0.5"/>')
+        out.append(f'<text x="{x_px:.1f}" y="{plot_y1+18}" text-anchor="middle" font-size="10" fill="#5b5547">{tick_year}</text>')
+
+    out.append(f'<text x="22" y="{(plot_y0+plot_y1)/2}" transform="rotate(-90,22,{(plot_y0+plot_y1)/2})" text-anchor="middle" '
+               'font-size="11" fill="#5b5547" font-weight="600">Cumulative storage change (AF)</text>')
+
+    pts = " ".join(f"{xscale(t['year']):.1f},{yscale(t['cumulative_AF']):.1f}" for t in ts)
+    out.append(f'<polyline points="{pts}" fill="none" stroke="#1f3a5f" stroke-width="2.4" clip-path="url(#ts-clip)"/>')
+    last = ts[-1]
+    out.append(f'<circle cx="{xscale(last["year"]):.1f}" cy="{yscale(last["cumulative_AF"]):.1f}" r="3.2" fill="#1f3a5f"/>')
+    out.append(f'<text x="{xscale(last["year"]) - 6:.1f}" y="{yscale(last["cumulative_AF"]) - 8:.1f}" '
+               f'text-anchor="end" font-size="11" font-weight="700" fill="#1f3a5f">'
+               f'{last["cumulative_AF"]:+,.0f} AF</text>')
+
+    legend_w, legend_h = 220, 102
+    legend_x = plot_x0 + 8
+    legend_y = plot_y1 - legend_h - 6
+    out.append(f'<g transform="translate({legend_x},{legend_y + 22})">')
+    out.append(f'<rect x="-8" y="-22" width="{legend_w}" height="{legend_h}" fill="#fafaf7" fill-opacity="0.92" stroke="#cfc9b8" stroke-width="0.5" rx="2"/>')
+    out.append('<line x1="0" y1="-10" x2="22" y2="-10" stroke="#1f3a5f" stroke-width="2.4"/>')
+    out.append('<text x="28" y="-7" font-size="11" fill="#1a1612"><tspan font-weight="700">28-polygon cumulative</tspan></text>')
+    swatch_y = 2
+    for full, color, opacity in [
+        ("Critical",      "#a32d2d", 0.32),
+        ("Dry",           "#c75a35", 0.26),
+        ("Below Normal",  "#d99a4f", 0.20),
+        ("Wet / Above N.", None,     0),
+    ]:
+        if color:
+            out.append(f'<rect x="0" y="{swatch_y}" width="22" height="10" fill="{color}" fill-opacity="{opacity}"/>')
+        else:
+            out.append(f'<rect x="0" y="{swatch_y}" width="22" height="10" fill="#fafaf7" stroke="#cfc9b8" stroke-width="0.5"/>')
+        out.append(f'<text x="28" y="{swatch_y+9}" font-size="11" fill="#1a1612">{full}</text>')
+        swatch_y += 16
+    out.append('</g>')
+    out.append("</svg>")
+    return "\n".join(out)
+
+
+# --- storage context (16 MAF proportion) ----------------------------------
+def render_storage_context(basin_cum_2025, worst_year_deficit, worst_year):
+    width, height = 760, 320
+    out = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+        'style="background:#fafaf7;font-family:\'Inter\',ui-sans-serif,system-ui;'
+        'width:100%;height:auto;display:block;">',
+        f'<text x="{width/2}" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1612">'
+        'How big is the deficit, relative to total fresh groundwater in storage?</text>',
+        f'<text x="{width/2}" y="40" text-anchor="middle" font-size="11" fill="#5b5547" font-style="italic">'
+        f'Vina Subbasin total fresh GW in storage: ~16 MAF ({SOURCE_GSP_LABEL})</text>',
+    ]
+
+    # Panel 1: full-scale bar
+    bar_x, bar_y = 50, 80
+    bar_w, bar_h = width - 100, 32
+    out.append(f'<rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" '
+               'fill="#e6f0e8" stroke="#5b5547" stroke-width="0.7"/>')
+    deficit_frac_2025 = abs(basin_cum_2025) / TOTAL_FRESH_STORAGE_AF
+    deficit_w_2025 = max(1.5, bar_w * deficit_frac_2025)
+    out.append(f'<rect x="{bar_x}" y="{bar_y}" width="{deficit_w_2025:.2f}" height="{bar_h}" '
+               'fill="#a32d2d"/>')
+    out.append(f'<text x="{bar_x + bar_w / 2}" y="{bar_y - 6}" text-anchor="middle" '
+               f'font-size="11" fill="#5b5547">Full-scale view (sliver = deficit)</text>')
+    out.append(f'<text x="{bar_x + bar_w / 2}" y="{bar_y + bar_h + 18}" text-anchor="middle" '
+               f'font-size="12" fill="#1a1612">'
+               f'WY 2025 cumulative deficit = <tspan font-weight="700" fill="#a32d2d">'
+               f'{deficit_frac_2025*100:.2f}%</tspan> of 16 MAF</text>')
+
+    # Panel 2: zoomed
+    zoom = 25
+    panel_y = 180
+    out.append(f'<rect x="{bar_x}" y="{panel_y}" width="{bar_w}" height="{bar_h}" '
+               'fill="#e6f0e8" stroke="#5b5547" stroke-width="0.7"/>')
+    visible_frac = 1 / zoom
+    visible_total_label = TOTAL_FRESH_STORAGE_AF * visible_frac
+    deficit_w_zoom_2025 = bar_w * abs(basin_cum_2025) / visible_total_label
+    deficit_w_zoom_worst = bar_w * worst_year_deficit / visible_total_label
+    out.append(f'<rect x="{bar_x}" y="{panel_y}" width="{deficit_w_zoom_worst:.2f}" height="{bar_h}" '
+               f'fill="#c75a35" fill-opacity="0.5" stroke="#a32d2d" stroke-width="0.5"/>')
+    out.append(f'<rect x="{bar_x}" y="{panel_y}" width="{deficit_w_zoom_2025:.2f}" height="{bar_h}" '
+               'fill="#a32d2d"/>')
+    out.append(f'<text x="{bar_x + bar_w / 2}" y="{panel_y - 6}" text-anchor="middle" '
+               f'font-size="11" fill="#5b5547">{zoom}× zoom (showing {visible_total_label/1e6:.2f} MAF of the 16 MAF total)</text>')
+    out.append(f'<text x="{bar_x + bar_w / 2}" y="{panel_y + bar_h + 18}" text-anchor="middle" '
+               f'font-size="12" fill="#1a1612">'
+               f'WY {worst_year} trough = <tspan font-weight="700" fill="#a32d2d">'
+               f'{worst_year_deficit/TOTAL_FRESH_STORAGE_AF*100:.2f}%</tspan> '
+               f'of 16 MAF ({worst_year_deficit:,.0f} AF deepest deficit)</text>')
+
+    out.append("</svg>")
+    return "\n".join(out)
+
+
+# --- polygon map ---------------------------------------------------------
+def render_polygon_map(polygons_meta, pol_summaries, well_lookup, sy_lookup,
+                       projects):
+    width, height, margin = 700, 820, 30
+    rings_all = [r for p in polygons_meta for r in p["rings"]]
+    proj = project_factory(rings_all, width, height, margin)
+
+    svg = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+        f'style="background:#fafaf7;font-family:ui-sans-serif,system-ui;'
+        f'width:100%;height:auto;display:block;">',
+        '<defs><style>'
+        '.poly{stroke:#5b5547;stroke-width:0.7;cursor:pointer;}'
+        '.poly:hover{stroke-width:2;filter:brightness(1.05);}'
+        '.well{fill:#1f1f1f;pointer-events:none;}'
+        '.well-project{fill:#1f3a5f;stroke:#fafaf7;stroke-width:1.2;pointer-events:none;}'
+        '.label{font-size:8.5px;fill:#332e22;text-anchor:middle;font-weight:500;pointer-events:none;}'
+        '.title{font-size:13px;font-weight:700;fill:#1a1612;text-anchor:middle;}'
+        '.subtitle{font-size:11px;fill:#5b5547;text-anchor:middle;font-style:italic;}'
+        '.legend-text{font-size:10.5px;fill:#332e22;}'
+        '.legend-title{font-size:11px;font-weight:700;fill:#1a1612;}'
+        '.legend-bg{fill:#fafaf7;fill-opacity:0.97;stroke:#cfc9b8;stroke-width:0.6;}'
+        '</style></defs>',
+        f'<text class="title" x="{width/2}" y="18">'
+        'Vina 2027 BC RMS network (28 polygons) — Coverage status after project portfolio (target 2032)</text>',
+        f'<text class="subtitle" x="{width/2}" y="32">'
+        'Click any polygon for detail. Color = project allocation minus polygon avg loss rate (AF/yr).</text>',
+    ]
+
+    summary_by_zone = {s["zone_label"]: s for s in pol_summaries}
+    for poly in polygons_meta:
+        zone = poly["zone_label"]
+        s = summary_by_zone[zone]
+        d_attr = rings_to_path(poly["rings"], proj)
+        fill = coverage_color(s["hold_steady_need_AF_per_yr"], s["project_alloc_AF_per_yr"])
+        late_baseline = s["baseline_year"] > START_YEAR
+        attrs = {
+            "class": "poly",
+            "fill": fill,
+            "data-short": zone,
+            "data-ma": s["ma"],
+            "data-base-year": str(s["baseline_year"]),
+            "data-end-year": str(s["endpoint_year"]),
+            "data-span": str(s["span_years"]),
+            "data-area": f"{s['area_ac']:,.0f}",
+            "data-rms-wells": ";".join(s["rms_wells_2026"]),
+            "data-sy": f"{s['sy']:.4f}",
+            "data-sy-source": s["sy_source"],
+            "data-avg-dgwe": f"{s['avg_dgwe_ft_per_yr']:+.2f}",
+            "data-cum-stor": fmt_int_signed(s["endpoint_cum_storage_AF"]),
+            "data-avg-rate": fmt_int_signed(s["avg_rate_AF_per_yr"]),
+            "data-critdry-share": f"{s['crit_dry_share_of_drawdown_pct']:.0f}%",
+            "data-crit-share": f"{s['crit_share_of_drawdown_pct']:.0f}%",
+            "data-bucket-wet": fmt_int_signed(s["bucket_storage_AF"]["wet"]),
+            "data-bucket-an": fmt_int_signed(s["bucket_storage_AF"]["an"]),
+            "data-bucket-bn": fmt_int_signed(s["bucket_storage_AF"]["bn"]),
+            "data-bucket-dry": fmt_int_signed(s["bucket_storage_AF"]["dry"]),
+            "data-bucket-critical": fmt_int_signed(s["bucket_storage_AF"]["critical"]),
+            "data-hold": f"{int(round(s['hold_steady_need_AF_per_yr'])):,}",
+            "data-project": f"{int(round(s['project_alloc_AF_per_yr'])):,}",
+            "data-project-name": s.get("project_name", ""),
+            "data-coverage": fmt_int_signed(s["coverage_net_AF_per_yr"]),
+            "data-late": "1" if late_baseline else "",
+        }
+        attr_str = " ".join(f'{k}="{v}"' for k, v in attrs.items())
+        svg.append(f'<path d="{d_attr}" {attr_str}>'
+                   f'<title>Click for {zone} detail</title></path>')
+
+    for poly in polygons_meta:
+        zone = poly["zone_label"]
+        s = summary_by_zone[zone]
+        for wname in s["rms_wells_2026"]:
+            wmeta = well_lookup.get(wname)
+            if not wmeta or wmeta.get("latitude") is None:
+                continue
+            cx, cy = proj(wmeta["latitude"], wmeta["longitude"])
+            is_project = s.get("project_alloc_AF_per_yr", 0) > 0
+            cls = "well-project" if is_project else "well"
+            r = 4.2 if is_project else 3.0
+            svg.append(f'<circle class="{cls}" cx="{cx:.1f}" cy="{cy:.1f}" r="{r}"/>')
+        lat_c, lon_c = polygon_centroid(poly["rings"])
+        cx, cy = proj(lat_c, lon_c)
+        # Show the section-letter shorthand to keep labels readable.
+        section_label = zone[6:11] if len(zone) >= 11 else zone
+        svg.append(f'<text class="label" x="{cx:.1f}" y="{cy:.1f}">{section_label}</text>')
+
+    # Legend
+    legend_x, legend_y = 16, height - 90
+    legend_swatches = [
+        ("Surplus",      "#6b9479"),
+        ("Covered",      "#a8c8b0"),
+        ("Near",         "#f0d9a8"),
+        ("Short <750",   "#e3a76f"),
+        ("Short <1.5k",  "#cb7740"),
+        ("Short <2.5k",  "#a84a2c"),
+        ("Short ≥2.5k",  "#7c2820"),
+    ]
+    swatch_w, col_w = 56, 76
+    legend_w = 8 + col_w * len(legend_swatches) + 175
+    svg.append(f'<g transform="translate({legend_x},{legend_y})">')
+    svg.append(f'<rect class="legend-bg" x="-8" y="-22" width="{legend_w}" height="86"/>')
+    svg.append('<text class="legend-title" x="0" y="-6">Coverage after project portfolio (AF/yr): project allocation − polygon avg loss</text>')
+    svg.append('<text class="legend-text" x="0" y="9" font-style="italic" font-size="9.5" fill="#5b5547">greens = surplus / covered  ·  oranges → reds = shortfall by AF/yr</text>')
+    swatch_y = 18
+    for i, (label, color) in enumerate(legend_swatches):
+        sx = i * col_w + (col_w - swatch_w) / 2
+        cx = i * col_w + col_w / 2
+        svg.append(f'<rect x="{sx:.1f}" y="{swatch_y}" width="{swatch_w}" height="18" fill="{color}" stroke="#332e22" stroke-width="0.4"/>')
+        svg.append(f'<text class="legend-text" x="{cx:.1f}" y="{swatch_y + 30}" text-anchor="middle">{label}</text>')
+    well_x = len(legend_swatches) * col_w + 16
+    svg.append(f'<circle cx="{well_x}" cy="{swatch_y + 4}" r="3"/>')
+    svg.append(f'<text class="legend-text" x="{well_x + 10}" y="{swatch_y + 8}">2026 GWL RMS well</text>')
+    svg.append(f'<circle class="well-project" cx="{well_x}" cy="{swatch_y + 20}" r="4.2"/>')
+    svg.append(f'<text class="legend-text" x="{well_x + 10}" y="{swatch_y + 24}">RMS well + project</text>')
+    svg.append('</g>')
+    svg.append("</svg>")
+    return "\n".join(svg)
+
+
+# --- main analysis --------------------------------------------------------
+def main():
+    polygons = load_js_const(POLY_JS, "RMS_POLYGONS")
+    wells = load_js_const(WELLS_JS, "WELLS")
+    meas = load_js_const(MEAS_JS, "MEASUREMENTS")
+    print(f"loaded {len(polygons)} polygons, {len(wells)} wells, "
+          f"{len(meas)} measurement series")
+
+    # well_name → site_code (some wells may have no site_code; fall back to name)
+    site_by_name = {w["well_name"]: w.get("site_code") or w["well_name"]
+                    for w in wells}
+    well_lookup = {w["well_name"]: w for w in wells}
+
+    # Track which Sy came from SVSim vs. basin-mean fallback.
+    sy_csv = DATA_DIR / "polygon_sy_svsim.csv"
+    sy_svsim_set = set()
+    if sy_csv.exists():
+        with sy_csv.open() as f:
+            for row in csv.DictReader(f):
+                if row.get("sy"):
+                    sy_svsim_set.add(row["zone_label"])
+    sy_lookup = load_sy(sy_csv, polygons)
+
+    # Project portfolio (per polygon).  This is the *proposed* mapping for
+    # the new 28-polygon network — see data/project_portfolio.json.  If the
+    # file is missing, no projects are sited and the dashboard shows the
+    # pre-portfolio shortfall.
+    portfolio_path = DATA_DIR / "project_portfolio.json"
+    if portfolio_path.exists():
+        portfolio = json.loads(portfolio_path.read_text())
+    else:
+        portfolio = {"projects": [], "notes": "no project portfolio loaded"}
+    project_by_zone = {p["polygon"]: p for p in portfolio.get("projects", [])}
+    project_total_afy = sum(p["af_per_yr"] for p in portfolio.get("projects", []))
+
+    # --- compute per-polygon GWE + storage ---
+    pol_summaries = []
+    BUCKET_KEYS = ["wet", "an", "bn", "dry", "critical"]
+    basin_buckets = {k: 0.0 for k in BUCKET_KEYS}
+    basin_cumulative_2025 = 0.0
+    basin_avg_rate_sum = 0.0
+    basin_yoy = defaultdict(float)
+    polygon_models = []     # for model_data.json
+
+    for poly in polygons:
+        zone = poly["zone_label"]
+        rms_wells = [poly.get("rms_well_swn")] if poly.get("rms_well_swn") else []
+        # Fallback if the older multi-well key is used.
+        if not rms_wells and poly.get("rms_wells_2026"):
+            rms_wells = poly["rms_wells_2026"]
+        well_year_maps = []
+        per_well_summary = []
+        for wname in rms_wells:
+            site = site_by_name.get(wname, wname)
+            recs = meas.get(site, [])
+            ymap = well_spring_year(wname, recs)
+            well_year_maps.append(ymap)
+            per_well_summary.append({
+                "well_name": wname,
+                "site_code": site,
+                "n_spring_years": len(ymap),
+                "earliest_year": min(ymap) if ymap else None,
+                "latest_year": max(ymap) if ymap else None,
+            })
+        annual = polygon_annual_gwe(well_year_maps)
+        annual_in_window = {y: v for y, v in annual.items()
+                            if START_YEAR <= y <= END_YEAR}
+        sy_p = sy_lookup[zone]
+        area = poly.get("area_acres") or polygon_area_acres(poly["rings"])
+
+        if not annual_in_window:
+            print(f"  ! {zone}: no spring measurements in {START_YEAR}–{END_YEAR}")
+            continue
+
+        baseline_year = min(annual_in_window)
+        baseline_gwe = annual_in_window[baseline_year]
+        annual_storage = {y: (g - baseline_gwe) * sy_p * area
+                          for y, g in annual_in_window.items()}
+        cumulative = fill_cumulative(annual_storage, baseline_year, END_YEAR)
+        deltas = yoy_deltas(cumulative)
+        for y, d in deltas.items():
+            basin_yoy[y] += d
+
+        # Bucket attribution
+        buckets = {k: 0.0 for k in BUCKET_KEYS}
+        bucket_years = {k: 0 for k in BUCKET_KEYS}
+        for y, d in deltas.items():
+            klass = classify_year(y)
+            buckets[klass] += d
+            bucket_years[klass] += 1
+
+        endpoint_year = max(cumulative)
+        endpoint_cum = cumulative[endpoint_year]
+        endpoint_gwe = annual_in_window.get(endpoint_year)
+        span_years = endpoint_year - baseline_year
+        avg_dgwe = ((endpoint_gwe - baseline_gwe) / span_years
+                    if (endpoint_gwe is not None and span_years > 0) else 0.0)
+        avg_rate = endpoint_cum / span_years if span_years > 0 else 0.0
+        hold_steady_need = max(0.0, -avg_rate)
+
+        # Project allocation
+        proj_info = project_by_zone.get(zone)
+        project_afy = float(proj_info["af_per_yr"]) if proj_info else 0.0
+        project_name = proj_info["name"] if proj_info else ""
+
+        coverage_net = project_afy - hold_steady_need
+
+        gross_drawdown = sum(d for d in deltas.values() if d < 0)
+        crit_dry_loss = sum(d for y, d in deltas.items()
+                            if d < 0 and classify_year(y) in ("critical", "dry"))
+        crit_dry_share = (crit_dry_loss / gross_drawdown * 100.0
+                          if gross_drawdown < 0 else 0.0)
+        crit_loss = sum(d for y, d in deltas.items()
+                        if d < 0 and classify_year(y) == "critical")
+        crit_share = (crit_loss / gross_drawdown * 100.0
+                      if gross_drawdown < 0 else 0.0)
+
+        pol_summaries.append({
+            "zone_label": zone,
+            "name": zone,
+            "ma": poly.get("mgmt_area") or poly.get("ma") or "",
+            "ma_full": poly.get("mgmt_area_full", ""),
+            "area_ac": area,
+            "rms_wells_2026": rms_wells,
+            "wells_summary": per_well_summary,
+            "baseline_year": baseline_year,
+            "endpoint_year": endpoint_year,
+            "span_years": span_years,
+            "baseline_gwe": baseline_gwe,
+            "endpoint_gwe": endpoint_gwe,
+            "sy": round(sy_p, 4),
+            "sy_source": "SVSim" if zone in sy_svsim_set else "basin-mean fallback",
+            "endpoint_cum_storage_AF": round(endpoint_cum, 0),
+            "avg_dgwe_ft_per_yr": round(avg_dgwe, 3),
+            "avg_rate_AF_per_yr": round(avg_rate, 1),
+            "bucket_storage_AF": {k: round(v, 0) for k, v in buckets.items()},
+            "bucket_polygon_years": bucket_years,
+            "crit_dry_share_of_drawdown_pct": round(crit_dry_share, 1),
+            "crit_share_of_drawdown_pct": round(crit_share, 1),
+            "hold_steady_need_AF_per_yr": round(hold_steady_need, 0),
+            "project_alloc_AF_per_yr": round(project_afy, 0),
+            "project_name": project_name,
+            "coverage_net_AF_per_yr": round(coverage_net, 0),
+            "sustainability_2042_need_AF_per_yr": round(hold_steady_need, 0),
+            "pct_of_basin_SY": round(hold_steady_need / SUSTAINABLE_YIELD_AFY * 100, 3),
+        })
+        for k in basin_buckets:
+            basin_buckets[k] += buckets[k]
+        basin_cumulative_2025 += endpoint_cum
+        basin_avg_rate_sum += avg_rate
+
+        polygon_models.append({
+            "zone_label": zone,
+            "name": zone,
+            "ma": poly.get("mgmt_area", ""),
+            "area_acres": area,
+            "rms_wells_2026": rms_wells,
+            "baseline_year": baseline_year,
+            "baseline_gwe": round(baseline_gwe, 2),
+            "gwe_2025": round(annual_in_window.get(END_YEAR), 2) if END_YEAR in annual_in_window else None,
+            "annual_gwe": {str(y): round(v, 2) for y, v in annual_in_window.items()},
+            "annual_storage_AF": {str(y): round(v, 1) for y, v in annual_storage.items()},
+            "sy": round(sy_p, 4),
+            "wells_summary": per_well_summary,
+        })
+
+    basin_polygon_summed_need = sum(s["hold_steady_need_AF_per_yr"] for s in pol_summaries)
+    basin_loss_rate = -basin_avg_rate_sum  # positive when basin losing
+    basin_portfolio_margin = project_total_afy - basin_loss_rate
+
+    # --- basin annual gap-attributed time series ----------------------
+    basin_annual = {str(y): round(basin_yoy.get(y, 0.0), 0)
+                    for y in range(START_YEAR + 1, END_YEAR + 1)}
+
+    # --- write JSON outputs --------------------------------------------
+    condition_out = {
+        "year_type_classification": "Sacramento Valley Index (Northern Sierra 8-Station Index)",
+        "year_types_by_year": SVI_YEAR_TYPE,
+        "polygons": [
+            {k: v for k, v in s.items()
+             if k in {"zone_label", "name", "ma", "ma_full", "area_ac",
+                      "baseline_year", "endpoint_year", "span_years",
+                      "baseline_gwe", "endpoint_gwe", "endpoint_cum_storage_AF",
+                      "avg_dgwe_ft_per_yr", "bucket_storage_AF",
+                      "bucket_polygon_years", "sy", "sy_source"}}
+            for s in pol_summaries
+        ],
+        "basin_total_by_condition_AF": {k: round(v, 0) for k, v in basin_buckets.items()},
+        "basin_total_net_AF": round(basin_cumulative_2025, 0),
+        "notes": (
+            "Year-over-year storage deltas from each polygon's cumulative "
+            "storage series; multi-year DWR gaps distributed evenly across "
+            "the gap before bucketing. 28 polygons in the 2027 BC RMS network; "
+            "baseline years are staggered per first Good-quality spring "
+            "measurement."
+        ),
+    }
+    (DATA_DIR / "condition_analysis.json").write_text(json.dumps(condition_out, indent=2))
+
+    sustainability_out = {
+        "framing": ("Hold current conditions: each polygon's sustainability "
+                    "need is its average annual loss rate; project portfolio "
+                    "supplies recharge / surface-water substitution to offset "
+                    "that loss starting ~2032."),
+        "endpoint_year": END_YEAR,
+        "projects_online_year": PROJECTS_ONLINE_YEAR,
+        "sustainable_yield_AF_per_yr": SUSTAINABLE_YIELD_AFY,
+        "sustainable_yield_source": SOURCE_GSP_LABEL,
+        "total_fresh_storage_AF": TOTAL_FRESH_STORAGE_AF,
+        "basin_total_cum_2025_AF": round(basin_cumulative_2025, 0),
+        "basin_pct_of_total_storage": round(basin_cumulative_2025 / TOTAL_FRESH_STORAGE_AF * 100, 3),
+        "basin_buckets_AF": {k: round(v, 0) for k, v in basin_buckets.items()},
+        "basin_avg_loss_rate_AF_per_yr": round(basin_loss_rate, 0),
+        "basin_polygon_summed_hold_need_AF_per_yr": round(basin_polygon_summed_need, 0),
+        "project_portfolio_total_AF_per_yr": project_total_afy,
+        "project_portfolio_basin_margin_AF_per_yr": round(basin_portfolio_margin, 0),
+        "project_portfolio": portfolio.get("projects", []),
+        "polygons": [
+            {
+                "zone_label": s["zone_label"],
+                "name": s["name"],
+                "ma": s["ma"],
+                "baseline_year": s["baseline_year"],
+                "endpoint_year": s["endpoint_year"],
+                "span_years": s["span_years"],
+                "sy": s["sy"],
+                "sy_source": s["sy_source"],
+                "endpoint_cum_storage_AF": s["endpoint_cum_storage_AF"],
+                "avg_rate_AF_per_yr": s["avg_rate_AF_per_yr"],
+                "hold_steady_need_AF_per_yr": s["hold_steady_need_AF_per_yr"],
+                "project_alloc_AF_per_yr": s["project_alloc_AF_per_yr"],
+                "project_name": s.get("project_name", ""),
+                "coverage_net_AF_per_yr": s["coverage_net_AF_per_yr"],
+                "crit_dry_share_of_drawdown_pct": s["crit_dry_share_of_drawdown_pct"],
+                "crit_share_of_drawdown_pct": s["crit_share_of_drawdown_pct"],
+                "bucket_storage_AF": s["bucket_storage_AF"],
+            }
+            for s in pol_summaries
+        ],
+    }
+    (DATA_DIR / "sustainability_2042.json").write_text(json.dumps(sustainability_out, indent=2))
+
+    (DATA_DIR / "basin_annual.json").write_text(json.dumps(basin_annual, indent=2))
+
+    # model_data.json (for downstream / debug use)
+    (DATA_DIR / "model_data.json").write_text(json.dumps({
+        "constants": {"start_year": START_YEAR, "end_year": END_YEAR,
+                       "n_polygons": len(polygon_models)},
+        "polygons": polygon_models,
+    }, indent=2))
+
+    # polygon_storage_2025.csv
+    with (DATA_DIR / "polygon_storage_2025.csv").open("w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["zone_label", "mgmt_area", "rms_well", "area_acres", "sy",
+                    "sy_source", "baseline_year", "baseline_gwe",
+                    "endpoint_year", "endpoint_gwe",
+                    "dgwe_endpoint_minus_baseline_ft",
+                    "cumulative_storage_endpoint_AF",
+                    "avg_rate_AF_per_yr",
+                    "hold_steady_need_AF_per_yr",
+                    "project_AF_per_yr", "project_name",
+                    "coverage_net_AF_per_yr"])
+        for s in pol_summaries:
+            w.writerow([s["zone_label"], s["ma"],
+                        s["rms_wells_2026"][0] if s["rms_wells_2026"] else "",
+                        f"{s['area_ac']:.1f}", s["sy"], s["sy_source"],
+                        s["baseline_year"], f"{s['baseline_gwe']:.2f}",
+                        s["endpoint_year"],
+                        f"{s['endpoint_gwe']:.2f}" if s["endpoint_gwe"] is not None else "",
+                        f"{s['endpoint_gwe'] - s['baseline_gwe']:+.2f}" if s["endpoint_gwe"] is not None else "",
+                        f"{s['endpoint_cum_storage_AF']:.0f}",
+                        f"{s['avg_rate_AF_per_yr']:.0f}",
+                        f"{s['hold_steady_need_AF_per_yr']:.0f}",
+                        f"{s['project_alloc_AF_per_yr']:.0f}",
+                        s.get("project_name", ""),
+                        f"{s['coverage_net_AF_per_yr']:+.0f}"])
+
+    # storage_timeseries.csv
+    cum_running = 0.0
+    with (DATA_DIR / "storage_timeseries.csv").open("w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["year", "year_type", "yoy_delta_AF", "cumulative_AF"])
+        for y in range(START_YEAR, END_YEAR + 1):
+            delta = basin_yoy.get(y, 0.0)
+            cum_running += delta
+            w.writerow([y, SVI_YEAR_TYPE.get(y, "?"),
+                        f"{delta:.0f}", f"{cum_running:.0f}"])
+
+    # --- render SVGs ----------------------------------------------------
+    polygon_map_svg = render_polygon_map(polygons, pol_summaries, well_lookup,
+                                          sy_lookup, portfolio.get("projects", []))
+    (DATA_DIR / "polygon_map.svg").write_text(polygon_map_svg)
+
+    n_by_type = {k: sum(1 for y in range(START_YEAR + 1, END_YEAR + 1)
+                        if classify_year(y) == k)
+                 for k in ["wet", "an", "bn", "dry", "critical"]}
+    bar_svg = render_bar_chart(basin_buckets, n_by_type, basin_cumulative_2025)
+    (DATA_DIR / "basin_buckets_chart.svg").write_text(bar_svg)
+
+    cum_running = 0.0
+    ts = []
+    for y in range(START_YEAR, END_YEAR + 1):
+        if y == START_YEAR:
+            ts.append({"year": y, "cumulative_AF": 0.0})
+        else:
+            cum_running += basin_yoy.get(y, 0.0)
+            ts.append({"year": y, "cumulative_AF": round(cum_running, 0)})
+    ts_svg = render_timeseries(ts)
+    (DATA_DIR / "basin_cumulative_chart.svg").write_text(ts_svg)
+
+    trough_cum = 0.0
+    trough_year = START_YEAR
+    cum_run = 0.0
+    for y_str, delta in basin_annual.items():
+        cum_run += delta
+        if cum_run < trough_cum:
+            trough_cum = cum_run
+            trough_year = int(y_str)
+    context_svg = render_storage_context(basin_cumulative_2025,
+                                          abs(trough_cum), trough_year)
+    (DATA_DIR / "storage_context.svg").write_text(context_svg)
+
+    # --- index.html -----------------------------------------------------
+    try:
+        from build_html import write_index_html
+        write_index_html(WORKTREE / "index.html",
+                         pol_summaries, basin_buckets, basin_cumulative_2025,
+                         basin_polygon_summed_need, basin_loss_rate,
+                         basin_portfolio_margin, basin_annual,
+                         polygon_map_svg, bar_svg, ts_svg, context_svg, sy_lookup,
+                         trough_cum, trough_year, portfolio, project_total_afy,
+                         n_by_type)
+    except ImportError:
+        print("(build_html.py not yet present; index.html skipped)")
+
+    # --- console summary ------------------------------------------------
+    print()
+    print("=== Basin totals by Sacramento Valley Index year type (WY 2000–2025) ===")
+    for k, full in [("wet", "Wet"), ("an", "Above Normal"), ("bn", "Below Normal"),
+                    ("dry", "Dry"), ("critical", "Critical")]:
+        n = n_by_type[k]
+        avg = basin_buckets[k] / n if n else 0
+        print(f"  {full:<14}: {basin_buckets[k]:>+12,.0f} AF "
+              f"({n} years; avg {avg:>+8,.0f}/yr)")
+    print(f"  {'basin net':<14}: {basin_cumulative_2025:>+12,.0f} AF "
+          f"({basin_cumulative_2025 / TOTAL_FRESH_STORAGE_AF * 100:+.2f}% of 16 MAF)")
+    print()
+    print("=== Hold-current target & project portfolio ===")
+    print(f"  Basin avg loss rate          : {basin_loss_rate:>+12,.0f} AF/yr")
+    print(f"  Polygon-summed hold need     : {basin_polygon_summed_need:>+12,.0f} AF/yr")
+    print(f"  Project portfolio (2032)     : {project_total_afy:>+12,.0f} AF/yr")
+    print(f"  Basin recovery margin        : {basin_portfolio_margin:>+12,.0f} AF/yr "
+          f"({basin_portfolio_margin / SUSTAINABLE_YIELD_AFY * 100:+.2f}% of SY)")
+    print()
+    print("Per-polygon detail (sorted by avg loss):")
+    print(f"  {'Zone':<18} {'MA':<6} {'Sy':>7} {'Src':<5} {'Cum2025':>10} "
+          f"{'Hold':>8} {'Proj':>8} {'Net':>9}")
+    for s in sorted(pol_summaries, key=lambda x: -x["hold_steady_need_AF_per_yr"]):
+        src = "SVSim" if s["sy_source"] == "SVSim" else "mean"
+        print(f"  {s['zone_label']:<18} {s['ma']:<6} {s['sy']:.4f} {src:<5} "
+              f"{s['endpoint_cum_storage_AF']:>+10,.0f} "
+              f"{s['hold_steady_need_AF_per_yr']:>+8,.0f} "
+              f"{s['project_alloc_AF_per_yr']:>+8,.0f} "
+              f"{s['coverage_net_AF_per_yr']:>+9,.0f}")
+
+
+if __name__ == "__main__":
+    main()
