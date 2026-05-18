@@ -114,19 +114,34 @@ tr:hover td { background: #f9f6ee; }
 .bigstat .pct { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 700; color: var(--ink); }
 .bigstat .desc { flex: 1 1 280px; font-size: 14px; color: var(--ink); line-height: 1.55; }
 .map-wrap { position: relative; }
-#polygon-popup { position: absolute; display: none; background: var(--bg-card); border: 1px solid var(--ink-muted); border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.16); padding: 14px 16px 12px 16px; font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.5; max-width: 380px; z-index: 100; pointer-events: auto; }
-#polygon-popup .popup-close { position: absolute; top: 6px; right: 8px; background: none; border: none; font-size: 18px; cursor: pointer; color: var(--ink-muted); padding: 2px 6px; line-height: 1; }
-#polygon-popup h4 { margin: 0 18px 8px 0; font-size: 14px; }
-#polygon-popup .popup-row { display: flex; justify-content: space-between; gap: 14px; padding: 3px 0; border-bottom: 1px dashed #e7e1cf; }
-#polygon-popup .popup-row:last-child { border-bottom: none; }
-#polygon-popup .popup-row .k { color: var(--ink-muted); font-weight: 500; }
-#polygon-popup .popup-row .v { font-weight: 700; font-variant-numeric: tabular-nums; }
-#polygon-popup .popup-row .v.gain { color: var(--good); }
-#polygon-popup .popup-row .v.loss { color: var(--warn); }
-#polygon-popup .popup-section { font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--ink-muted); margin-top: 10px; letter-spacing: 0.03em; }
-#polygon-popup .popup-need { background: #ecf3ed; padding: 10px 12px; margin-top: 10px; border-radius: 3px; font-size: 13px; line-height: 1.4; border-left: 3px solid var(--good); }
-#polygon-popup .popup-need .big { font-size: 22px; font-weight: 800; color: var(--good); display: block; margin-top: 2px; }
-#polygon-popup .popup-late { background: #faf1dc; color: #6e5615; padding: 8px 10px; margin-top: 10px; border-radius: 3px; font-size: 12px; line-height: 1.4; }
+.leaflet-map { width: 100%; height: 620px; border: 1px solid var(--rule); background: #fafaf7; border-radius: 2px; }
+.leaflet-map .polygon-label { font-family: 'Inter', sans-serif; font-size: 9.5px; font-weight: 600; color: #332e22; text-align: center; text-shadow: 0 0 2px rgba(255,255,255,0.85), 0 0 2px rgba(255,255,255,0.85); pointer-events: none; line-height: 1; white-space: nowrap; }
+.map-toolbar { display: flex; flex-wrap: wrap; gap: 16px; padding: 10px 14px; margin: 10px 0 4px 0; background: var(--bg-card); border: 1px solid var(--rule); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 12px; align-items: center; }
+.map-toolbar-label { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); }
+.map-toggle { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--ink); user-select: none; }
+.map-toggle input { cursor: pointer; }
+.map-legend-row { padding: 10px 14px; margin: 4px 0 4px 0; background: var(--bg-card); border: 1px solid var(--rule); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink); }
+.map-legend-title { font-weight: 700; font-size: 11px; color: var(--ink); margin-bottom: 6px; }
+.map-legend-swatches { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+.map-legend-swatches > div { display: inline-flex; align-items: center; gap: 5px; }
+.map-legend-swatches .sw { display: inline-block; width: 18px; height: 11px; border: 0.5px solid #332e22; }
+.map-legend-swatches .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #fafaf7; }
+.leaflet-popup-content { font-family: 'Inter', sans-serif; font-size: 13px; min-width: 280px; max-width: 360px; }
+.leaflet-popup-content h4 { margin: 0 0 8px 0; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; }
+.leaflet-popup-content .popup-row { display: flex; justify-content: space-between; gap: 14px; padding: 3px 0; border-bottom: 1px dashed #e7e1cf; }
+.leaflet-popup-content .popup-row:last-child { border-bottom: none; }
+.leaflet-popup-content .popup-row .k { color: var(--ink-muted); font-weight: 500; }
+.leaflet-popup-content .popup-row .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+.leaflet-popup-content .popup-row .v.gain { color: var(--good); }
+.leaflet-popup-content .popup-row .v.loss { color: var(--warn); }
+.leaflet-popup-content .popup-section { font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--ink-muted); margin-top: 10px; letter-spacing: 0.03em; }
+.leaflet-popup-content .popup-need { background: #ecf3ed; padding: 10px 12px; margin-top: 10px; border-radius: 3px; font-size: 13px; line-height: 1.4; border-left: 3px solid var(--good); }
+.leaflet-popup-content .popup-need .big { font-size: 22px; font-weight: 800; display: block; margin-top: 2px; }
+.leaflet-popup-content .popup-late { background: #faf1dc; color: #6e5615; padding: 8px 10px; margin-top: 10px; border-radius: 3px; font-size: 12px; line-height: 1.4; }
+
+table tr[data-zone-label] { cursor: pointer; }
+table tr[data-zone-label]:hover td { background: #fff1cc; }
+table tr[data-zone-label]:hover td:first-child::before { content: '➤ '; color: var(--accent); font-weight: 700; }
 details { margin: 16px 0; padding: 12px 18px; background: var(--bg-card); border: 1px solid var(--rule); border-left: 4px solid var(--tan); }
 details summary { cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; color: var(--ink); }
 details[open] summary { margin-bottom: 12px; }
@@ -185,51 +200,64 @@ a:hover { background: #fff1cc; }
 .method-banner strong { color: var(--ink); }
 """
 
-POPUP_JS = """
+MAP_JS = r"""
 (function() {
-  const popup = document.getElementById('polygon-popup');
-  const ppName = document.getElementById('pp-name');
-  const ppBody = document.getElementById('pp-body');
-  const closeBtn = popup.querySelector('.popup-close');
+  if (typeof L === 'undefined') {
+    console.warn('Leaflet not loaded; map cannot render.');
+    return;
+  }
 
-  function fmtClass(s) {
-    if (!s) return '';
-    if (s.startsWith('+')) return 'gain';
-    if (s.startsWith('-')) return 'loss';
+  const BASEMAP_URL = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+  const BASEMAP_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>';
+
+  function fmtSigned(v) {
+    if (v === null || v === undefined) return 'n/a';
+    const n = Math.round(v);
+    if (n > 0) return '+' + n.toLocaleString();
+    if (n < 0) return '-' + Math.abs(n).toLocaleString();
+    return '0';
+  }
+  function fmtSignedFt(v) {
+    if (v === null || v === undefined) return 'n/a';
+    const s = v >= 0 ? '+' : '';
+    return s + v.toFixed(2);
+  }
+  function gainLossClass(v) {
+    if (v > 0) return 'gain';
+    if (v < 0) return 'loss';
     return '';
   }
 
-  function showPopup(path, evt) {
-    const d = path.dataset;
-    const wrap = path.closest('.map-wrap');
-    ppName.textContent = d.short + ' (' + d.ma + ')';
-    let html = '';
-    if (d.reassigned === '1') {
-      html += `<div class="popup-row"><span class="k">Zone (spatial)</span><span class="v" style="color:#7c4a86;">${d.ma} — reassigned from ${d.workbookMa}</span></div>`;
+  function buildPopupHtml(p) {
+    let html = `<h4>${p.zone_label} (${p.ma})</h4>`;
+    if (p.reassigned) {
+      html += `<div class="popup-row"><span class="k">Zone (spatial)</span><span class="v" style="color:#7c4a86;">${p.ma_full} — reassigned from ${p.workbook_ma}</span></div>`;
     }
-    html += `<div class="popup-row"><span class="k">RMS well(s)</span><span class="v">${d.rmsWells.replace(/;/g, ', ')}</span></div>`;
-    html += `<div class="popup-row"><span class="k">Area</span><span class="v">${d.area} ac</span></div>`;
-    html += `<div class="popup-row"><span class="k">Span</span><span class="v">${d.baseYear}–${d.endYear} (${d.span} yr)</span></div>`;
-    html += `<div class="popup-row"><span class="k">Avg ΔGWE/yr</span><span class="v ${fmtClass(d.avgDgwe)}">${d.avgDgwe} ft</span></div>`;
-    html += `<div class="popup-row"><span class="k">Cumulative ΔStorage</span><span class="v ${fmtClass(d.cumStor)}">${d.cumStor} AF</span></div>`;
-    html += `<div class="popup-row"><span class="k">Avg storage rate</span><span class="v ${fmtClass(d.avgRate)}">${d.avgRate} AF/yr</span></div>`;
-    html += `<div class="popup-row"><span class="k">Critical + Dry share of drawdown</span><span class="v">${d.critdryShare}</span></div>`;
-    html += `<div class="popup-row"><span class="k">Critical only</span><span class="v">${d.critShare}</span></div>`;
+    html += `<div class="popup-row"><span class="k">RMS well(s)</span><span class="v">${(p.rms_wells || []).join(', ')}</span></div>`;
+    html += `<div class="popup-row"><span class="k">Area</span><span class="v">${p.area_ac.toLocaleString()} ac</span></div>`;
+    html += `<div class="popup-row"><span class="k">Span</span><span class="v">${p.baseline_year}–${p.endpoint_year} (${p.span_years} yr)</span></div>`;
+    html += `<div class="popup-row"><span class="k">Avg ΔGWE/yr</span><span class="v ${gainLossClass(p.avg_dgwe)}">${fmtSignedFt(p.avg_dgwe)} ft</span></div>`;
+    html += `<div class="popup-row"><span class="k">Cumulative ΔStorage</span><span class="v ${gainLossClass(p.cum_2025)}">${fmtSigned(p.cum_2025)} AF</span></div>`;
+    html += `<div class="popup-row"><span class="k">Avg storage rate</span><span class="v ${gainLossClass(p.avg_rate)}">${fmtSigned(p.avg_rate)} AF/yr</span></div>`;
+    html += `<div class="popup-row"><span class="k">Normalized cum 2025</span><span class="v ${gainLossClass(p.norm_cum)}">${fmtSigned(p.norm_cum)} AF</span></div>`;
+    html += `<div class="popup-row"><span class="k">Critical+Dry share of drawdown</span><span class="v">${Math.round(p.crit_dry_share)}%</span></div>`;
     html += `<div class="popup-section">By Sac Valley Index year type</div>`;
-    html += `<div class="popup-row"><span class="k">Wet</span><span class="v ${fmtClass(d.bucketWet)}">${d.bucketWet} AF</span></div>`;
-    html += `<div class="popup-row"><span class="k">Above Normal</span><span class="v ${fmtClass(d.bucketAn)}">${d.bucketAn} AF</span></div>`;
-    html += `<div class="popup-row"><span class="k">Below Normal</span><span class="v ${fmtClass(d.bucketBn)}">${d.bucketBn} AF</span></div>`;
-    html += `<div class="popup-row"><span class="k">Dry</span><span class="v ${fmtClass(d.bucketDry)}">${d.bucketDry} AF</span></div>`;
-    html += `<div class="popup-row"><span class="k">Critical</span><span class="v ${fmtClass(d.bucketCritical)}">${d.bucketCritical} AF</span></div>`;
-    const syExtra = d.sySource === 'SVSim' ? '' : ' <span style="color:#8a5a18;font-style:italic;font-size:11px;">(basin-mean fallback)</span>';
-    html += `<div class="popup-row"><span class="k">Specific yield</span><span class="v">${d.sy}${syExtra}</span></div>`;
+    html += `<div class="popup-row"><span class="k">Wet</span><span class="v ${gainLossClass(p.buckets.wet)}">${fmtSigned(p.buckets.wet)} AF</span></div>`;
+    html += `<div class="popup-row"><span class="k">Above Normal</span><span class="v ${gainLossClass(p.buckets.an)}">${fmtSigned(p.buckets.an)} AF</span></div>`;
+    html += `<div class="popup-row"><span class="k">Below Normal</span><span class="v ${gainLossClass(p.buckets.bn)}">${fmtSigned(p.buckets.bn)} AF</span></div>`;
+    html += `<div class="popup-row"><span class="k">Dry</span><span class="v ${gainLossClass(p.buckets.dry)}">${fmtSigned(p.buckets.dry)} AF</span></div>`;
+    html += `<div class="popup-row"><span class="k">Critical</span><span class="v ${gainLossClass(p.buckets.critical)}">${fmtSigned(p.buckets.critical)} AF</span></div>`;
+    const syExtra = p.sy_source === 'SVSim' ? '' : ' <span style="color:#8a5a18;font-style:italic;font-size:11px;">(basin-mean fallback)</span>';
+    html += `<div class="popup-row"><span class="k">Specific yield</span><span class="v">${p.sy.toFixed(4)}${syExtra}</span></div>`;
     html += `<div class="popup-section">Hold-current sustainability</div>`;
-    const hold = parseInt(d.hold.replace(/,/g, ''), 10);
-    const project = parseInt(d.project.replace(/,/g, ''), 10);
-    html += `<div class="popup-row"><span class="k">Avg loss rate</span><span class="v">${d.hold} AF/yr</span></div>`;
-    const projDisplay = project > 0 ? `${d.project} AF/yr <span style="font-weight:400;color:#5b5547;font-size:11px;">(${d.projectName})</span>` : '— none here —';
+    const hold = p.hold || 0;
+    const project = p.project_afy || 0;
+    html += `<div class="popup-row"><span class="k">Avg loss rate</span><span class="v">${hold.toLocaleString()} AF/yr</span></div>`;
+    const projDisplay = project > 0
+      ? `${project.toLocaleString()} AF/yr <span style="font-weight:400;color:#5b5547;font-size:11px;">(${p.project_name})</span>`
+      : '— none here —';
     html += `<div class="popup-row"><span class="k">Project allocation</span><span class="v">${projDisplay}</span></div>`;
-    const coverage = parseInt(d.coverage.replace(/,/g, '').replace('+', ''), 10);
+    const coverage = p.coverage || 0;
     let coverageBg, coverageColor, coverageLabel;
     if (hold === 0 && project === 0) {
       coverageBg = '#ecf3ed'; coverageColor = '#2e6f3f';
@@ -241,41 +269,161 @@ POPUP_JS = """
       coverageBg = '#fbf0e7'; coverageColor = '#8a3a18';
       coverageLabel = `Polygon-level shortfall of ${Math.abs(coverage).toLocaleString()} AF/yr after project portfolio.`;
     }
-    html += `<div class="popup-need" style="background:${coverageBg};border-left-color:${coverageColor}"><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:#5b5547;font-weight:700;">Net coverage after portfolio</div><span class="big" style="color:${coverageColor}">${d.coverage} AF/yr</span><div style="font-size:12px;margin-top:4px;color:#5b5547;">${coverageLabel}</div></div>`;
-    if (d.late === '1') {
-      html += `<div class="popup-late">Late baseline: this polygon's RMS well wasn't measured in 1999, so its record starts at ${d.baseYear}. Pre-${d.baseYear} drawdown is not captured.</div>`;
+    html += `<div class="popup-need" style="background:${coverageBg};border-left-color:${coverageColor}"><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:#5b5547;font-weight:700;">Net coverage after portfolio</div><span class="big" style="color:${coverageColor}">${fmtSigned(coverage)} AF/yr</span><div style="font-size:12px;margin-top:4px;color:#5b5547;">${coverageLabel}</div></div>`;
+    if (p.late_baseline) {
+      html += `<div class="popup-late">Late baseline: this polygon's RMS well wasn't measured in 1999, so its record starts at ${p.baseline_year}. Pre-${p.baseline_year} drawdown is not captured.</div>`;
     }
-    ppBody.innerHTML = html;
-
-    // Position popup relative to the visible map-wrap that owns this path
-    const rect = wrap.getBoundingClientRect();
-    let x = evt.clientX - rect.left + 12;
-    let y = evt.clientY - rect.top + 12;
-    // Move popup into this wrap (so absolute positioning is relative to it)
-    if (popup.parentElement !== wrap) wrap.appendChild(popup);
-    popup.style.display = 'block';
-    const popRect = popup.getBoundingClientRect();
-    if (x + popRect.width > rect.width) x = rect.width - popRect.width - 8;
-    if (y + popRect.height > rect.height) y = rect.height - popRect.height - 8;
-    popup.style.left = x + 'px';
-    popup.style.top = y + 'px';
+    return html;
   }
 
-  document.querySelectorAll('path.poly').forEach(p => {
-    p.addEventListener('click', (e) => { e.stopPropagation(); showPopup(p, e); });
-  });
-  closeBtn.addEventListener('click', () => popup.style.display = 'none');
-  document.addEventListener('click', (e) => {
-    if (!popup.contains(e.target) && !e.target.closest('path.poly')) {
-      popup.style.display = 'none';
+  function sectionLabel(zone) {
+    return zone.length >= 11 ? zone.substring(6, 11) : zone;
+  }
+
+  const MAPS = {};
+
+  function initMap(method) {
+    if (MAPS[method]) return MAPS[method];
+    const container = document.getElementById(`map-${method}`);
+    if (!container) return null;
+    const polys = window.POLYGONS_BY_METHOD[method] || [];
+
+    const map = L.map(container, {
+      zoomSnap: 0.25,
+      zoomDelta: 0.5,
+      attributionControl: true,
+      preferCanvas: false,
+    });
+
+    const basemap = L.tileLayer(BASEMAP_URL, {
+      attribution: BASEMAP_ATTR,
+      subdomains: 'abcd',
+      maxZoom: 19,
+    });
+
+    const polyLayer = L.featureGroup();
+    const labelLayer = L.layerGroup();
+    const wellLayer = L.layerGroup();
+
+    polys.forEach(p => {
+      const poly = L.polygon(p.rings, {
+        color: '#332e22',
+        weight: 0.8,
+        opacity: 1,
+        fillColor: p.fill_color,
+        fillOpacity: 0.82,
+      });
+      poly._meta = p;
+      poly.bindPopup(buildPopupHtml(p), { maxWidth: 380, autoPan: true });
+      poly.on('mouseover', function() { this.setStyle({ weight: 2.4 }); this.bringToFront(); });
+      poly.on('mouseout', function() {
+        if (!this._isFlashing) this.setStyle({ weight: 0.8, color: '#332e22' });
+      });
+      polyLayer.addLayer(poly);
+
+      // Centroid label
+      const ll = poly.getBounds().getCenter();
+      const label = L.marker(ll, {
+        icon: L.divIcon({
+          className: 'polygon-label-wrap',
+          html: `<div class="polygon-label">${sectionLabel(p.zone_label)}</div>`,
+          iconSize: [56, 14],
+          iconAnchor: [28, 7],
+        }),
+        interactive: false,
+      });
+      labelLayer.addLayer(label);
+
+      // Seed-well marker
+      if (p.seed_latlng && p.seed_latlng[0] !== null) {
+        const isProject = (p.project_afy || 0) > 0;
+        const wellMarker = L.circleMarker(p.seed_latlng, {
+          radius: isProject ? 5 : 3.5,
+          color: '#fafaf7',
+          weight: isProject ? 1.5 : 1,
+          fillColor: isProject ? '#1f3a5f' : '#1f1f1f',
+          fillOpacity: 1,
+          interactive: false,
+        });
+        wellLayer.addLayer(wellMarker);
+      }
+    });
+
+    polyLayer.addTo(map);
+    labelLayer.addTo(map);
+    wellLayer.addTo(map);
+    map.fitBounds(polyLayer.getBounds(), { padding: [14, 14] });
+
+    const basemapToggle = document.getElementById(`basemap-toggle-${method}`);
+    const fillToggle = document.getElementById(`fill-toggle-${method}`);
+    const labelToggle = document.getElementById(`label-toggle-${method}`);
+    if (basemapToggle) basemapToggle.addEventListener('change', () => {
+      if (basemapToggle.checked) basemap.addTo(map); else map.removeLayer(basemap);
+    });
+    if (fillToggle) fillToggle.addEventListener('change', () => {
+      polyLayer.eachLayer(l => l.setStyle({ fillOpacity: fillToggle.checked ? 0.82 : 0 }));
+    });
+    if (labelToggle) labelToggle.addEventListener('change', () => {
+      if (labelToggle.checked) labelLayer.addTo(map); else map.removeLayer(labelLayer);
+    });
+
+    MAPS[method] = { map, basemap, polyLayer, labelLayer, wellLayer };
+    return MAPS[method];
+  }
+
+  function flashPolygon(method, zoneLabel) {
+    // Make sure the right method is visible
+    const targetContent = document.querySelector('.method-content.method-' + method);
+    if (!targetContent || targetContent.classList.contains('hidden')) {
+      const btn = document.querySelector(`.method-toggle button[data-method="${method}"]`);
+      if (btn) btn.click();
+    }
+
+    setTimeout(() => {
+      const M = initMap(method);
+      if (!M) return;
+      M.map.invalidateSize();
+      let target = null;
+      M.polyLayer.eachLayer(l => {
+        if (l._meta && l._meta.zone_label === zoneLabel) target = l;
+      });
+      if (!target) return;
+      const container = document.getElementById(`map-${method}`);
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      const origStyle = {
+        color: target.options.color,
+        weight: target.options.weight,
+        fillOpacity: target.options.fillOpacity,
+      };
+      target._isFlashing = true;
+      target.setStyle({ color: '#ffd700', weight: 5, fillOpacity: 0.95 });
+      target.bringToFront();
+      M.map.fitBounds(target.getBounds().pad(0.5), { maxZoom: 14, animate: true });
+
+      setTimeout(() => {
+        target.setStyle(origStyle);
+        target._isFlashing = false;
+      }, 1600);
+    }, 100);
+  }
+
+  // Expose for table row handlers
+  window.flashPolygon = flashPolygon;
+  window.initMap = initMap;
+
+  // Initialize the currently visible method
+  document.addEventListener('DOMContentLoaded', () => {
+    const active = document.querySelector('.method-content:not(.hidden)');
+    if (active) {
+      const cls = Array.from(active.classList).find(c => c.startsWith('method-') && c !== 'method-content');
+      const method = cls ? cls.replace('method-', '') : 'single';
+      const M = initMap(method);
+      if (M) setTimeout(() => M.map.invalidateSize(), 80);
     }
   });
-})();
-"""
 
-TOGGLE_JS = """
-(function() {
-  const popup = document.getElementById('polygon-popup');
+  // Method toggle: ensure target map is initialized and sized
   document.querySelectorAll('.method-toggle button').forEach(btn => {
     btn.addEventListener('click', () => {
       const m = btn.dataset.method;
@@ -283,10 +431,26 @@ TOGGLE_JS = """
         b.classList.toggle('active', b === btn));
       document.querySelectorAll('.method-content').forEach(c =>
         c.classList.toggle('hidden', !c.classList.contains('method-' + m)));
-      if (popup) popup.style.display = 'none';
-      // Scroll to top of method content
-      const visible = document.querySelector('.method-content:not(.hidden)');
-      if (visible) visible.scrollIntoView({behavior: 'smooth', block: 'start'});
+      setTimeout(() => {
+        const M = initMap(m);
+        if (M) M.map.invalidateSize();
+        const visible = document.querySelector('.method-content:not(.hidden)');
+        if (visible) visible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 60);
+    });
+  });
+
+  // Table row → flash polygon
+  document.querySelectorAll('tr[data-zone-label]').forEach(row => {
+    row.title = 'Click to locate on the map';
+    row.addEventListener('click', () => {
+      const methodContent = row.closest('.method-content');
+      let method = 'single';
+      if (methodContent) {
+        const cls = Array.from(methodContent.classList).find(c => c.startsWith('method-') && c !== 'method-content');
+        if (cls) method = cls.replace('method-', '');
+      }
+      flashPolygon(method, row.dataset.zoneLabel);
     });
   });
 })();
@@ -354,7 +518,7 @@ def _render_method_section(method, results, portfolio):
         fallback_marker = (f' <span class="fallback" title="Year-type(s) not observed; '
                           f'using polygon overall avg as fallback: {", ".join(fallback_types)}">'
                           f'(fb)</span>' if fallback_types else "")
-        detail_rows.append(f"""<tr>
+        detail_rows.append(f"""<tr data-zone-label="{s['zone_label']}">
       <td><strong>{s["zone_label"]}</strong> <span style="color:#8a8a8a;font-size:11px;">{s["ma"]}</span>{late_marker}</td>
       <td class="num">{s["span_years"]} yr ({s["baseline_year"]}–{s["endpoint_year"]})</td>
       <td class="num">{s["sy"]:.4f}{sy_marker}</td>
@@ -381,7 +545,7 @@ def _render_method_section(method, results, portfolio):
         net = s["coverage_net_AF_per_yr"]
         net_str = (f'<span class="gain">+{int(net):,}</span>' if net > 0
                    else (f'<span class="loss">{int(net):,}</span>' if net < 0 else "0"))
-        project_rows.append(f"""<tr>
+        project_rows.append(f"""<tr data-zone-label="{zone}">
       <td><strong>{zone}</strong> <span style="color:#8a8a8a;font-size:11px;">{s['ma']}</span></td>
       <td>{name}</td>
       <td class="num">{int(afy):,}</td>
@@ -391,7 +555,7 @@ def _render_method_section(method, results, portfolio):
 
     short_rows = []
     for s in short_pols:
-        short_rows.append(f"""<tr>
+        short_rows.append(f"""<tr data-zone-label="{s['zone_label']}">
       <td><strong>{s["zone_label"]}</strong> <span style="color:#8a8a8a;font-size:11px;">{s['ma']}</span></td>
       <td class="num">{int(s["hold_steady_need_AF_per_yr"]):,}</td>
       <td class="num">{int(s["project_alloc_AF_per_yr"]):,}</td>
@@ -590,10 +754,37 @@ def _render_method_section(method, results, portfolio):
 <p>The polygon map below is colored by <strong>net coverage after the project portfolio comes online</strong>. {len(short_pols)} polygons remain partially uncovered (combined shortfall {abs(short_total):,.0f} AF/yr)
 {f' — most prominently <strong>{short_pols[0]["zone_label"]}</strong> at {abs(short_pols[0]["coverage_net_AF_per_yr"]):,.0f} AF/yr below its loss rate' if short_pols else ''}.</p>
 
-<div class="map-wrap">
-<div class="figure">{polygon_map_svg}</div>
+<div class="map-toolbar">
+  <span class="map-toolbar-label">Layers:</span>
+  <label class="map-toggle">
+    <input type="checkbox" id="basemap-toggle-{method}"/>
+    <span>CartoDB Positron basemap</span>
+  </label>
+  <label class="map-toggle">
+    <input type="checkbox" id="fill-toggle-{method}" checked/>
+    <span>Polygon fill (coverage colors)</span>
+  </label>
+  <label class="map-toggle">
+    <input type="checkbox" id="label-toggle-{method}" checked/>
+    <span>Section labels</span>
+  </label>
 </div>
-<div class="figcaption">Figure 4. Click any polygon for full detail. Color = project allocation minus polygon avg loss rate (AF/yr).</div>
+<div id="map-{method}" class="leaflet-map" aria-label="Interactive polygon map for {method_pretty}"></div>
+<div class="map-legend-row">
+  <div class="map-legend-title">Coverage after project portfolio (AF/yr): project allocation − polygon avg loss</div>
+  <div class="map-legend-swatches">
+    <div><span class="sw" style="background:#6b9479"></span> Surplus</div>
+    <div><span class="sw" style="background:#a8c8b0"></span> Covered</div>
+    <div><span class="sw" style="background:#f0d9a8"></span> Near</div>
+    <div><span class="sw" style="background:#e3a76f"></span> Short &lt; 750</div>
+    <div><span class="sw" style="background:#cb7740"></span> Short &lt; 1.5k</div>
+    <div><span class="sw" style="background:#a84a2c"></span> Short &lt; 2.5k</div>
+    <div><span class="sw" style="background:#7c2820"></span> Short ≥ 2.5k</div>
+    <div><span class="dot" style="background:#1f1f1f"></span> 2026 GWL RMS well</div>
+    <div><span class="dot" style="background:#1f3a5f"></span> RMS well + project</div>
+  </div>
+</div>
+<div class="figcaption">Figure 4. Click any polygon for full detail. Toggle the basemap on to see streets / parcels / hydrology under the cells; toggle the fill off to see what's underneath without re-coloring. Click any row in the tables above or below to fly to that polygon and flash it briefly.</div>
 
 {('<h3>Residual shortfall polygons</h3><table><thead><tr><th>Polygon</th><th class="num">Avg loss (AF/yr)</th><th class="num">Project alloc (AF/yr)</th><th class="num">Shortfall (AF/yr)</th></tr></thead><tbody>' + chr(10).join(short_rows) + '</tbody></table>') if short_rows else ''}
 
@@ -644,12 +835,18 @@ def _render_method_section(method, results, portfolio):
 
 def write_index_html(out_path, results_by_method, portfolio):
     """Build the toggle-able single-file dashboard."""
+    import json as _json
+
     method_sections = {
         m: _render_method_section(m, r, portfolio)
         for m, r in results_by_method.items()
     }
 
-    # Buttons in stable order: single first, then three-zone
+    polygons_by_method = {
+        m: r.get("polygons_for_js", []) for m, r in results_by_method.items()
+    }
+    polygons_json = _json.dumps(polygons_by_method, separators=(",", ":"))
+
     toggle_buttons = []
     for m in ("single", "three-zone"):
         if m in method_sections:
@@ -680,10 +877,12 @@ def write_index_html(out_path, results_by_method, portfolio):
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Vina Subbasin: Where the Losses Happen — 2027 BC RMS Network</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>{INDEX_CSS}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
 <div class="container">
@@ -695,13 +894,6 @@ def write_index_html(out_path, results_by_method, portfolio):
 
 {chr(10).join(sections_html)}
 
-<!-- Shared polygon popup (moved into the active map-wrap on click) -->
-<div id="polygon-popup">
-  <button class="popup-close" type="button">×</button>
-  <h4 id="pp-name">—</h4>
-  <div id="pp-body"></div>
-</div>
-
 <div class="footer">
 <p><strong>Files in this folder.</strong> <code>index.html</code> (this page) · <code>data/condition_analysis_{{single,three_zone}}.json</code> · <code>data/sustainability_2042_{{single,three_zone}}.json</code> · <code>data/basin_annual_{{single,three_zone}}.json</code> (observed + normalized) · <code>data/model_data_{{single,three_zone}}.json</code> · <code>data/polygon_storage_2025_{{single,three_zone}}.csv</code> · <code>data/storage_timeseries_{{single,three_zone}}.csv</code> · <code>data/polygon_sy_svsim_{{single,three_zone}}.csv</code> · <code>data/project_portfolio.json</code> (editable input) · per-method SVGs (<code>polygon_map_*.svg</code>, <code>basin_buckets_chart_*.svg</code>, <code>basin_cumulative_chart_*.svg</code>, <code>storage_context_*.svg</code>).</p>
 <p><strong>Upstream.</strong> Polygons, wells, and DWR periodic GWL measurements come from the companion <a href="https://agubc-vina.github.io/2027-BC-prop-network/">2027-BC-prop-network</a> framework — both <code>polygons-data-single.js</code> (single basin-wide tessellation) and <code>polygons-data-three-zone.js</code> (three independent tessellations per management area) are read here.</p>
@@ -710,7 +902,10 @@ def write_index_html(out_path, results_by_method, portfolio):
 
 </div>
 
-<script>{POPUP_JS}{TOGGLE_JS}</script>
+<script>
+window.POLYGONS_BY_METHOD = {polygons_json};
+</script>
+<script>{MAP_JS}</script>
 
 </body>
 </html>

@@ -1060,6 +1060,48 @@ def compute_method(method, wells_meta, meas, portfolio):
                                           abs(trough_cum), trough_year)
     (DATA_DIR / f"storage_context_{suffix}.svg").write_text(context_svg)
 
+    # --- polygon-with-meta payload for Leaflet (embedded in JS) ----------
+    polygons_for_js = []
+    for p_meta in polygons:
+        zone = p_meta["zone_label"]
+        s = next((x for x in pol_summaries if x["zone_label"] == zone), None)
+        if not s:
+            continue
+        seed_latlng = p_meta.get("seed_latlng") or [None, None]
+        polygons_for_js.append({
+            "zone_label": zone,
+            "ma": s["ma"],
+            "ma_full": s.get("ma_full", ""),
+            "workbook_ma": p_meta.get("workbook_mgmt_area", ""),
+            "reassigned": bool(p_meta.get("reassigned", False)),
+            "area_ac": round(s["area_ac"], 1),
+            "rms_wells": s["rms_wells_2026"],
+            "baseline_year": s["baseline_year"],
+            "endpoint_year": s["endpoint_year"],
+            "span_years": s["span_years"],
+            "baseline_gwe": round(s["baseline_gwe"], 2),
+            "endpoint_gwe": round(s["endpoint_gwe"], 2) if s["endpoint_gwe"] is not None else None,
+            "avg_dgwe": s["avg_dgwe_ft_per_yr"],
+            "sy": s["sy"],
+            "sy_source": s["sy_source"],
+            "cum_2025": s["endpoint_cum_storage_AF"],
+            "avg_rate": s["avg_rate_AF_per_yr"],
+            "norm_cum": s["normalized_cum_2025_AF"],
+            "norm_avg": s["normalized_avg_rate_AF_per_yr"],
+            "buckets": s["bucket_storage_AF"],
+            "crit_dry_share": s["crit_dry_share_of_drawdown_pct"],
+            "crit_share": s["crit_share_of_drawdown_pct"],
+            "hold": s["hold_steady_need_AF_per_yr"],
+            "project_afy": s["project_alloc_AF_per_yr"],
+            "project_name": s.get("project_name", ""),
+            "coverage": s["coverage_net_AF_per_yr"],
+            "late_baseline": s["baseline_year"] > START_YEAR,
+            "rings": p_meta.get("rings", []),
+            "seed_latlng": seed_latlng,
+            "fill_color": coverage_color(s["hold_steady_need_AF_per_yr"],
+                                          s["project_alloc_AF_per_yr"]),
+        })
+
     # Per-method console summary
     print()
     print(f"=== [{method}] Basin totals (WY 2000–2025) ===")
@@ -1103,6 +1145,7 @@ def compute_method(method, wells_meta, meas, portfolio):
         "n_by_type": n_by_type,
         "n_by_type_full": N_BY_TYPE_FULL,
         "project_total_afy": project_total_afy,
+        "polygons_for_js": polygons_for_js,
     }
 
 
