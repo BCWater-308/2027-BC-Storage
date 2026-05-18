@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Vina Subbasin: Where the Losses Happen — 2027 BC RMS Network (28 polygons)</title>
+<title>Vina Subbasin: Where the Losses Happen — 2027 BC RMS Network</title>
 <style>
 :root {
   --bg: #faf8f3; --bg-card: #ffffff; --ink: #1a1612; --ink-muted: #5b5547;
@@ -32,7 +32,7 @@ em { font-style: italic; color: var(--ink); }
 strong { font-weight: 700; }
 code { font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace; font-size: 0.92em; background: #f1ede2; padding: 1px 5px; border-radius: 3px; color: var(--ink); }
 .container { max-width: 980px; margin: 0 auto; padding: 36px 28px 80px 28px; }
-.subtitle { color: var(--ink-muted); font-size: 14px; font-family: 'Inter', sans-serif; margin: 0 0 32px 0; }
+.subtitle { color: var(--ink-muted); font-size: 14px; font-family: 'Inter', sans-serif; margin: 0 0 18px 0; }
 .lead { font-size: 18px; line-height: 1.55; color: var(--ink); }
 .headline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 28px 0 18px 0; }
 @media (max-width: 720px) { .headline { grid-template-columns: 1fr; } }
@@ -61,6 +61,7 @@ tr:hover td { background: #f9f6ee; }
 .loss { color: var(--warn); font-weight: 600; }
 .late { color: var(--tan); font-style: italic; font-weight: 500; }
 .fallback { color: #8a5a18; font-style: italic; font-size: 11px; }
+.reassigned-tag { color: #7c4a86; font-style: italic; font-size: 11px; }
 .figure { margin: 18px 0 6px 0; }
 .figure svg { display: block; max-width: 100%; height: auto; border: 1px solid var(--rule); background: #fafaf7; }
 .figcaption { font-size: 12px; color: var(--ink-muted); margin: 6px 0 18px 2px; font-style: italic; }
@@ -90,6 +91,56 @@ details[open] summary { margin-bottom: 12px; }
 .footer { margin-top: 60px; padding-top: 18px; border-top: 1.5px solid var(--rule); font-size: 13px; color: var(--ink-muted); font-family: 'Inter', sans-serif; line-height: 1.5; }
 a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
 a:hover { background: #fff1cc; }
+
+/* Method toggle */
+.method-toggle {
+  display: inline-flex;
+  gap: 0;
+  margin: 18px 0 32px 0;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  padding: 4px;
+  font-family: 'Inter', sans-serif;
+  flex-wrap: wrap;
+}
+.method-toggle button {
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+.method-toggle button:hover { background: #f1ede2; color: var(--ink); }
+.method-toggle button.active {
+  background: var(--accent);
+  color: white;
+}
+.method-toggle-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+  font-weight: 600;
+  margin-right: 12px;
+  align-self: center;
+}
+.method-content { display: block; }
+.method-content.hidden { display: none; }
+.method-banner {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--ink-muted);
+  padding: 6px 0 0 2px;
+  margin-bottom: 6px;
+}
+.method-banner strong { color: var(--ink); }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,11 +150,15 @@ a:hover { background: #fff1cc; }
 <div class="container">
 
 <h1>Where the Losses Happen — A Drought-Conditioned Look at the 2027 BC RMS Network</h1>
-<p class="subtitle">May 2026 · Prepared by AGUBC · 28 Voronoi polygons (13 North · 2 Chico · 13 South) · 28 2027 GWL RMS wells · polygon-by-polygon Sy from DWR SVSim Texture Data · WY 1999–2025 · ΔGWE × Sy<sub>p</sub> × Area<sub>p</sub>, sliced by hydrologic condition and read against a project-portfolio sustainability target.</p>
+<p class="subtitle">May 2026 · Prepared by AGUBC · 28 polygons · polygon-by-polygon Sy from DWR SVSim Texture Data · WY 1999–2025 · ΔGWE × Sy<sub>p</sub> × Area<sub>p</sub>, sliced by hydrologic condition and read against a project-portfolio sustainability target.</p>
 
-<p class="lead">Two questions: <strong>when and where is the basin losing water, and what would it take to be sustainable by 2042?</strong> Across WY 1999–2025, loss isn't a steady year-over-year decline — it's sharply concentrated in <strong>Critical and Dry</strong> water-year types, with <strong>Wet and Above-Normal</strong> years doing the recovery work. The basin's net deficit is <strong>146k AF — about 0.91% of the 16+ MAF in basin storage</strong>. <strong>Assuming the next 17 years see a roughly similar mix of year types as WY 1999–2025</strong>, holding current conditions through 2042 takes a basin-wide <strong>6,322 AF/yr</strong> of new recharge or demand reduction; a project portfolio totaling <strong>14,500 AF/yr</strong> (online by ~2032) would cover that with room to spare.</p>
+<div class="method-toggle"><span class="method-toggle-label">Polygon method:</span><button data-method="single" class="active">Single basin-wide tessellation</button><button data-method="three-zone" class="">Three-zone (per management area)</button></div>
 
-<div class="callout"><strong>What's new vs. the 17-polygon version.</strong> This dashboard uses the 28-polygon Voronoi tessellation from the <em>2027-BC-prop-network</em> framework — every 2027 GWL RMS well gets its own cell (the old build dissolved the three Chico cells and merged some southern wells). New polygon Sy values are recomputed from DWR SVSim Texture Data against the new geometry. The basin deficit comes out smaller here (-145,732 AF vs. −193,010 AF in the 17-polygon build) because (a) the new <code>21N02E18C003M</code> polygon is larger and posts a recovery surplus, (b) the new Chico cells are smaller and capture less area-weighted drawdown, and (c) the new set adds late-baseline polygons that contribute less to early-record buckets.</div>
+<div class="method-content method-single"><div class="method-banner"><strong>Single basin-wide tessellation.</strong> All 28 polygons built as one Voronoi tessellation clipped to the basin boundary; cells can cross management-area lines. 28 polygons total (13 North · 2 Chico · 13 South).</div>
+
+<p class="lead">Across WY 1999–2025, loss is sharply concentrated in <strong>Critical and Dry</strong> water-year types, with <strong>Wet and Above-Normal</strong> years doing the recovery work. The basin's <strong>observed</strong> net deficit is <strong>146k AF — about 0.91% of the 16+ MAF in basin storage</strong>; the <strong>year-type-normalized</strong> deficit is <strong>189k AF</strong> (1.18%). Holding current conditions through 2042 takes a basin-wide <strong>6,322 AF/yr</strong> (observed) / <strong>-7,277 AF/yr</strong> (normalized) of new recharge or demand reduction; the project portfolio totaling <strong>14,500 AF/yr</strong> (online by ~2032) would cover that with margin.</p>
+
+
 
 <div class="headline">
   <div class="stat warn">
@@ -123,16 +178,16 @@ a:hover { background: #fff1cc; }
   </div>
 </div>
 
-<div class="callout"><strong>The picture in one sentence.</strong> Across 1999–2025, Critical and Dry years removed about <strong>441,968 AF</strong>, Below-Normal years moved storage by <strong>-37,848 AF</strong>, and Wet + Above-Normal years recovered <strong>+334,085 AF</strong>. Net basin deficit through 2025: <strong>-145,732 AF</strong>, summed across all 28 polygons.</div>
+<div class="callout"><strong>The picture in one sentence.</strong> Across 1999–2025, Critical and Dry years removed about <strong>441,968 AF</strong>, Below-Normal years moved storage by <strong>-37,848 AF</strong>, and Wet + Above-Normal years recovered <strong>+334,085 AF</strong>. Net basin deficit through 2025: <strong>-145,732 AF observed / -189,209 AF year-type-normalized</strong>, summed across all 28 polygons.</div>
 
 <h2>Method, in brief</h2>
-<p>Per polygon: ΔStorage<sub>p,y</sub> = (GWE<sub>p,y</sub> − GWE<sub>p,baseline</sub>) × Sy<sub>p</sub> × Area<sub>p</sub>. GWE<sub>p,y</sub> is the polygon's 2027 GWL RMS well's spring composite (March mean for SWN-named wells; Feb–Apr mean for CWSCH wells), Good-quality DWR records only. In the 28-polygon network there is exactly one RMS well per polygon — the well that seeded the polygon's Voronoi cell. Each polygon is anchored to WY 1999 if it has a Good spring composite that year; otherwise to the polygon's first observation after 1999. We then take the per-polygon cumulative storage time series, compute year-over-year deltas (distributing multi-year DWR gaps evenly), and bucket each year by its <strong>official Sacramento Valley Index water-year type</strong>.</p>
+<p>Per polygon: ΔStorage<sub>p,y</sub> = (GWE<sub>p,y</sub> − GWE<sub>p,baseline</sub>) × Sy<sub>p</sub> × Area<sub>p</sub>. GWE<sub>p,y</sub> is the polygon's 2027 GWL RMS well's spring composite (March mean for SWN-named wells), Good-quality DWR records only. Each polygon is anchored to WY 1999 if it has a Good spring composite that year; otherwise to the polygon's first observation after 1999. We then take the per-polygon cumulative storage time series, compute year-over-year deltas (distributing multi-year DWR gaps evenly), and bucket each year by its <strong>official Sacramento Valley Index water-year type</strong>.</p>
 
-<p><strong>Specific yield is polygon-by-polygon</strong>, derived from DWR's SVSim Texture Data (Sacramento Valley Simulation Model v1.0, CKAN resource <code>544623e2-0cd5-4c5b-827f-affa4abf4e16</code>): coarse-grained sediments → Sy = 0.15, fine-grained → Sy = 0.05, Sy<sub>p</sub> = (% coarse × 0.15) + (% fine × 0.05) over the 0–500 ft below ground surface analysis window across the polygon's boreholes (≥200 ft of valid lithology required per borehole). Polygon Sy values for the 28-polygon network range <strong>0.0594</strong> to <strong>0.1172</strong>; basin area-weighted mean is roughly 0.087.</p>
+<p><strong>Specific yield is polygon-by-polygon</strong>, derived from DWR's SVSim Texture Data (Sacramento Valley Simulation Model v1.0). Coarse-grained sediments → Sy = 0.15, fine-grained → Sy = 0.05, area-weighted by borehole lithology in the 0–500 ft below ground surface analysis window. Polygon Sy values range <strong>0.0594</strong> to <strong>0.1172</strong>; basin area-weighted mean ≈ 0.087.</p>
 
-<p style="font-size:13px;color:var(--ink-muted);">Three polygons (23N02W25C001M, 23N01E29P002M, 21N01E25K001M) have insufficient SVSim borehole coverage (≤2 boreholes, none meeting the 200-ft valid-thickness threshold) and use the basin area-weighted mean as a Sy fallback. These are flagged in the table below with "(mean)". This is mostly a function of the new polygons being smaller and more numerous than the 17-polygon set, leaving some cells with thin SVSim coverage.</p>
+<p style="font-size:13px;color:var(--ink-muted);">3 polygons (23N02W25C001M, 23N01E29P002M, 21N01E25K001M) have insufficient SVSim borehole coverage and use the basin area-weighted mean as a Sy fallback. Flagged with "(mean)" in the table.</p>
 
-<p>Year-type classification uses DWR's Sacramento Valley Index (Northern Sierra 8-Station Index) — the same five-tier system DWR publishes annually:</p>
+<p>Year-type classification uses DWR's Sacramento Valley Index (Northern Sierra 8-Station Index):</p>
 <ul>
 <li><strong>Wet:</strong> 1999, 2006, 2011, 2017, 2019, 2023, 2025 (7 years)</li>
 <li><strong>Above Normal:</strong> 2000, 2003, 2005, 2024 (4 years)</li>
@@ -140,9 +195,8 @@ a:hover { background: #fff1cc; }
 <li><strong>Dry:</strong> 2001, 2002, 2007, 2009, 2013, 2020 (6 years)</li>
 <li><strong>Critical:</strong> 2008, 2014, 2015, 2021, 2022 (5 years)</li>
 </ul>
-<p style="font-size:13px;color:var(--ink-muted);">WY 2025 is preliminary (DWR upgraded to Wet in April 2025; final May-1 designation to verify). The 1991–2020 long-term 8SI average is 53.2 inches; SVI thresholds: Wet ≥ 9.2 MAF; Above Normal &gt; 7.8 ≤ 9.2; Below Normal &gt; 6.5 ≤ 7.8; Dry &gt; 5.4 ≤ 6.5; Critical ≤ 5.4.</p>
 
-<p><strong>Baseline asymmetry.</strong> Polygons anchored to WY 1999: those whose 2027 GWL RMS well had a Good March measurement that year. The rest baseline later: 23N01E07H001M (2019); 23N01E33A001M (2003); 23N01W03H004M (2012); 23N01W10M001M (2002); 23N01W28M004M (2009); 23N01W31M004M (2009); 22N01E20K001M (2000); 22N01E09B001M (2002); 20N02E24C001M (2000); 21N02E18C003M (2011); 20N01E02H003M (2002); 20N02E08H003M (2008); 20N02E09G001M (2002); 20N03E33L001M (2000); 21N01E13L004M (2012); 21N02E26E006M (2008); 21N02E32E001M (2009); 21N03E32B001M (2000). Each polygon contributes year-over-year deltas only for years it has a baseline-anchored record, so early-record buckets reflect fewer polygons than late-record buckets. Polygons with shorter records cannot register pre-baseline drawdown.</p>
+<p><strong>Baseline asymmetry.</strong> Polygons anchored to WY 1999: those whose 2027 GWL RMS well had a Good March measurement that year (10 of 28). The rest baseline later: 23N01E07H001M (2019); 23N01E33A001M (2003); 23N01W03H004M (2012); 23N01W10M001M (2002); 23N01W28M004M (2009); 23N01W31M004M (2009); 22N01E20K001M (2000); 22N01E09B001M (2002); 20N02E24C001M (2000); 21N02E18C003M (2011); 20N01E02H003M (2002); 20N02E08H003M (2008); 20N02E09G001M (2002); 20N03E33L001M (2000); 21N01E13L004M (2012); 21N02E26E006M (2008); 21N02E32E001M (2009); 21N03E32B001M (2000).</p>
 
 <h2>When and where the basin loses water</h2>
 
@@ -178,7 +232,7 @@ a:hover { background: #fff1cc; }
 <text x="752.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(5 years)</text>
 <text x="440.0" y="406" text-anchor="middle" font-size="13" fill="#5b5547">Net basin total since baseline: <tspan font-weight="800" fill="#a32d2d">-145,732 AF</tspan></text>
 </svg></div>
-<div class="figcaption">Figure 1. Sum across all 28 polygons in the 2027 BC RMS network, gap-attributed by year, bucketed by official Sacramento Valley Index water-year type. Critical years alone average 45,977 AF/yr of loss — about 1.3× the per-year loss rate of Dry years.</div>
+<div class="figcaption">Figure 1. Sum across all 28 polygons, gap-attributed by year, bucketed by official Sacramento Valley Index water-year type. Critical years alone average 45,977 AF/yr of loss — about 1.3× the per-year loss rate of Dry years.</div>
 
 <div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" style="background:#fafaf7;font-family:'Inter',ui-sans-serif,system-ui;width:100%;height:auto;display:block;">
 <defs><clipPath id="ts-clip"><rect x="92" y="32" width="644" height="292"/></clipPath></defs>
@@ -253,12 +307,11 @@ a:hover { background: #fff1cc; }
 <text x="28" y="77" font-size="11" fill="#1a1612">Wet / Above N.</text>
 </g>
 </svg></div>
-<div class="figcaption">Figure 2. Basin cumulative ΔStorage. <strong>Solid blue line = observed</strong> (each polygon contributes only the years its RMS well actually measured). <strong>Dashed purple line = year-type-weighted normalized</strong> (corrects for late-baseline drag — see methodology section below). Red-tinted vertical bands = Critical years; orange = Dry; light tan = Below Normal. Wet and Above-Normal years remain untinted. Almost every steep drop falls inside a tinted band; almost every recovery falls outside one.</div>
+<div class="figcaption">Figure 2. Basin cumulative ΔStorage. <strong>Solid blue line = observed</strong> (each polygon contributes only years its RMS well actually measured). <strong>Dashed purple line = year-type-weighted normalized</strong> (corrects for late-baseline drag — see callout below).</div>
 
-<div class="callout warn"><strong>Late-baseline drag and the year-type-weighted normalization.</strong> Of the 28 polygons, only 11 have a Good March measurement in WY 1999. The other 17 baseline later — between 2000 and 2019 — because their RMS well wasn't measured in 1999. Each polygon contributes year-over-year deltas only for the years it has a baseline-anchored record, which means the early-record buckets reflect fewer polygons than the late-record buckets. Late-baseline polygons cannot register their pre-baseline drawdown, so the <strong>observed</strong> basin cumulative (-145,732 AF through 2025) <em>understates</em> what the basin would show if every polygon had a full record.<br><br>The <strong>year-type-weighted normalized</strong> series corrects this. For each polygon, we compute its average ΔStorage <em>per Sacramento Valley Index year type</em> (Wet, Above Normal, Below Normal, Dry, Critical) using <em>only its own observations</em>. We then synthesize what that polygon would have contributed across the full WY 1999–2025 record by applying its per-type rates to the basin's actual year-type mix (6 Wet, 4 AN, 5 BN, 6 Dry, 5 Critical = 26 transition years). Summed across all 28 polygons, that gives the normalized basin total: <strong>-189,209 AF</strong> through 2025 — an avg loss rate of <strong>-7,277 AF/yr</strong>, vs. the observed 6,322 AF/yr. The late-baseline drag in the observed series is therefore worth ≈43,477 AF cumulative (955 AF/yr rate equivalent — note: this is the bound from the polygon's own data and is independent of any neighboring-well proxying).</div>
+<div class="callout warn"><strong>Late-baseline drag and the year-type-weighted normalization.</strong> Of the 28 polygons, only 10 have a Good March measurement in WY 1999. The other 18 baseline later — between 2000 and 2019 — because their 2027 GWL RMS well wasn't measured in 1999. Late-baseline polygons cannot register their pre-baseline drawdown, so the <strong>observed</strong> basin cumulative (-145,732 AF through 2025) <em>understates</em> what the basin would show if every polygon had a full record.<br><br>The <strong>year-type-weighted normalized</strong> series corrects this. For each polygon, we compute its average ΔStorage <em>per Sacramento Valley Index year type</em> using <em>only its own observations</em>. We then synthesize what that polygon would have contributed across the full WY 1999–2025 record by applying its per-type rates to the basin's actual year-type mix (6 Wet, 4 AN, 5 BN, 6 Dry, 5 Critical = 26 transition years). Summed across all 28 polygons, that gives the normalized basin total: <strong>-189,209 AF</strong> through 2025 — an avg loss rate of <strong>-7,277 AF/yr</strong>, vs. the observed 6,322 AF/yr.</div>
 
 <h3>Putting the deficit in proportion</h3>
-<p>The cumulative deficit looks alarming on a chart that runs from 0 to almost −300k AF, but it is a small fraction of the fresh groundwater that exists in the subbasin. Panel 1 below shows the deficit at full scale (the small red sliver). Panel 2 zooms in so the deficit is actually visible.</p>
 <div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" style="background:#fafaf7;font-family:'Inter',ui-sans-serif,system-ui;width:100%;height:auto;display:block;">
 <text x="380.0" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1612">How big is the deficit, relative to total fresh groundwater in storage?</text>
 <text x="380.0" y="40" text-anchor="middle" font-size="11" fill="#5b5547" font-style="italic">Vina Subbasin total fresh GW in storage: ~16 MAF (Vina Subbasin GSP (Dec 15, 2021), p. ES-5)</text>
@@ -272,17 +325,13 @@ a:hover { background: #fff1cc; }
 <text x="380.0" y="174" text-anchor="middle" font-size="11" fill="#5b5547">25× zoom (showing 0.64 MAF of the 16 MAF total)</text>
 <text x="380.0" y="230" text-anchor="middle" font-size="12" fill="#1a1612">WY 2022 trough = <tspan font-weight="700" fill="#a32d2d">1.78%</tspan> of 16 MAF (285,567 AF deepest deficit)</text>
 </svg></div>
-<div class="figcaption">Figure 3. Source: total storage from the Vina Subbasin GSP (Dec 15, 2021), p. ES-5 (BBGM-2020 estimate). Cumulative ΔStorage from this dashboard. WY 2022 trough = deepest observed deficit in the 28-polygon analysis.</div>
+<div class="figcaption">Figure 3. Source: total storage from the Vina Subbasin GSP (Dec 15, 2021), p. ES-5 (BBGM-2020 estimate). WY 2022 trough = deepest observed deficit in this single basin-wide tessellation.</div>
 
-<div class="callout good"><strong>Why this matters for project design.</strong> Losses are concentrated in Critical and Dry years; recovery happens in Wet and Above-Normal years. But the project portfolio doesn't have to follow that pattern year by year — it's <em>permanent infrastructure</em> (recharge facilities, surface-water deliveries) that produces yield year after year. Annual yields will vary with hydrology, but the long-run average matters more than year-by-year matching: with portfolio yield at ≈14,500 AF/yr against a basin loss rate of ≈6,322 AF/yr, surplus from Wet and Above-Normal years carries through Critical ones. The goal isn't to offset every drought-year loss in the year it happens; it's to install enough permanent supply that the multi-year trend bends back toward equilibrium.</div>
-
-<h2>The 2042 sustainability target — hold current conditions, with the project portfolio</h2>
+<h2>The 2042 sustainability target — hold the line, with the project portfolio</h2>
 
 <p>The Vina Subbasin has lost storage across the WY 1999–2025 record through 5 Critical years, 6 Dry years, 5 Below-Normal years, and a long-term decline rate of about 0.07%/yr. The basin's historic low was the <strong>WY 2022 trough</strong> at roughly 285,567 AF below baseline — and even at that low, <strong>no SGMA sustainability indicator registered an undesirable result</strong>.</p>
 
-<p>The framing here is therefore not "recover to the WY 1999 baseline." The operational target is: <strong>GWE at each Groundwater Level RMS well stays at or above its WY 2022 level going forward</strong>. MTs for the GSP would be set <em>lower</em> than WY 2022, creating operational range and margin for an unforeseen 7–10 year drought, similar to what the subbasin experienced between 1985 and 1994. The portfolio's job is to ensure the next major drought doesn't push observed GWE below WY 2022, with projects coming online in roughly 3–5 years (by ~2032 at the latest).</p>
-
-<p>The sizing test below uses the basin's <strong>average annual loss rate</strong> as the volumetric need — a stronger target than "stay above WY 2022" alone, because matching average loss keeps the basin near today's WY 2025 level (which sits ≈139,835 AF above the WY 2022 trough) and provides built-in cushion against drought. Per polygon, the volume needed to hold steady is just the polygon's average annual loss rate. Surplus polygons need zero. Sum across the 28 polygons:</p>
+<p>The framing here is therefore not "recover to the WY 1999 baseline." The operational target is: <strong>GWE at each Groundwater Level RMS well stays at or above its WY 2022 level going forward</strong>. MTs for the GSP would be set <em>lower</em> than WY 2022, creating operational range and margin for an unforeseen 7–10 year drought, similar to what the subbasin experienced between 1985 and 1994. The portfolio's job is to ensure the next major drought doesn't push observed GWE below WY 2022.</p>
 
 <div class="bigstat">
   <div class="row">
@@ -297,29 +346,19 @@ a:hover { background: #fff1cc; }
     </div>
     <div>
       <div class="num">+8,178 <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
-      <div class="lab">Recovery margin (portfolio − observed loss)</div>
+      <div class="lab">Recovery margin (vs. observed loss)</div>
       <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Against normalized loss: <strong>+7,223</strong> AF/yr</div>
     </div>
-    <div class="desc">Portfolio = 7,000 AF/yr conjunctive use (surface water replaces groundwater) + 1,500 AF/yr Comanche Creek recharge + 4,000 AF/yr Rock Creek recharge + 2,000 AF/yr Recharge project. The portfolio's recovery margin remains comfortably positive against either the observed or the normalized loss rate, with a cushion of <strong>+7,223 AF/yr against the normalized rate</strong> (+3.1% of the 233,500 AF/yr GSP-stated sustainable yield) starting ~2032.</div>
+    <div class="desc">Portfolio = 7,000 AF/yr conjunctive use (surface water replaces groundwater) + 1,500 AF/yr Comanche Creek recharge + 4,000 AF/yr Rock Creek recharge + 2,000 AF/yr Recharge project. The recovery margin remains comfortably positive against both the observed and normalized loss rates (+3.1% of the 233,500 AF/yr GSP-stated sustainable yield).</div>
   </div>
 </div>
 
 <h2>Where the projects land — coverage by polygon</h2>
-
-<p>Project allocations under the 14,500 AF/yr portfolio:</p>
-
 <table>
   <thead>
-    <tr>
-      <th>Polygon</th>
-      <th>Project</th>
-      <th class="num">Allocation (AF/yr)</th>
-      <th class="num">Polygon avg loss (AF/yr)</th>
-      <th class="num">Net coverage</th>
-    </tr>
+    <tr><th>Polygon</th><th>Project</th><th class="num">Allocation (AF/yr)</th><th class="num">Polygon avg loss (AF/yr)</th><th class="num">Net coverage</th></tr>
   </thead>
-  <tbody>
-<tr>
+  <tbody><tr>
       <td><strong>20N02E08H003M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
       <td>Conjunctive use (surface water replaces groundwater)</td>
       <td class="num">2,250</td>
@@ -374,20 +413,14 @@ a:hover { background: #fff1cc; }
       <td class="num">2,000</td>
       <td class="num">582</td>
       <td class="num"><span class="gain">+1,418</span></td>
-    </tr>
-  </tbody>
+    </tr></tbody>
   <tfoot>
-    <tr>
-      <th>Total portfolio</th>
-      <th>—</th>
-      <th class="num"><strong>14,500</strong></th>
-      <th class="num">6,322</th>
-      <th class="num"><strong><span class="gain">+8,178</span></strong></th>
-    </tr>
+    <tr><th>Total portfolio</th><th>—</th><th class="num"><strong>14,500</strong></th><th class="num">6,322</th><th class="num"><strong><span class="gain">+8,178</span></strong></th></tr>
   </tfoot>
 </table>
 
-<p>The polygon map below is colored by <strong>net coverage after the project portfolio comes online</strong>: greens are at-or-above their hold-steady need, oranges and reds remain short. 14 polygons remain partially uncovered (combined shortfall 4,878 AF/yr) — most prominently <strong>21N01E13L004M</strong> at 1,000 AF/yr below its loss rate. At basin scale the portfolio's surplus capacity in over-allocated polygons (combined +11,256 AF/yr) more than covers the residual shortfalls; whether that holds at each RMS well depends on lateral connectivity, which is outside this analysis.</p>
+<p>The polygon map below is colored by <strong>net coverage after the project portfolio comes online</strong>. 14 polygons remain partially uncovered (combined shortfall 4,878 AF/yr)
+ — most prominently <strong>21N01E13L004M</strong> at 1,000 AF/yr below its loss rate.</p>
 
 <div class="map-wrap">
 <div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 820" style="background:#fafaf7;font-family:ui-sans-serif,system-ui;width:100%;height:auto;display:block;">
@@ -502,13 +535,8 @@ a:hover { background: #fff1cc; }
 <text class="legend-text" x="558" y="42">RMS well + project</text>
 </g>
 </svg></div>
-<div id="polygon-popup">
-  <button class="popup-close" type="button">×</button>
-  <h4 id="pp-name">—</h4>
-  <div id="pp-body"></div>
 </div>
-</div>
-<div class="figcaption">Figure 4. Click any polygon for full detail. Color = project allocation minus polygon avg loss rate (AF/yr). Greens = covered or surplus; oranges/reds = polygon-level shortfall after the project portfolio. Larger dots mark polygons hosting a project.</div>
+<div class="figcaption">Figure 4. Click any polygon for full detail. Color = project allocation minus polygon avg loss rate (AF/yr).</div>
 
 <h3>Residual shortfall polygons</h3><table><thead><tr><th>Polygon</th><th class="num">Avg loss (AF/yr)</th><th class="num">Project alloc (AF/yr)</th><th class="num">Shortfall (AF/yr)</th></tr></thead><tbody><tr>
       <td><strong>21N01E13L004M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
@@ -596,9 +624,6 @@ a:hover { background: #fff1cc; }
     </tr></tbody></table>
 
 <h2>Per-polygon detail (technical)</h2>
-
-<p>Polygons sorted by hold-steady need (avg annual loss rate), descending. Late-baseline polygons (record starts after 1999) are flagged. "Crit+Dry share" is the share of each polygon's <em>gross drawdown</em> (sum of losing years) that occurred in Critical and Dry water-year types. Sy values marked "(mean)" use the basin area-weighted mean as a fallback for polygons with insufficient SVSim borehole coverage.</p>
-
 <table>
   <thead>
     <tr>
@@ -606,18 +631,17 @@ a:hover { background: #fff1cc; }
       <th class="num">Span</th>
       <th class="num">Sy</th>
       <th class="num">Cum 2025 obs (AF)</th>
-      <th class="num">Avg rate obs (AF/yr)</th>
+      <th class="num">Avg obs (AF/yr)</th>
       <th class="num">Cum 2025 norm (AF)</th>
-      <th class="num">Avg rate norm (AF/yr)</th>
+      <th class="num">Avg norm (AF/yr)</th>
       <th class="num">Crit+Dry (AF)</th>
       <th class="num">Crit+Dry share</th>
-      <th class="num">Hold need (AF/yr)</th>
+      <th class="num">Hold (AF/yr)</th>
       <th class="num">Project (AF/yr)</th>
-      <th class="num">Net coverage</th>
+      <th class="num">Net</th>
     </tr>
   </thead>
-  <tbody>
-<tr>
+  <tbody><tr>
       <td><strong>21N01E13L004M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2012)</span></td>
       <td class="num">13 yr (2012–2025)</td>
       <td class="num">0.0921</td>
@@ -1008,19 +1032,15 @@ a:hover { background: #fff1cc; }
       <td class="num">0</td>
       <td class="num">—</td>
       <td class="num">0</td>
-    </tr>
-  </tbody>
+    </tr></tbody>
   <tfoot>
     <tr>
-      <th>Basin (sum)</th>
-      <th class="num">—</th>
-      <th class="num">—</th>
+      <th>Basin (sum)</th><th class="num">—</th><th class="num">—</th>
       <th class="num"><strong>-145,732</strong></th>
       <th class="num">-6,322</th>
       <th class="num"><strong>-189,209</strong></th>
       <th class="num">-7,277</th>
-      <th class="num">-441,968</th>
-      <th class="num">—</th>
+      <th class="num">-441,968</th><th class="num">—</th>
       <th class="num"><strong>8,122</strong></th>
       <th class="num"><strong>14,500</strong></th>
       <th class="num"><strong><span class="gain">+8,178</span></strong></th>
@@ -1030,13 +1050,10 @@ a:hover { background: #fff1cc; }
 
 <details>
 <summary>Annual basin time series (2000–2025), gap-attributed</summary>
-<p style="font-size:13px;color:var(--ink-muted);">Sum of all 28 polygons' year-over-year storage change with polygon-by-polygon Sy. Multi-year DWR data gaps within a polygon are distributed evenly across the gap and bucketed by each year's hydrologic condition. Late-baseline polygons contribute zero to years before their baseline.</p>
+<p style="font-size:13px;color:var(--ink-muted);">Sum of all 28 polygons' year-over-year storage change with polygon-by-polygon Sy.</p>
 <table>
-  <thead>
-    <tr><th class="num">Year</th><th>Condition</th><th class="num">ΔStor (AF)</th><th class="num">Cumulative (AF)</th></tr>
-  </thead>
-  <tbody>
-<tr><td class="num">2000</td><td><span style="background:#eef5ee;color:#3a8050;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Above Normal</span></td><td class="num"><span class="loss">-9,524</span></td><td class="num"><span class="loss">-9,524</span></td></tr>
+  <thead><tr><th class="num">Year</th><th>Condition</th><th class="num">ΔStor (AF)</th><th class="num">Cumulative (AF)</th></tr></thead>
+  <tbody><tr><td class="num">2000</td><td><span style="background:#eef5ee;color:#3a8050;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Above Normal</span></td><td class="num"><span class="loss">-9,524</span></td><td class="num"><span class="loss">-9,524</span></td></tr>
 <tr><td class="num">2001</td><td><span style="background:#fadcc9;color:#9c4521;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Dry</span></td><td class="num"><span class="loss">-24,580</span></td><td class="num"><span class="loss">-34,104</span></td></tr>
 <tr><td class="num">2002</td><td><span style="background:#fadcc9;color:#9c4521;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Dry</span></td><td class="num"><span class="loss">-13,468</span></td><td class="num"><span class="loss">-47,572</span></td></tr>
 <tr><td class="num">2003</td><td><span style="background:#eef5ee;color:#3a8050;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Above Normal</span></td><td class="num"><span class="gain">+7,257</span></td><td class="num"><span class="loss">-40,315</span></td></tr>
@@ -1061,30 +1078,950 @@ a:hover { background: #fff1cc; }
 <tr><td class="num">2022</td><td><span style="background:#fbe6e6;color:#a32d2d;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Critical</span></td><td class="num"><span class="loss">-53,291</span></td><td class="num"><span class="loss">-285,567</span></td></tr>
 <tr><td class="num">2023</td><td><span style="background:#e6f0e8;color:#2e6f3f;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Wet</span></td><td class="num"><span class="gain">+47,684</span></td><td class="num"><span class="loss">-237,883</span></td></tr>
 <tr><td class="num">2024</td><td><span style="background:#eef5ee;color:#3a8050;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Above Normal</span></td><td class="num"><span class="gain">+48,963</span></td><td class="num"><span class="loss">-188,920</span></td></tr>
-<tr><td class="num">2025</td><td><span style="background:#e6f0e8;color:#2e6f3f;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Wet</span></td><td class="num"><span class="gain">+43,189</span></td><td class="num"><span class="loss">-145,731</span></td></tr>
-  </tbody>
+<tr><td class="num">2025</td><td><span style="background:#e6f0e8;color:#2e6f3f;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Wet</span></td><td class="num"><span class="gain">+43,189</span></td><td class="num"><span class="loss">-145,731</span></td></tr></tbody>
 </table>
 </details>
+</div>
+<div class="method-content method-three-zone hidden"><div class="method-banner"><strong>Three-zone (per management area).</strong> Three independent Voronoi tessellations (one per management area), each clipped to its own boundary; cells do NOT cross management-area lines. 28 polygons total (12 North · 3 Chico · 13 South).</div>
 
-<h2>Caveats</h2>
+<p class="lead">Across WY 1999–2025, loss is sharply concentrated in <strong>Critical and Dry</strong> water-year types, with <strong>Wet and Above-Normal</strong> years doing the recovery work. The basin's <strong>observed</strong> net deficit is <strong>173k AF — about 1.08% of the 16+ MAF in basin storage</strong>; the <strong>year-type-normalized</strong> deficit is <strong>210k AF</strong> (1.31%). Holding current conditions through 2042 takes a basin-wide <strong>7,940 AF/yr</strong> (observed) / <strong>-8,061 AF/yr</strong> (normalized) of new recharge or demand reduction; the project portfolio totaling <strong>14,500 AF/yr</strong> (online by ~2032) would cover that with margin.</p>
 
+<div class="callout tan"><strong>Spatial zone reassignment.</strong> In the three-zone method, polygons are assigned to management areas by <em>spatial containment</em> in the management-area boundary polygons, not by workbook tag. 1 polygon reassigned: <code>23N01E33A001M</code> (workbook tag: 01-Vina-North → spatial: 02-Vina-Chico). This is a deliberate on-the-record boundary call for SMC defensibility (where the well physically sits matters for subsidence/SMC).</div>
+
+<div class="headline">
+  <div class="stat warn">
+    <div class="num warn">-468,037</div>
+    <div class="lab">AF lost in Critical + Dry years</div>
+    <div class="det">5 Critical + 6 Dry years (42% of the record). Critical years alone removed -236,432 AF.</div>
+  </div>
+  <div class="stat tan">
+    <div class="num tan">-19,687</div>
+    <div class="lab">AF in Below-Normal years</div>
+    <div class="det">5 Below-Normal years. Mixed contribution — typically small net loss.</div>
+  </div>
+  <div class="stat acc">
+    <div class="num acc">+314,329</div>
+    <div class="lab">AF gained in Wet + Above-Normal years</div>
+    <div class="det">6 Wet + 4 Above-Normal years. The basin is already recharging — just not fast enough to keep up with Critical years on its own.</div>
+  </div>
+</div>
+
+<div class="callout"><strong>The picture in one sentence.</strong> Across 1999–2025, Critical and Dry years removed about <strong>468,037 AF</strong>, Below-Normal years moved storage by <strong>-19,687 AF</strong>, and Wet + Above-Normal years recovered <strong>+314,329 AF</strong>. Net basin deficit through 2025: <strong>-173,395 AF observed / -209,594 AF year-type-normalized</strong>, summed across all 28 polygons.</div>
+
+<h2>Method, in brief</h2>
+<p>Per polygon: ΔStorage<sub>p,y</sub> = (GWE<sub>p,y</sub> − GWE<sub>p,baseline</sub>) × Sy<sub>p</sub> × Area<sub>p</sub>. GWE<sub>p,y</sub> is the polygon's 2027 GWL RMS well's spring composite (March mean for SWN-named wells), Good-quality DWR records only. Each polygon is anchored to WY 1999 if it has a Good spring composite that year; otherwise to the polygon's first observation after 1999. We then take the per-polygon cumulative storage time series, compute year-over-year deltas (distributing multi-year DWR gaps evenly), and bucket each year by its <strong>official Sacramento Valley Index water-year type</strong>.</p>
+
+<p><strong>Specific yield is polygon-by-polygon</strong>, derived from DWR's SVSim Texture Data (Sacramento Valley Simulation Model v1.0). Coarse-grained sediments → Sy = 0.15, fine-grained → Sy = 0.05, area-weighted by borehole lithology in the 0–500 ft below ground surface analysis window. Polygon Sy values range <strong>0.0594</strong> to <strong>0.1172</strong>; basin area-weighted mean ≈ 0.087.</p>
+
+<p style="font-size:13px;color:var(--ink-muted);">2 polygons (23N02W25C001M, 21N01E25K001M) have insufficient SVSim borehole coverage and use the basin area-weighted mean as a Sy fallback. Flagged with "(mean)" in the table.</p>
+
+<p>Year-type classification uses DWR's Sacramento Valley Index (Northern Sierra 8-Station Index):</p>
 <ul>
-  <li><strong>Specific yield is polygon-by-polygon</strong> from SVSim Texture Data (range 0.0594–0.1172); basin area-weighted mean is ≈0.087. The textural classifier (coarse vs. fine) is documented in <code>scripts/build_sy_svsim.py</code> and is reproducible from the DWR CKAN dataset. Three polygons (23N02W25C001M, 23N01E29P002M, 21N01E25K001M) lack sufficient SVSim borehole density and use the basin area-weighted mean as a fallback — a known limitation when fragmenting the basin into 28 smaller cells.</li>
-  <li><strong>Baseline asymmetry.</strong> Late-baseline polygons — 23N01E07H001M (2019); 23N01E33A001M (2003); 23N01W03H004M (2012); 23N01W10M001M (2002); 23N01W28M004M (2009); 23N01W31M004M (2009); 22N01E20K001M (2000); 22N01E09B001M (2002); 20N02E24C001M (2000); 21N02E18C003M (2011); 20N01E02H003M (2002); 20N02E08H003M (2008); 20N02E09G001M (2002); 20N03E33L001M (2000); 21N01E13L004M (2012); 21N02E26E006M (2008); 21N02E32E001M (2009); 21N03E32B001M (2000) — have shorter records. <code>21N02E18C003M</code>'s large apparent surplus is partly an artifact of starting near the bottom of the 2011 drought; it cannot register pre-2011 drawdown.</li>
-  <li><strong>Sustainable yield = 233,500 AF/yr</strong> per the 2022 GSP (Dec 15, 2021), p. ES-5: 243,500 AFY historical pumping minus 10,000 AFY decrease in storage. Used here as a denominator only; volumetric needs (AF/yr) do not depend on it.</li>
-  <li><strong>Total storage = 16+ MAF</strong> per the GSP, BBGM-2020 estimate. Used in the proportion visual; not a calibration input.</li>
-  <li><strong>Sustainability target.</strong> "Sustainability" here means GWE at each Groundwater Level RMS well stays at or above its <strong>WY 2022</strong> level going forward — the basin's historic low, at which no sustainability indicator registered an undesirable result. MTs for the GSP would be set <em>lower</em> than WY 2022 to create operational range and margin in the event of an unforeseen 7–10 year drought, similar to what the subbasin experienced between 1985 and 1994. The volumetric sizing in this dashboard uses the basin's average annual loss rate as the need, which is a stronger target than "stay above WY 2022" alone — matching average loss keeps the basin near WY 2025 conditions, providing built-in drought cushion.</li>
-  <li><strong>Project portfolio is at-yield, not at-design.</strong> Conjunctive-use figures assume successful surface-water substitution. <strong>Recharge figures assume 2–3 storm events per year</strong> where excess flow can be diverted into recharge basins; drought-year recharge rates will be lower, wet-year rates higher.</li>
-  <li><strong>Per-polygon vs. basin-wide.</strong> The portfolio covers basin loss with margin, but 14 polygons remain locally short. The two Chico cells (<code>22N01E09B001M</code> and <code>22N01E20K001M</code>) together are the largest residual shortfall — Chico may be able to add recharge capacity by directing more flow into Lindo Channel, but evaluating that potential is outside this scope. Whether one polygon's neighbors' surplus reaches its RMS well depends on lateral hydraulic conductivity that this dashboard does not model.</li>
-  <li><strong>Hold-current target assumes a representative year-type mix going forward.</strong> The 6,322 AF/yr basin avg loss rate is the average over WY 1999–2025, which had 6 Wet, 4 Above Normal, 5 Below Normal, 6 Dry, and 5 Critical years. If WY 2026–2042 sees materially more Critical years, the realized loss rate will be higher; if more Wet years, lower. The portfolio's recovery margin (≈8,178 AF/yr) is the buffer for that uncertainty.</li>
-  <li><strong>Year-type definitions are the official Sacramento Valley Index types,</strong> published annually by DWR from the Northern Sierra 8-Station Index.</li>
-  <li><strong>Comparison to the 17-polygon version.</strong> The basin deficit through WY 2025 is smaller here (-145,732 AF vs. −193,010 AF in the 17-polygon build), and the avg loss rate is smaller too (6,322 AF/yr vs. 8,558). The difference traces to (a) the new <code>21N02E18C003M</code> polygon being larger and posting a recovering surplus, (b) the new Chico cells being smaller than the old dissolved Chico polygon, (c) the addition of late-baseline polygons that contribute less to early-record buckets, and (d) different per-polygon Sy values from the SVSim recompute against the new geometry.</li>
+<li><strong>Wet:</strong> 1999, 2006, 2011, 2017, 2019, 2023, 2025 (7 years)</li>
+<li><strong>Above Normal:</strong> 2000, 2003, 2005, 2024 (4 years)</li>
+<li><strong>Below Normal:</strong> 2004, 2010, 2012, 2016, 2018 (5 years)</li>
+<li><strong>Dry:</strong> 2001, 2002, 2007, 2009, 2013, 2020 (6 years)</li>
+<li><strong>Critical:</strong> 2008, 2014, 2015, 2021, 2022 (5 years)</li>
 </ul>
 
+<p><strong>Baseline asymmetry.</strong> Polygons anchored to WY 1999: those whose 2027 GWL RMS well had a Good March measurement that year (10 of 28). The rest baseline later: 23N01E07H001M (2019); 23N01W03H004M (2012); 23N01W10M001M (2002); 23N01W28M004M (2009); 23N01W31M004M (2009); 23N01E33A001M (2003); 22N01E20K001M (2000); 22N01E09B001M (2002); 20N02E24C001M (2000); 21N02E18C003M (2011); 20N01E02H003M (2002); 20N02E08H003M (2008); 20N02E09G001M (2002); 20N03E33L001M (2000); 21N01E13L004M (2012); 21N02E26E006M (2008); 21N02E32E001M (2009); 21N03E32B001M (2000).</p>
+
+<h2>When and where the basin loses water</h2>
+
+<div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 420" style="background:#fafaf7;font-family:'Inter',ui-sans-serif,system-ui;width:100%;height:auto;display:block;">
+<text x="440.0" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1612">Basin storage change since baseline, by Sacramento Valley Index year type</text>
+<text x="440.0" y="42" text-anchor="middle" font-size="11" fill="#5b5547" font-style="italic">Sum across all 28 polygons (WY 2000–2025). Critical years remove about 1.5× per year what Wet+Above-Normal years recover.</text>
+<line x1="60" y1="200" x2="820" y2="200" stroke="#5b5547" stroke-width="0.9"/>
+<text x="828" y="204" font-size="11" fill="#5b5547">0 AF</text>
+<rect x="73.0" y="90.0" width="110" height="110.0" fill="#2e6f3f" stroke="#1a1612" stroke-width="0.6"/>
+<text x="128.0" y="76.0" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+265,060</text>
+<text x="128.0" y="88.0" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<text x="128.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Wet</text>
+<text x="128.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(6 years)</text>
+<rect x="229.0" y="179.55320482230027" width="110" height="20.446795177699727" fill="#7eb585" stroke="#1a1612" stroke-width="0.6"/>
+<text x="284.0" y="165.55320482230027" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+49,269</text>
+<text x="284.0" y="177.55320482230027" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<text x="284.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Above Normal</text>
+<text x="284.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(4 years)</text>
+<rect x="385.0" y="200" width="110" height="8.17018136555736" fill="#d99a4f" stroke="#1a1612" stroke-width="0.6"/>
+<text x="440.0" y="224.17018136555737" text-anchor="middle" font-size="14" font-weight="800" fill="#a32d2d">-19,687</text>
+<text x="440.0" y="240.17018136555737" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<text x="440.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Below Normal</text>
+<text x="440.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(5 years)</text>
+<rect x="541.0" y="200" width="110" height="96.11611256580848" fill="#c75a35" stroke="#1a1612" stroke-width="0.6"/>
+<text x="596.0" y="312.11611256580846" text-anchor="middle" font-size="14" font-weight="800" fill="#a32d2d">-231,605</text>
+<text x="596.0" y="328.11611256580846" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<text x="596.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Dry</text>
+<text x="596.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(6 years)</text>
+<rect x="697.0" y="200" width="110" height="98.11944945897784" fill="#a32d2d" stroke="#1a1612" stroke-width="0.6"/>
+<text x="752.0" y="314.11944945897784" text-anchor="middle" font-size="14" font-weight="800" fill="#a32d2d">-236,432</text>
+<text x="752.0" y="330.11944945897784" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<text x="752.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Critical</text>
+<text x="752.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(5 years)</text>
+<text x="440.0" y="406" text-anchor="middle" font-size="13" fill="#5b5547">Net basin total since baseline: <tspan font-weight="800" fill="#a32d2d">-173,395 AF</tspan></text>
+</svg></div>
+<div class="figcaption">Figure 1. Sum across all 28 polygons, gap-attributed by year, bucketed by official Sacramento Valley Index water-year type. Critical years alone average 47,286 AF/yr of loss — about 1.2× the per-year loss rate of Dry years.</div>
+
+<div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" style="background:#fafaf7;font-family:'Inter',ui-sans-serif,system-ui;width:100%;height:auto;display:block;">
+<defs><clipPath id="ts-clip"><rect x="92" y="32" width="644" height="292"/></clipPath></defs>
+<text x="380.0" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1612">Basin cumulative ΔStorage (28-polygon network), shaded by hydrologic condition</text>
+<rect x="129.2" y="32" width="24.8" height="292" fill="#c75a35" fill-opacity="0.26"/>
+<rect x="153.9" y="32" width="24.8" height="292" fill="#c75a35" fill-opacity="0.26"/>
+<rect x="203.5" y="32" width="24.8" height="292" fill="#d99a4f" fill-opacity="0.2"/>
+<rect x="277.8" y="32" width="24.8" height="292" fill="#c75a35" fill-opacity="0.26"/>
+<rect x="302.5" y="32" width="24.8" height="292" fill="#a32d2d" fill-opacity="0.32"/>
+<rect x="327.3" y="32" width="24.8" height="292" fill="#c75a35" fill-opacity="0.26"/>
+<rect x="352.1" y="32" width="24.8" height="292" fill="#d99a4f" fill-opacity="0.2"/>
+<rect x="401.6" y="32" width="24.8" height="292" fill="#d99a4f" fill-opacity="0.2"/>
+<rect x="426.4" y="32" width="24.8" height="292" fill="#c75a35" fill-opacity="0.26"/>
+<rect x="451.2" y="32" width="24.8" height="292" fill="#a32d2d" fill-opacity="0.32"/>
+<rect x="475.9" y="32" width="24.8" height="292" fill="#a32d2d" fill-opacity="0.32"/>
+<rect x="500.7" y="32" width="24.8" height="292" fill="#d99a4f" fill-opacity="0.2"/>
+<rect x="550.2" y="32" width="24.8" height="292" fill="#d99a4f" fill-opacity="0.2"/>
+<rect x="599.8" y="32" width="24.8" height="292" fill="#c75a35" fill-opacity="0.26"/>
+<rect x="624.5" y="32" width="24.8" height="292" fill="#a32d2d" fill-opacity="0.32"/>
+<rect x="649.3" y="32" width="24.8" height="292" fill="#a32d2d" fill-opacity="0.32"/>
+<line x1="92" y1="324.0" x2="736" y2="324.0" stroke="#e7e1cf" stroke-width="0.5"/>
+<text x="84" y="327.0" text-anchor="end" font-size="10" fill="#5b5547">-350,000</text>
+<line x1="92" y1="287.5" x2="736" y2="287.5" stroke="#e7e1cf" stroke-width="0.5"/>
+<text x="84" y="290.5" text-anchor="end" font-size="10" fill="#5b5547">-300,000</text>
+<line x1="92" y1="251.0" x2="736" y2="251.0" stroke="#e7e1cf" stroke-width="0.5"/>
+<text x="84" y="254.0" text-anchor="end" font-size="10" fill="#5b5547">-250,000</text>
+<line x1="92" y1="214.5" x2="736" y2="214.5" stroke="#e7e1cf" stroke-width="0.5"/>
+<text x="84" y="217.5" text-anchor="end" font-size="10" fill="#5b5547">-200,000</text>
+<line x1="92" y1="178.0" x2="736" y2="178.0" stroke="#e7e1cf" stroke-width="0.5"/>
+<text x="84" y="181.0" text-anchor="end" font-size="10" fill="#5b5547">-150,000</text>
+<line x1="92" y1="141.5" x2="736" y2="141.5" stroke="#e7e1cf" stroke-width="0.5"/>
+<text x="84" y="144.5" text-anchor="end" font-size="10" fill="#5b5547">-100,000</text>
+<line x1="92" y1="105.0" x2="736" y2="105.0" stroke="#e7e1cf" stroke-width="0.5"/>
+<text x="84" y="108.0" text-anchor="end" font-size="10" fill="#5b5547">-50,000</text>
+<line x1="92" y1="68.5" x2="736" y2="68.5" stroke="#e7e1cf" stroke-width="0.5"/>
+<text x="84" y="71.5" text-anchor="end" font-size="10" fill="#5b5547">0</text>
+<line x1="92" y1="32.0" x2="736" y2="32.0" stroke="#e7e1cf" stroke-width="0.5"/>
+<text x="84" y="35.0" text-anchor="end" font-size="10" fill="#5b5547">50,000</text>
+<line x1="92" y1="68.5" x2="736" y2="68.5" stroke="#5b5547" stroke-width="0.8"/>
+<line x1="116.8" y1="324" x2="116.8" y2="328" stroke="#5b5547" stroke-width="0.5"/>
+<text x="116.8" y="342" text-anchor="middle" font-size="10" fill="#5b5547">2000</text>
+<line x1="240.6" y1="324" x2="240.6" y2="328" stroke="#5b5547" stroke-width="0.5"/>
+<text x="240.6" y="342" text-anchor="middle" font-size="10" fill="#5b5547">2005</text>
+<line x1="364.5" y1="324" x2="364.5" y2="328" stroke="#5b5547" stroke-width="0.5"/>
+<text x="364.5" y="342" text-anchor="middle" font-size="10" fill="#5b5547">2010</text>
+<line x1="488.3" y1="324" x2="488.3" y2="328" stroke="#5b5547" stroke-width="0.5"/>
+<text x="488.3" y="342" text-anchor="middle" font-size="10" fill="#5b5547">2015</text>
+<line x1="612.2" y1="324" x2="612.2" y2="328" stroke="#5b5547" stroke-width="0.5"/>
+<text x="612.2" y="342" text-anchor="middle" font-size="10" fill="#5b5547">2020</text>
+<line x1="736.0" y1="324" x2="736.0" y2="328" stroke="#5b5547" stroke-width="0.5"/>
+<text x="736.0" y="342" text-anchor="middle" font-size="10" fill="#5b5547">2025</text>
+<text x="22" y="178.0" transform="rotate(-90,22,178.0)" text-anchor="middle" font-size="11" fill="#5b5547" font-weight="600">Cumulative storage change (AF)</text>
+<polyline points="92.0,68.5 116.8,77.4 141.5,96.1 166.3,107.0 191.1,102.7 215.8,90.1 240.6,86.1 265.4,68.1 290.2,109.0 314.9,123.2 339.7,151.9 364.5,144.9 389.2,142.2 414.0,146.2 438.8,181.9 463.5,229.4 488.3,239.0 513.1,234.1 537.8,160.5 562.6,195.3 587.4,157.0 612.2,191.1 636.9,246.3 661.7,292.5 686.5,264.5 711.2,227.9 736.0,195.1" fill="none" stroke="#1f3a5f" stroke-width="2.4" clip-path="url(#ts-clip)"/>
+<circle cx="736.0" cy="195.1" r="3.2" fill="#1f3a5f"/>
+<text x="730.0" y="187.1" text-anchor="end" font-size="11" font-weight="700" fill="#1f3a5f">-173,395 AF</text>
+<polyline points="92.0,68.5 116.8,53.0 141.5,91.2 166.3,129.4 191.1,113.9 215.8,118.1 240.6,102.7 265.4,66.4 290.2,104.5 314.9,141.0 339.7,179.2 364.5,183.4 389.2,147.1 414.0,151.4 438.8,189.5 463.5,226.0 488.3,262.5 513.1,266.7 537.8,230.5 562.6,234.7 587.4,198.4 612.2,236.6 636.9,273.1 661.7,309.5 686.5,273.3 711.2,257.8 736.0,221.5" fill="none" stroke="#7c4a86" stroke-width="2.0" stroke-dasharray="6,4" clip-path="url(#ts-clip)"/>
+<circle cx="736.0" cy="221.5" r="3.0" fill="#7c4a86"/>
+<text x="730.0" y="235.5" text-anchor="end" font-size="11" font-weight="700" fill="#7c4a86">-209,594 AF (normalized)</text>
+<g transform="translate(100,208)">
+<rect x="-8" y="-22" width="260" height="132" fill="#fafaf7" fill-opacity="0.92" stroke="#cfc9b8" stroke-width="0.5" rx="2"/>
+<line x1="0" y1="-10" x2="22" y2="-10" stroke="#1f3a5f" stroke-width="2.4"/>
+<text x="28" y="-7" font-size="11" fill="#1a1612"><tspan font-weight="700">Observed</tspan> (each polygon contributes only years it observed)</text>
+<line x1="0" y1="7" x2="22" y2="7" stroke="#7c4a86" stroke-width="2.0" stroke-dasharray="6,4"/>
+<text x="28" y="11" font-size="11" fill="#1a1612"><tspan font-weight="700">Normalized</tspan> (year-type-weighted backcast — see methodology)</text>
+<rect x="0" y="20" width="22" height="10" fill="#a32d2d" fill-opacity="0.32"/>
+<text x="28" y="29" font-size="11" fill="#1a1612">Critical</text>
+<rect x="0" y="36" width="22" height="10" fill="#c75a35" fill-opacity="0.26"/>
+<text x="28" y="45" font-size="11" fill="#1a1612">Dry</text>
+<rect x="0" y="52" width="22" height="10" fill="#d99a4f" fill-opacity="0.2"/>
+<text x="28" y="61" font-size="11" fill="#1a1612">Below Normal</text>
+<rect x="0" y="68" width="22" height="10" fill="#fafaf7" stroke="#cfc9b8" stroke-width="0.5"/>
+<text x="28" y="77" font-size="11" fill="#1a1612">Wet / Above N.</text>
+</g>
+</svg></div>
+<div class="figcaption">Figure 2. Basin cumulative ΔStorage. <strong>Solid blue line = observed</strong> (each polygon contributes only years its RMS well actually measured). <strong>Dashed purple line = year-type-weighted normalized</strong> (corrects for late-baseline drag — see callout below).</div>
+
+<div class="callout warn"><strong>Late-baseline drag and the year-type-weighted normalization.</strong> Of the 28 polygons, only 10 have a Good March measurement in WY 1999. The other 18 baseline later — between 2000 and 2019 — because their 2027 GWL RMS well wasn't measured in 1999. Late-baseline polygons cannot register their pre-baseline drawdown, so the <strong>observed</strong> basin cumulative (-173,395 AF through 2025) <em>understates</em> what the basin would show if every polygon had a full record.<br><br>The <strong>year-type-weighted normalized</strong> series corrects this. For each polygon, we compute its average ΔStorage <em>per Sacramento Valley Index year type</em> using <em>only its own observations</em>. We then synthesize what that polygon would have contributed across the full WY 1999–2025 record by applying its per-type rates to the basin's actual year-type mix (6 Wet, 4 AN, 5 BN, 6 Dry, 5 Critical = 26 transition years). Summed across all 28 polygons, that gives the normalized basin total: <strong>-209,594 AF</strong> through 2025 — an avg loss rate of <strong>-8,061 AF/yr</strong>, vs. the observed 7,940 AF/yr.</div>
+
+<h3>Putting the deficit in proportion</h3>
+<div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" style="background:#fafaf7;font-family:'Inter',ui-sans-serif,system-ui;width:100%;height:auto;display:block;">
+<text x="380.0" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1612">How big is the deficit, relative to total fresh groundwater in storage?</text>
+<text x="380.0" y="40" text-anchor="middle" font-size="11" fill="#5b5547" font-style="italic">Vina Subbasin total fresh GW in storage: ~16 MAF (Vina Subbasin GSP (Dec 15, 2021), p. ES-5)</text>
+<rect x="50" y="80" width="660" height="32" fill="#e6f0e8" stroke="#5b5547" stroke-width="0.7"/>
+<rect x="50" y="80" width="7.15" height="32" fill="#a32d2d"/>
+<text x="380.0" y="74" text-anchor="middle" font-size="11" fill="#5b5547">Full-scale view (sliver = deficit)</text>
+<text x="380.0" y="130" text-anchor="middle" font-size="12" fill="#1a1612">WY 2025 cumulative deficit = <tspan font-weight="700" fill="#a32d2d">1.08%</tspan> of 16 MAF</text>
+<rect x="50" y="180" width="660" height="32" fill="#e6f0e8" stroke="#5b5547" stroke-width="0.7"/>
+<rect x="50" y="180" width="316.44" height="32" fill="#c75a35" fill-opacity="0.5" stroke="#a32d2d" stroke-width="0.5"/>
+<rect x="50" y="180" width="178.81" height="32" fill="#a32d2d"/>
+<text x="380.0" y="174" text-anchor="middle" font-size="11" fill="#5b5547">25× zoom (showing 0.64 MAF of the 16 MAF total)</text>
+<text x="380.0" y="230" text-anchor="middle" font-size="12" fill="#1a1612">WY 2022 trough = <tspan font-weight="700" fill="#a32d2d">1.92%</tspan> of 16 MAF (306,853 AF deepest deficit)</text>
+</svg></div>
+<div class="figcaption">Figure 3. Source: total storage from the Vina Subbasin GSP (Dec 15, 2021), p. ES-5 (BBGM-2020 estimate). WY 2022 trough = deepest observed deficit in this three-zone (per management area).</div>
+
+<h2>The 2042 sustainability target — hold the line, with the project portfolio</h2>
+
+<p>The Vina Subbasin has lost storage across the WY 1999–2025 record through 5 Critical years, 6 Dry years, 5 Below-Normal years, and a long-term decline rate of about 0.07%/yr. The basin's historic low was the <strong>WY 2022 trough</strong> at roughly 306,853 AF below baseline — and even at that low, <strong>no SGMA sustainability indicator registered an undesirable result</strong>.</p>
+
+<p>The framing here is therefore not "recover to the WY 1999 baseline." The operational target is: <strong>GWE at each Groundwater Level RMS well stays at or above its WY 2022 level going forward</strong>. MTs for the GSP would be set <em>lower</em> than WY 2022, creating operational range and margin for an unforeseen 7–10 year drought, similar to what the subbasin experienced between 1985 and 1994. The portfolio's job is to ensure the next major drought doesn't push observed GWE below WY 2022.</p>
+
+<div class="bigstat">
+  <div class="row">
+    <div>
+      <div class="num">7,940 <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
+      <div class="lab">Basin avg loss rate — observed</div>
+      <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Normalized: <strong>-8,061</strong> AF/yr</div>
+    </div>
+    <div>
+      <div class="num" style="color:var(--accent);">14,500 <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
+      <div class="lab">Project portfolio (online by 2032)</div>
+    </div>
+    <div>
+      <div class="num">+6,560 <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
+      <div class="lab">Recovery margin (vs. observed loss)</div>
+      <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Against normalized loss: <strong>+6,439</strong> AF/yr</div>
+    </div>
+    <div class="desc">Portfolio = 7,000 AF/yr conjunctive use (surface water replaces groundwater) + 1,500 AF/yr Comanche Creek recharge + 4,000 AF/yr Rock Creek recharge + 2,000 AF/yr Recharge project. The recovery margin remains comfortably positive against both the observed and normalized loss rates (+2.8% of the 233,500 AF/yr GSP-stated sustainable yield).</div>
+  </div>
+</div>
+
+<h2>Where the projects land — coverage by polygon</h2>
+<table>
+  <thead>
+    <tr><th>Polygon</th><th>Project</th><th class="num">Allocation (AF/yr)</th><th class="num">Polygon avg loss (AF/yr)</th><th class="num">Net coverage</th></tr>
+  </thead>
+  <tbody><tr>
+      <td><strong>20N02E08H003M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td>Conjunctive use (surface water replaces groundwater)</td>
+      <td class="num">2,250</td>
+      <td class="num">121</td>
+      <td class="num"><span class="gain">+2,129</span></td>
+    </tr>
+<tr>
+      <td><strong>20N02E09G001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td>Conjunctive use (surface water replaces groundwater)</td>
+      <td class="num">2,250</td>
+      <td class="num">232</td>
+      <td class="num"><span class="gain">+2,018</span></td>
+    </tr>
+<tr>
+      <td><strong>20N02E24C001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td>Conjunctive use (surface water replaces groundwater)</td>
+      <td class="num">1,250</td>
+      <td class="num">711</td>
+      <td class="num"><span class="gain">+539</span></td>
+    </tr>
+<tr>
+      <td><strong>20N03E33L001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td>Conjunctive use (surface water replaces groundwater)</td>
+      <td class="num">1,250</td>
+      <td class="num">416</td>
+      <td class="num"><span class="gain">+834</span></td>
+    </tr>
+<tr>
+      <td><strong>21N01E10B003M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td>Comanche Creek recharge</td>
+      <td class="num">1,500</td>
+      <td class="num">499</td>
+      <td class="num"><span class="gain">+1,001</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W36P001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td>Rock Creek recharge</td>
+      <td class="num">2,000</td>
+      <td class="num">439</td>
+      <td class="num"><span class="gain">+1,561</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01E29P002M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td>Rock Creek recharge</td>
+      <td class="num">2,000</td>
+      <td class="num">623</td>
+      <td class="num"><span class="gain">+1,377</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01E33A001M</strong> <span style="color:#8a8a8a;font-size:11px;">Chico</span></td>
+      <td>Recharge project</td>
+      <td class="num">2,000</td>
+      <td class="num">82</td>
+      <td class="num"><span class="gain">+1,918</span></td>
+    </tr></tbody>
+  <tfoot>
+    <tr><th>Total portfolio</th><th>—</th><th class="num"><strong>14,500</strong></th><th class="num">7,940</th><th class="num"><strong><span class="gain">+6,560</span></strong></th></tr>
+  </tfoot>
+</table>
+
+<p>The polygon map below is colored by <strong>net coverage after the project portfolio comes online</strong>. 14 polygons remain partially uncovered (combined shortfall 5,452 AF/yr)
+ — most prominently <strong>22N01E20K001M</strong> at 1,171 AF/yr below its loss rate.</p>
+
+<div class="map-wrap">
+<div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 820" style="background:#fafaf7;font-family:ui-sans-serif,system-ui;width:100%;height:auto;display:block;">
+<defs><style>.poly{stroke:#5b5547;stroke-width:0.7;cursor:pointer;}.poly:hover{stroke-width:2;filter:brightness(1.05);}.well{fill:#1f1f1f;pointer-events:none;}.well-project{fill:#1f3a5f;stroke:#fafaf7;stroke-width:1.2;pointer-events:none;}.label{font-size:8.5px;fill:#332e22;text-anchor:middle;font-weight:500;pointer-events:none;}.title{font-size:13px;font-weight:700;fill:#1a1612;text-anchor:middle;}.subtitle{font-size:11px;fill:#5b5547;text-anchor:middle;font-style:italic;}.legend-text{font-size:10.5px;fill:#332e22;}.legend-title{font-size:11px;font-weight:700;fill:#1a1612;}.legend-bg{fill:#fafaf7;fill-opacity:0.97;stroke:#cfc9b8;stroke-width:0.6;}</style></defs>
+<text class="title" x="350.0" y="18">Vina 2027 BC RMS network (28 polygons) — Coverage status after project portfolio (target 2032)</text>
+<text class="subtitle" x="350.0" y="32">Click any polygon for detail. Color = project allocation minus polygon avg loss rate (AF/yr).</text>
+<path d="M 163.7,275.5 L 181.3,383.1 L 181.2,383.8 L 181.2,383.8 L 181.1,385.9 L 180.7,387.6 L 179.9,388.4 L 179.0,389.4 L 178.4,390.1 L 177.6,390.7 L 176.5,391.4 L 175.2,391.9 L 173.7,392.4 L 172.0,392.6 L 171.0,392.3 L 170.2,391.7 L 169.4,391.1 L 168.5,390.3 L 167.6,389.7 L 166.6,388.9 L 166.1,388.0 L 165.4,387.1 L 164.9,386.2 L 164.5,384.8 L 164.4,383.8 L 164.5,382.5 L 164.6,381.3 L 164.9,380.3 L 164.9,380.1 L 165.5,378.8 L 166.0,377.9 L 166.7,376.6 L 167.2,375.5 L 167.5,374.7 L 168.2,374.0 L 168.9,373.6 L 169.8,373.1 L 170.9,372.8 L 172.3,372.4 L 172.8,371.9 L 173.3,371.0 L 173.6,370.0 L 173.6,369.2 L 173.7,368.9 L 173.7,367.6 L 173.9,366.0 L 174.3,364.4 L 174.5,363.4 L 174.7,362.2 L 174.7,361.9 L 174.4,360.6 L 174.2,359.9 L 173.6,358.9 L 173.3,358.1 L 172.9,357.1 L 172.3,356.2 L 171.6,355.0 L 170.9,353.6 L 170.0,352.3 L 169.2,351.5 L 168.5,351.4 L 167.9,351.5 L 167.0,351.8 L 165.8,352.5 L 165.7,352.6 L 164.0,353.6 L 163.8,353.7 L 162.8,354.5 L 162.1,355.3 L 161.5,356.4 L 161.2,357.6 L 161.2,359.1 L 161.5,360.5 L 161.8,362.2 L 162.0,364.0 L 161.8,365.2 L 161.4,366.3 L 160.8,367.2 L 159.8,367.8 L 158.7,368.3 L 157.8,368.1 L 156.8,367.8 L 155.5,367.6 L 154.0,367.4 L 153.0,367.0 L 151.8,366.6 L 150.6,366.3 L 148.2,365.5 L 147.0,365.2 L 145.8,364.6 L 145.4,364.3 L 144.3,363.3 L 143.7,362.1 L 143.1,360.8 L 142.5,359.9 L 141.9,358.8 L 141.1,357.3 L 141.0,357.2 L 140.3,355.8 L 139.4,354.1 L 138.5,352.2 L 137.2,349.8 L 136.0,347.8 L 135.1,346.2 L 133.9,344.6 L 132.7,342.9 L 131.1,341.1 L 128.5,337.9 L 128.5,337.8 L 127.0,336.0 L 126.6,335.5 L 124.0,332.8 L 122.4,331.2 L 122.0,330.8 L 120.7,329.4 L 118.5,327.4 L 116.4,325.8 L 113.6,324.1 L 110.4,321.8 L 104.5,319.6 L 102.1,318.8 L 100.4,318.3 L 100.1,318.0 L 99.5,317.4 L 97.5,315.5 L 97.2,315.1 L 95.4,312.9 L 92.6,309.9 L 88.8,304.6 L 86.8,301.5 L 84.9,297.7 L 84.7,297.3 L 82.7,294.1 L 82.0,292.8 L 79.8,289.1 L 79.1,286.7 L 79.1,286.7 L 80.0,285.0 L 80.3,284.6 L 81.6,282.5 L 83.2,279.8 L 83.9,278.9 L 84.2,278.7 L 85.1,277.5 L 87.2,274.9 L 88.0,272.8 L 88.3,271.9 L 89.0,267.0 L 114.0,243.1 L 148.3,258.8 L 163.7,275.5 Z" class="poly" fill="#a8c8b0" data-short="22N01W05M001M" data-ma="North" data-base-year="1999" data-end-year="2025" data-span="26" data-area="7,468" data-rms-wells="22N01W05M001M" data-sy="0.0825" data-sy-source="SVSim" data-avg-dgwe="+0.00" data-cum-stor="+0" data-avg-rate="+0" data-critdry-share="82%" data-crit-share="39%" data-bucket-wet="+3,152" data-bucket-an="+4,518" data-bucket-bn="-821" data-bucket-dry="-3,563" data-bucket-critical="-3,286" data-hold="0" data-project="0" data-project-name="" data-coverage="+0" data-late=""><title>Click for 22N01W05M001M detail</title></path>
+<path d="M 247.5,186.3 L 208.8,142.3 L 220.3,108.1 L 229.1,108.1 L 254.9,108.0 L 280.0,107.6 L 288.6,107.5 L 316.9,106.9 L 325.2,118.4 L 332.5,130.4 L 336.4,138.0 L 338.0,142.1 L 345.8,158.4 L 349.6,165.5 L 247.5,186.3 Z" class="poly" fill="#e3a76f" data-short="23N01E07H001M" data-ma="North" data-base-year="2019" data-end-year="2025" data-span="6" data-area="8,342" data-rms-wells="23N01E07H001M" data-sy="0.0935" data-sy-source="SVSim" data-avg-dgwe="-0.57" data-cum-stor="-2,652" data-avg-rate="-442" data-critdry-share="86%" data-crit-share="70%" data-bucket-wet="+78" data-bucket-an="+936" data-bucket-bn="+0" data-bucket-dry="-663" data-bucket-critical="-3,003" data-hold="442" data-project="0" data-project-name="" data-coverage="-442" data-late="1"><title>Click for 23N01E07H001M detail</title></path>
+<path d="M 225.9,215.5 L 265.0,287.4 L 264.9,287.8 L 264.7,288.2 L 264.4,288.4 L 263.8,288.6 L 263.6,288.8 L 263.3,290.2 L 263.3,290.5 L 263.0,290.9 L 263.0,291.0 L 262.9,291.5 L 263.0,291.8 L 263.0,292.5 L 263.1,293.0 L 263.1,293.2 L 263.1,293.3 L 262.8,294.0 L 261.1,296.4 L 260.8,296.9 L 260.1,298.5 L 258.9,299.7 L 258.7,299.7 L 258.5,299.8 L 257.9,300.1 L 256.9,300.0 L 256.8,300.0 L 256.9,303.7 L 256.9,306.4 L 256.9,306.4 L 256.9,306.4 L 257.6,306.4 L 259.3,306.4 L 260.1,306.4 L 260.5,306.4 L 261.0,306.4 L 261.8,306.4 L 262.8,306.4 L 263.1,306.4 L 263.2,306.4 L 264.0,306.4 L 264.1,306.4 L 264.8,306.3 L 265.0,306.3 L 265.2,306.3 L 265.4,306.3 L 265.6,306.3 L 265.8,306.3 L 266.1,306.3 L 266.3,306.3 L 266.5,306.3 L 266.8,306.3 L 267.0,306.3 L 267.3,306.3 L 267.5,306.3 L 267.7,306.3 L 267.9,306.3 L 268.2,306.3 L 268.4,306.3 L 268.6,306.3 L 268.9,306.3 L 270.4,306.3 L 270.5,306.3 L 270.6,306.2 L 270.8,306.4 L 270.6,306.6 L 271.2,307.4 L 271.7,308.0 L 272.0,308.3 L 273.1,309.8 L 275.0,312.3 L 276.0,313.5 L 275.3,314.0 L 274.9,314.4 L 274.2,314.9 L 273.6,315.3 L 273.0,315.8 L 272.4,316.3 L 271.8,316.7 L 271.1,317.2 L 271.0,317.3 L 272.3,319.0 L 273.6,320.6 L 276.9,325.0 L 275.4,325.0 L 275.4,324.9 L 274.3,325.0 L 271.7,325.0 L 271.2,325.0 L 270.4,325.0 L 270.5,325.2 L 271.1,325.9 L 271.2,326.0 L 271.2,326.1 L 271.4,326.3 L 271.6,326.6 L 271.9,326.9 L 272.3,327.4 L 272.6,327.9 L 273.2,327.5 L 274.0,326.9 L 274.5,326.5 L 275.1,326.0 L 276.3,325.1 L 277.4,326.5 L 278.2,327.6 L 278.6,328.1 L 280.1,330.0 L 280.4,330.4 L 280.8,331.0 L 281.1,331.4 L 281.5,331.9 L 282.0,332.5 L 282.0,332.5 L 280.4,333.7 L 279.6,334.3 L 277.2,336.2 L 277.1,336.3 L 279.0,338.7 L 277.8,339.7 L 276.5,340.7 L 276.6,340.8 L 277.0,341.2 L 277.4,341.8 L 277.5,341.9 L 278.0,342.6 L 278.4,343.1 L 278.4,343.1 L 278.4,343.1 L 277.2,344.1 L 276.1,345.0 L 276.0,345.0 L 275.8,345.1 L 274.7,346.0 L 274.2,345.8 L 273.7,345.5 L 272.0,344.6 L 270.0,343.5 L 269.3,343.0 L 268.4,342.6 L 267.7,342.1 L 267.1,341.8 L 266.6,341.5 L 263.8,340.0 L 263.2,339.7 L 262.5,339.3 L 261.8,338.9 L 261.1,338.5 L 261.1,338.6 L 259.7,337.9 L 258.3,337.1 L 257.1,336.5 L 256.8,336.3 L 256.5,336.1 L 256.1,335.9 L 255.6,335.6 L 254.2,334.8 L 253.0,334.1 L 250.4,332.7 L 250.4,332.7 L 249.7,332.3 L 242.2,328.1 L 242.1,328.5 L 242.0,328.7 L 241.3,332.1 L 240.9,334.1 L 240.8,334.5 L 240.9,334.5 L 241.4,334.5 L 247.9,336.1 L 248.4,336.3 L 248.8,336.4 L 249.3,336.6 L 249.9,337.0 L 250.0,337.1 L 250.1,337.3 L 250.1,338.2 L 250.1,339.2 L 251.2,339.2 L 251.2,338.2 L 251.2,337.4 L 254.2,339.0 L 254.3,340.3 L 254.3,341.5 L 255.1,341.5 L 255.1,340.3 L 255.1,339.5 L 256.3,340.1 L 259.4,341.9 L 259.4,345.5 L 259.4,346.2 L 259.5,347.6 L 259.5,348.5 L 259.5,348.7 L 260.5,348.7 L 261.8,348.6 L 262.9,348.6 L 263.9,348.6 L 266.8,348.6 L 267.0,348.6 L 267.0,348.7 L 269.8,348.7 L 269.7,349.6 L 270.1,349.6 L 270.1,349.8 L 270.1,351.6 L 270.1,352.2 L 271.9,352.2 L 271.9,351.6 L 273.2,351.6 L 275.7,351.6 L 276.3,351.6 L 276.3,351.6 L 276.3,351.7 L 276.3,351.7 L 276.3,351.7 L 276.2,351.9 L 276.2,351.9 L 276.2,351.9 L 276.2,351.9 L 276.2,352.0 L 276.2,352.0 L 276.2,352.0 L 276.2,352.1 L 276.2,352.1 L 276.2,352.1 L 276.2,352.1 L 276.1,352.2 L 276.1,352.2 L 276.1,352.2 L 276.1,352.3 L 276.1,352.3 L 276.1,352.4 L 276.1,354.1 L 276.1,354.2 L 276.0,354.3 L 275.9,354.3 L 275.9,354.3 L 275.9,354.4 L 275.9,354.4 L 276.6,355.0 L 278.5,356.1 L 278.5,356.9 L 278.5,356.9 L 278.5,356.9 L 278.5,358.8 L 278.5,360.0 L 278.5,360.9 L 278.5,361.3 L 278.5,361.7 L 278.5,362.2 L 278.4,362.2 L 278.4,362.2 L 278.4,362.3 L 278.4,362.3 L 278.4,362.5 L 278.4,364.0 L 278.4,365.6 L 278.4,367.0 L 278.3,368.0 L 278.3,368.4 L 278.3,368.8 L 278.4,369.2 L 278.4,369.5 L 278.4,370.1 L 278.4,370.1 L 278.6,374.6 L 278.5,374.7 L 278.4,374.7 L 278.2,374.8 L 278.1,374.9 L 277.9,375.0 L 277.7,375.2 L 277.5,375.3 L 277.3,375.5 L 277.2,375.7 L 277.0,375.9 L 276.9,376.2 L 276.8,376.3 L 276.6,376.5 L 276.3,376.9 L 276.1,377.1 L 275.9,377.3 L 275.5,377.5 L 275.2,377.7 L 274.9,377.7 L 274.6,377.8 L 274.3,377.8 L 274.0,377.7 L 273.7,377.6 L 273.5,377.6 L 273.3,377.5 L 273.1,377.5 L 272.8,377.5 L 272.6,377.5 L 272.5,377.6 L 272.3,377.8 L 272.0,377.8 L 271.8,377.9 L 271.6,377.9 L 271.5,377.9 L 271.3,377.9 L 271.0,377.9 L 270.8,378.0 L 270.6,378.1 L 270.3,378.3 L 270.1,378.4 L 269.8,378.7 L 269.6,378.8 L 269.4,378.9 L 269.1,379.2 L 269.0,379.3 L 268.8,379.5 L 268.6,379.8 L 268.5,379.9 L 268.4,380.0 L 268.3,380.1 L 268.1,380.2 L 267.9,380.2 L 267.8,380.3 L 267.6,380.4 L 267.4,380.5 L 267.2,380.6 L 267.0,380.7 L 266.8,380.7 L 266.6,380.7 L 266.3,380.7 L 266.1,380.6 L 265.9,380.5 L 265.8,380.4 L 265.6,380.3 L 265.4,380.3 L 265.1,380.3 L 264.9,380.3 L 264.7,380.4 L 264.5,380.4 L 264.3,380.6 L 264.1,380.7 L 263.9,381.0 L 263.7,381.1 L 263.5,381.3 L 263.2,381.5 L 263.0,381.6 L 262.8,381.8 L 262.7,381.9 L 262.5,382.0 L 262.3,382.1 L 262.0,382.2 L 261.7,382.3 L 261.4,382.4 L 261.1,382.4 L 260.9,382.4 L 260.7,382.4 L 260.5,382.5 L 260.3,382.4 L 260.1,382.4 L 260.0,382.4 L 259.8,382.3 L 259.6,382.3 L 259.6,382.3 L 259.5,382.3 L 259.3,382.2 L 259.3,382.2 L 259.1,382.2 L 259.1,382.1 L 258.9,382.1 L 258.8,382.1 L 258.7,382.1 L 258.7,382.1 L 258.6,382.1 L 258.6,382.1 L 258.4,382.1 L 258.4,382.1 L 258.1,382.1 L 258.0,382.1 L 257.7,382.1 L 257.6,382.1 L 257.4,382.2 L 257.3,382.2 L 257.1,382.4 L 257.0,382.5 L 256.8,382.6 L 256.6,382.9 L 256.4,383.2 L 256.4,383.3 L 256.3,383.4 L 256.1,383.5 L 256.0,383.7 L 255.9,383.8 L 255.8,384.0 L 255.7,384.2 L 255.6,384.4 L 255.5,384.5 L 255.3,384.7 L 255.1,384.8 L 255.0,384.9 L 254.6,385.0 L 254.5,385.0 L 254.3,385.0 L 254.1,385.0 L 253.9,385.0 L 253.7,385.0 L 253.4,385.2 L 253.2,385.4 L 253.1,385.5 L 252.9,385.7 L 252.8,385.9 L 252.7,386.1 L 252.7,386.2 L 252.5,386.4 L 252.4,386.6 L 252.3,386.7 L 252.2,386.7 L 252.0,386.8 L 251.9,386.9 L 251.7,387.0 L 251.6,387.0 L 251.5,387.0 L 251.2,387.1 L 251.1,387.1 L 251.0,387.1 L 250.9,386.9 L 250.8,386.8 L 250.6,386.7 L 250.4,386.7 L 250.3,386.8 L 250.1,387.0 L 249.9,387.1 L 249.7,387.3 L 249.5,387.3 L 249.4,387.4 L 249.2,387.6 L 249.0,387.7 L 248.9,387.7 L 248.7,387.9 L 248.5,388.0 L 248.4,388.1 L 248.3,388.2 L 248.0,388.3 L 247.8,388.4 L 247.6,388.5 L 247.5,388.6 L 247.3,388.8 L 247.2,389.0 L 247.1,389.1 L 247.0,389.2 L 247.0,389.3 L 246.9,389.5 L 246.8,389.6 L 246.6,389.7 L 246.5,389.7 L 246.4,389.7 L 246.2,389.6 L 245.9,389.6 L 245.5,389.9 L 245.3,390.0 L 245.1,390.1 L 244.9,390.2 L 244.6,390.4 L 244.5,390.4 L 244.5,390.5 L 244.3,390.6 L 244.0,390.6 L 244.0,390.6 L 243.7,390.6 L 243.4,390.6 L 243.2,390.6 L 242.9,390.5 L 242.6,390.4 L 242.4,390.3 L 242.2,390.2 L 241.9,390.1 L 241.6,390.1 L 241.3,390.1 L 241.1,390.1 L 240.5,390.3 L 240.0,390.7 L 239.7,391.1 L 239.2,391.3 L 238.9,391.7 L 238.4,392.0 L 238.0,392.2 L 237.6,392.3 L 237.1,392.5 L 236.9,392.7 L 236.7,393.0 L 236.4,393.1 L 236.3,393.3 L 235.9,393.4 L 235.6,393.5 L 235.3,393.6 L 235.0,393.6 L 234.6,393.7 L 233.8,393.6 L 233.2,393.5 L 233.0,393.4 L 232.6,393.3 L 232.1,393.3 L 231.7,393.3 L 231.1,393.2 L 230.3,393.2 L 229.7,393.6 L 229.3,394.0 L 228.9,394.2 L 228.6,394.4 L 228.3,394.4 L 227.9,394.5 L 227.5,394.4 L 227.2,394.3 L 227.0,394.1 L 226.6,394.2 L 226.2,394.4 L 225.9,394.4 L 225.7,394.5 L 225.2,394.5 L 224.6,394.0 L 224.1,393.6 L 223.5,393.5 L 221.6,393.7 L 221.1,393.5 L 220.9,393.3 L 220.7,393.0 L 220.5,393.0 L 220.3,393.2 L 220.0,393.4 L 219.7,393.6 L 219.2,393.9 L 218.9,394.1 L 218.6,394.3 L 218.4,394.4 L 218.1,394.5 L 217.8,394.5 L 217.5,394.6 L 217.3,394.7 L 216.9,394.7 L 216.4,394.7 L 216.1,394.9 L 215.8,395.1 L 215.6,395.1 L 215.3,395.2 L 215.1,395.2 L 214.8,395.1 L 214.7,395.1 L 214.4,395.1 L 214.2,395.2 L 214.0,395.3 L 213.8,395.4 L 213.5,395.5 L 212.8,395.7 L 212.5,396.0 L 212.3,396.3 L 212.2,396.5 L 212.1,396.9 L 212.3,397.1 L 212.5,397.6 L 212.9,398.2 L 213.2,399.0 L 213.2,399.3 L 213.2,400.6 L 213.2,401.6 L 212.9,402.0 L 212.7,402.6 L 212.3,403.3 L 212.2,403.5 L 211.7,403.8 L 211.4,404.2 L 211.2,404.5 L 211.2,405.3 L 211.4,405.9 L 211.3,406.5 L 211.0,407.0 L 210.9,407.5 L 210.8,407.8 L 210.7,408.3 L 210.3,408.9 L 210.1,409.2 L 210.0,409.3 L 209.9,410.1 L 209.7,410.3 L 209.4,410.3 L 209.1,410.4 L 208.9,410.5 L 208.5,410.7 L 208.4,410.9 L 208.3,411.1 L 208.0,411.3 L 207.7,411.4 L 207.3,411.3 L 207.0,411.5 L 206.7,411.8 L 206.6,412.1 L 206.6,412.3 L 206.5,412.7 L 206.2,413.0 L 205.6,413.4 L 205.1,413.7 L 204.5,414.2 L 204.0,414.4 L 203.5,414.7 L 203.2,415.3 L 203.1,416.2 L 203.1,416.8 L 202.5,420.8 L 199.8,425.6 L 199.7,425.2 L 199.3,424.1 L 199.3,424.0 L 199.3,423.8 L 199.0,422.9 L 198.6,421.7 L 198.1,420.7 L 197.5,419.0 L 196.8,416.9 L 196.1,415.6 L 196.0,415.6 L 194.8,413.3 L 194.1,411.8 L 193.6,410.5 L 193.5,409.4 L 193.5,408.0 L 193.6,407.1 L 194.0,405.8 L 194.1,404.8 L 194.1,404.5 L 194.1,404.4 L 194.2,403.5 L 194.2,402.6 L 193.9,401.2 L 193.6,400.3 L 193.6,400.2 L 193.2,399.0 L 192.7,397.9 L 191.8,396.6 L 190.9,395.4 L 190.1,394.5 L 189.1,393.6 L 188.7,392.7 L 188.3,391.8 L 188.1,390.5 L 188.0,389.6 L 188.1,388.9 L 188.3,387.9 L 188.5,386.7 L 189.0,385.7 L 189.6,384.5 L 190.2,383.5 L 190.9,382.5 L 191.7,381.3 L 192.3,380.3 L 192.7,379.4 L 192.8,378.0 L 192.8,376.5 L 192.7,375.0 L 192.7,373.3 L 192.6,371.5 L 192.1,370.3 L 191.7,369.4 L 191.2,368.4 L 190.4,367.5 L 190.3,367.4 L 190.0,367.1 L 189.7,366.9 L 189.6,366.8 L 188.8,366.5 L 187.8,366.3 L 187.2,366.3 L 186.4,366.5 L 185.8,366.8 L 185.4,367.1 L 185.0,367.8 L 184.8,368.7 L 184.4,370.0 L 183.8,371.6 L 183.1,373.3 L 182.6,374.7 L 182.3,376.2 L 181.9,377.4 L 181.9,377.4 L 181.7,378.9 L 181.5,380.6 L 181.4,382.1 L 181.3,383.1 L 181.3,383.1 L 163.7,275.5 L 204.4,219.4 L 225.9,215.5 Z" class="poly" fill="#6b9479" data-short="23N01W36P001M" data-ma="North" data-base-year="1999" data-end-year="2025" data-span="26" data-area="15,173" data-rms-wells="23N01W36P001M" data-sy="0.0648" data-sy-source="SVSim" data-avg-dgwe="-0.45" data-cum-stor="-11,405" data-avg-rate="-439" data-critdry-share="80%" data-crit-share="29%" data-bucket-wet="+38,788" data-bucket-an="+3,048" data-bucket-bn="-4,670" data-bucket-dry="-33,233" data-bucket-critical="-15,338" data-hold="439" data-project="2,000" data-project-name="Rock Creek recharge" data-coverage="+1,561" data-late=""><title>Click for 23N01W36P001M detail</title></path>
+<path d="M 104.7,180.2 L 101.1,219.4 L 47.4,242.3 L 47.1,242.1 L 45.8,241.0 L 45.2,240.5 L 44.8,240.3 L 43.3,238.9 L 42.9,238.6 L 42.5,238.1 L 42.2,237.5 L 41.8,237.1 L 41.5,236.7 L 41.0,236.2 L 40.2,235.4 L 39.9,235.1 L 39.5,234.9 L 39.2,234.7 L 38.9,234.4 L 38.2,233.8 L 37.8,233.5 L 37.3,233.2 L 36.8,232.9 L 36.5,232.6 L 35.8,231.0 L 35.7,230.6 L 35.6,230.1 L 35.5,229.5 L 35.5,229.4 L 35.5,229.0 L 35.6,228.5 L 35.7,228.0 L 36.0,227.5 L 36.4,227.0 L 36.7,226.6 L 37.0,226.3 L 37.3,226.0 L 37.7,225.7 L 38.0,225.4 L 38.4,225.3 L 39.5,224.6 L 39.8,224.3 L 40.1,224.1 L 40.4,223.7 L 40.7,223.4 L 41.4,222.8 L 42.1,222.0 L 42.8,221.2 L 43.1,220.6 L 43.2,220.4 L 43.6,219.6 L 43.8,218.9 L 44.1,217.5 L 44.3,216.3 L 44.7,214.4 L 44.8,213.8 L 45.0,213.3 L 45.3,212.8 L 46.3,210.8 L 46.6,210.1 L 46.9,209.3 L 47.1,208.8 L 47.2,208.2 L 47.4,207.3 L 47.4,206.3 L 47.4,205.3 L 47.3,204.7 L 47.2,204.3 L 47.2,203.9 L 47.0,203.4 L 46.8,203.1 L 46.8,203.0 L 46.7,202.9 L 46.7,202.9 L 46.5,202.5 L 46.2,202.0 L 45.8,201.5 L 44.7,200.5 L 44.3,200.2 L 43.8,199.7 L 42.9,199.2 L 42.3,198.9 L 41.8,198.5 L 41.1,198.2 L 40.8,198.0 L 40.7,197.9 L 40.3,197.7 L 38.9,196.8 L 38.7,196.5 L 38.6,196.4 L 37.8,195.5 L 37.2,194.6 L 36.7,193.8 L 35.8,192.8 L 35.4,192.3 L 34.8,191.7 L 34.5,191.3 L 34.2,190.9 L 33.8,190.3 L 33.1,189.3 L 32.7,188.6 L 32.2,187.7 L 31.8,186.8 L 31.6,186.4 L 31.5,186.1 L 31.2,185.2 L 31.0,184.8 L 30.7,183.9 L 30.6,183.2 L 30.0,183.0 L 30.5,182.4 L 30.5,181.5 L 30.6,181.1 L 30.7,180.6 L 30.8,180.2 L 31.7,178.4 L 32.4,177.3 L 32.8,176.8 L 33.4,176.0 L 33.8,175.5 L 34.2,174.9 L 34.7,174.4 L 35.1,173.8 L 35.9,172.8 L 36.3,172.4 L 37.0,171.8 L 37.4,171.6 L 37.7,171.3 L 38.3,171.0 L 38.9,170.7 L 39.5,170.3 L 39.7,170.1 L 39.9,170.0 L 40.1,169.9 L 40.4,169.8 L 41.3,169.0 L 41.8,168.6 L 42.7,167.6 L 42.8,167.4 L 43.4,166.6 L 43.8,166.1 L 44.5,165.0 L 45.1,164.1 L 45.4,163.5 L 45.7,163.0 L 46.0,162.5 L 46.5,161.2 L 46.6,160.9 L 47.3,159.0 L 47.4,158.6 L 48.0,157.0 L 48.2,156.4 L 48.2,156.4 L 48.5,155.2 L 48.6,154.8 L 48.7,152.5 L 48.7,152.0 L 48.6,151.5 L 48.4,149.7 L 48.4,149.3 L 48.1,148.5 L 47.9,147.5 L 47.7,146.1 L 47.6,144.9 L 47.6,144.5 L 47.7,143.8 L 47.9,143.0 L 48.1,142.2 L 48.8,141.0 L 50.1,139.4 L 50.4,139.0 L 51.7,137.7 L 52.8,136.5 L 52.9,136.4 L 104.7,180.2 Z" class="poly" fill="#a8c8b0" data-short="23N02W25C001M" data-ma="North" data-base-year="1999" data-end-year="2025" data-span="26" data-area="4,900" data-rms-wells="23N02W25C001M" data-sy="0.0845" data-sy-source="basin-mean fallback" data-avg-dgwe="+0.18" data-cum-stor="+1,904" data-avg-rate="+73" data-critdry-share="52%" data-crit-share="25%" data-bucket-wet="+9,790" data-bucket-an="+3,726" data-bucket-bn="-5,423" data-bucket-dry="-3,436" data-bucket-critical="-2,753" data-hold="0" data-project="0" data-project-name="" data-coverage="+0" data-late=""><title>Click for 23N02W25C001M detail</title></path>
+<path d="M 349.6,165.5 L 350.0,166.3 L 353.7,173.1 L 354.4,174.5 L 360.3,187.1 L 362.2,190.8 L 368.1,200.3 L 378.3,211.5 L 386.6,221.9 L 387.2,222.6 L 392.3,229.7 L 400.2,242.3 L 411.9,256.1 L 419.7,268.3 L 423.5,273.3 L 425.8,275.8 L 432.5,281.7 L 436.3,285.8 L 436.3,285.8 L 433.2,287.5 L 430.4,289.0 L 428.9,289.8 L 427.6,290.0 L 417.5,291.2 L 410.0,292.8 L 402.9,298.5 L 396.7,303.3 L 396.7,303.4 L 396.4,303.4 L 395.3,303.4 L 396.3,302.5 L 396.1,302.0 L 392.0,290.5 L 392.0,290.5 L 392.0,290.5 L 382.3,278.3 L 377.6,278.5 L 377.6,279.3 L 363.7,279.8 L 353.7,280.1 L 349.3,280.2 L 348.3,280.2 L 344.6,280.3 L 341.3,280.3 L 339.9,280.3 L 339.7,280.3 L 338.2,280.4 L 337.3,280.4 L 336.6,280.4 L 335.0,280.4 L 331.3,280.4 L 331.1,280.5 L 331.0,280.3 L 328.9,277.0 L 328.9,276.8 L 328.9,275.6 L 328.9,274.3 L 329.0,274.3 L 328.9,268.1 L 330.1,268.1 L 331.9,268.0 L 331.8,267.9 L 331.9,267.9 L 331.8,262.0 L 331.8,261.9 L 330.0,261.9 L 328.7,262.0 L 328.7,260.4 L 328.6,259.6 L 328.5,259.1 L 328.4,257.5 L 328.4,255.9 L 328.4,255.7 L 328.4,255.6 L 328.5,253.0 L 328.5,253.0 L 328.5,253.0 L 323.3,253.1 L 323.3,253.0 L 323.2,252.9 L 323.2,252.8 L 323.1,252.8 L 323.1,252.7 L 323.0,252.6 L 323.0,252.6 L 322.9,252.5 L 322.9,252.4 L 322.9,252.3 L 322.8,252.3 L 322.8,252.2 L 322.8,252.1 L 322.7,252.0 L 322.7,251.9 L 322.6,251.8 L 322.6,251.8 L 322.6,251.7 L 322.5,251.6 L 322.5,251.5 L 322.5,251.5 L 322.5,251.4 L 322.5,251.3 L 322.4,251.2 L 322.4,251.1 L 322.4,251.1 L 322.4,251.0 L 322.4,250.9 L 322.4,250.8 L 322.3,250.7 L 322.3,250.7 L 322.3,250.6 L 322.3,250.5 L 322.3,250.4 L 322.3,250.3 L 322.3,250.3 L 322.3,250.2 L 322.4,244.4 L 322.2,237.0 L 322.2,235.5 L 322.2,235.1 L 322.1,232.8 L 322.3,231.0 L 322.3,231.0 L 322.3,231.0 L 321.8,231.0 L 320.5,231.0 L 319.0,231.0 L 317.1,231.0 L 316.2,231.0 L 315.9,231.0 L 315.9,232.1 L 315.9,232.2 L 314.6,232.4 L 314.6,232.4 L 314.6,232.3 L 314.6,232.3 L 314.6,232.3 L 314.2,232.3 L 314.2,232.5 L 313.5,232.6 L 313.1,232.7 L 313.1,232.7 L 313.7,233.6 L 311.7,234.0 L 311.5,234.0 L 311.5,234.2 L 311.5,234.4 L 311.5,236.5 L 311.5,238.3 L 311.4,238.3 L 311.1,238.9 L 310.3,239.2 L 309.5,239.2 L 309.4,239.2 L 309.4,239.1 L 307.8,238.5 L 307.4,238.5 L 307.4,238.6 L 307.4,239.0 L 307.4,239.6 L 307.4,239.7 L 307.4,241.0 L 305.6,241.0 L 305.5,241.0 L 305.3,241.0 L 305.3,240.0 L 303.5,237.2 L 303.5,231.4 L 303.5,231.4 L 303.5,231.4 L 303.4,231.4 L 301.4,231.4 L 300.0,231.5 L 298.8,229.7 L 297.5,227.6 L 296.1,225.4 L 296.0,225.3 L 296.0,225.3 L 296.0,225.3 L 296.0,225.2 L 295.9,225.2 L 295.6,224.7 L 295.5,224.6 L 295.5,224.5 L 295.5,224.5 L 295.5,224.5 L 295.5,224.5 L 295.5,224.4 L 295.4,224.4 L 295.4,224.4 L 295.4,224.4 L 293.4,221.4 L 293.4,221.4 L 293.4,221.4 L 289.4,222.7 L 288.7,223.9 L 287.8,225.7 L 287.6,225.5 L 287.6,225.5 L 287.6,225.5 L 287.1,226.5 L 286.0,226.1 L 286.0,226.4 L 286.0,227.0 L 285.7,227.0 L 285.7,227.1 L 285.2,227.4 L 283.9,228.3 L 284.2,228.8 L 285.1,230.1 L 285.6,230.8 L 285.6,231.6 L 285.6,231.6 L 285.6,231.6 L 285.9,231.6 L 286.0,231.7 L 286.0,231.7 L 286.0,231.8 L 286.4,232.3 L 291.0,239.5 L 291.0,241.0 L 290.9,241.7 L 290.9,242.1 L 291.0,243.3 L 291.0,244.3 L 291.0,244.3 L 291.0,244.3 L 291.2,244.3 L 291.3,244.3 L 293.9,244.2 L 297.4,249.7 L 297.4,252.3 L 297.3,256.5 L 297.3,268.4 L 297.4,270.4 L 292.2,270.4 L 292.3,270.5 L 292.4,270.9 L 292.5,270.9 L 292.5,270.9 L 297.4,271.0 L 297.4,273.3 L 297.4,274.7 L 297.3,281.0 L 297.3,281.0 L 297.3,281.0 L 297.6,281.0 L 297.7,283.4 L 297.7,283.4 L 296.7,282.8 L 296.3,282.4 L 295.7,281.9 L 295.3,281.6 L 294.7,280.9 L 294.1,280.9 L 293.1,280.1 L 292.8,279.9 L 292.5,279.7 L 291.9,279.5 L 291.5,279.4 L 291.4,279.4 L 291.3,279.3 L 291.3,279.3 L 291.2,279.3 L 289.3,279.4 L 288.9,279.3 L 288.5,279.1 L 287.3,278.4 L 286.2,277.7 L 285.7,277.3 L 285.5,277.0 L 285.3,276.8 L 285.3,276.6 L 285.2,276.3 L 285.0,276.2 L 284.9,276.0 L 284.4,275.4 L 283.3,274.8 L 282.4,274.6 L 281.4,274.6 L 280.7,274.7 L 280.1,274.9 L 278.7,275.4 L 278.1,275.6 L 277.9,275.6 L 277.5,275.6 L 277.1,275.4 L 276.7,275.1 L 276.5,274.9 L 274.5,275.0 L 274.6,275.3 L 274.8,275.7 L 275.2,276.2 L 275.2,276.2 L 275.2,276.3 L 275.2,276.3 L 275.2,276.3 L 275.2,276.3 L 275.2,276.3 L 275.2,276.3 L 275.2,276.4 L 275.2,276.4 L 275.2,276.4 L 275.3,276.4 L 275.3,276.4 L 275.3,276.4 L 275.3,276.5 L 275.3,276.5 L 275.3,276.5 L 275.3,276.5 L 275.3,276.5 L 275.3,276.5 L 275.3,276.6 L 275.3,276.6 L 275.3,276.6 L 275.3,276.6 L 275.3,276.6 L 275.3,276.7 L 275.3,276.7 L 275.3,276.7 L 275.3,276.7 L 275.3,276.7 L 275.3,276.7 L 275.3,276.8 L 275.3,276.8 L 275.3,276.8 L 275.3,276.8 L 275.3,276.8 L 275.3,276.9 L 275.3,276.9 L 275.3,276.9 L 275.3,276.9 L 275.0,277.0 L 274.5,277.6 L 273.9,277.4 L 273.7,277.4 L 273.6,277.4 L 273.1,277.4 L 272.6,276.8 L 272.4,276.7 L 272.0,276.1 L 271.9,276.1 L 271.4,275.5 L 271.0,275.0 L 271.0,275.0 L 270.6,274.5 L 270.3,274.0 L 269.9,273.5 L 269.6,273.0 L 269.2,272.5 L 268.9,272.0 L 268.6,271.5 L 268.3,271.0 L 268.0,270.5 L 267.7,270.0 L 267.3,269.5 L 267.0,269.0 L 266.7,268.5 L 266.4,268.0 L 266.5,266.7 L 266.5,266.3 L 266.5,265.3 L 266.5,264.0 L 266.5,263.5 L 266.4,262.1 L 266.4,261.4 L 266.4,260.7 L 266.4,259.9 L 266.2,259.9 L 266.2,259.9 L 266.2,260.0 L 266.2,260.0 L 266.1,260.1 L 266.1,260.2 L 266.1,260.3 L 266.1,260.4 L 266.1,260.5 L 265.1,260.5 L 264.1,260.5 L 263.1,260.5 L 261.8,260.5 L 261.5,260.1 L 260.8,259.1 L 260.4,259.1 L 259.9,259.1 L 259.7,259.1 L 259.4,259.1 L 258.9,259.1 L 258.5,259.1 L 258.0,259.1 L 257.5,259.1 L 257.5,258.1 L 257.5,258.0 L 257.5,257.7 L 257.5,256.8 L 256.9,256.8 L 256.3,256.8 L 256.2,256.8 L 255.5,256.8 L 255.2,256.8 L 254.8,256.8 L 254.1,256.8 L 254.1,256.2 L 251.9,256.1 L 251.9,256.4 L 251.8,256.4 L 251.8,256.9 L 251.1,256.9 L 250.4,257.1 L 250.7,257.2 L 250.9,257.4 L 251.7,258.4 L 260.2,269.0 L 260.7,269.6 L 265.6,275.4 L 267.8,278.1 L 267.9,278.2 L 269.8,280.5 L 269.8,280.5 L 269.8,280.5 L 269.2,281.3 L 268.7,282.0 L 268.6,282.7 L 267.5,284.0 L 266.5,286.0 L 266.4,286.1 L 265.7,286.7 L 265.4,286.9 L 265.1,287.2 L 265.0,287.4 L 225.9,215.5 L 247.5,186.3 L 349.6,165.5 Z" class="poly" fill="#a8c8b0" data-short="23N01E29P002M" data-ma="North" data-base-year="1999" data-end-year="2025" data-span="26" data-area="14,798" data-rms-wells="23N01E29P002M" data-sy="0.0629" data-sy-source="SVSim" data-avg-dgwe="-0.67" data-cum-stor="-16,196" data-avg-rate="-623" data-critdry-share="82%" data-crit-share="40%" data-bucket-wet="+21,642" data-bucket-an="+1,350" data-bucket-bn="-884" data-bucket-dry="-19,501" data-bucket-critical="-18,803" data-hold="623" data-project="2,000" data-project-name="Rock Creek recharge" data-coverage="+1,377" data-late=""><title>Click for 23N01E29P002M detail</title></path>
+<path d="M 208.8,142.3 L 189.5,149.2 L 149.4,116.2 L 145.4,107.7 L 154.3,107.8 L 179.6,108.0 L 204.1,108.1 L 220.3,108.1 L 208.8,142.3 Z" class="poly" fill="#f0d9a8" data-short="23N01W03H004M" data-ma="North" data-base-year="2012" data-end-year="2025" data-span="13" data-area="1,996" data-rms-wells="23N01W03H004M" data-sy="0.1098" data-sy-source="SVSim" data-avg-dgwe="-0.34" data-cum-stor="-964" data-avg-rate="-74" data-critdry-share="58%" data-crit-share="45%" data-bucket-wet="+1,705" data-bucket-an="+535" data-bucket-bn="-1,249" data-bucket-dry="-662" data-bucket-critical="-1,293" data-hold="74" data-project="0" data-project-name="" data-coverage="-74" data-late="1"><title>Click for 23N01W03H004M detail</title></path>
+<path d="M 149.4,116.2 L 135.4,179.3 L 104.7,180.2 L 52.9,136.4 L 53.3,136.0 L 53.6,135.7 L 53.7,135.7 L 54.7,134.6 L 55.1,134.2 L 55.4,133.9 L 56.4,132.8 L 56.6,132.6 L 57.4,131.6 L 57.8,131.1 L 58.2,130.6 L 58.7,129.9 L 59.1,129.2 L 60.9,126.5 L 61.1,126.1 L 61.4,125.5 L 61.7,125.0 L 61.8,124.8 L 62.1,124.0 L 62.4,123.6 L 63.0,122.7 L 63.0,122.5 L 63.5,121.3 L 63.7,120.6 L 64.0,120.0 L 64.8,118.9 L 66.3,117.1 L 67.4,115.6 L 67.8,114.9 L 68.1,114.2 L 68.1,113.8 L 68.1,113.1 L 68.0,112.1 L 67.9,111.6 L 67.8,111.1 L 67.6,110.7 L 67.3,110.1 L 66.5,109.1 L 66.3,109.0 L 65.5,108.5 L 65.5,108.5 L 64.3,108.0 L 62.9,107.4 L 62.8,107.4 L 62.3,107.2 L 62.3,107.2 L 62.9,107.2 L 88.3,107.4 L 88.5,107.7 L 89.2,107.7 L 119.7,107.6 L 120.7,107.6 L 120.7,107.5 L 129.6,107.6 L 145.4,107.7 L 149.4,116.2 Z" class="poly" fill="#f0d9a8" data-short="23N01W09E001M" data-ma="North" data-base-year="1999" data-end-year="2025" data-span="26" data-area="5,275" data-rms-wells="23N01W09E001M" data-sy="0.0821" data-sy-source="SVSim" data-avg-dgwe="-0.11" data-cum-stor="-1,213" data-avg-rate="-47" data-critdry-share="70%" data-crit-share="14%" data-bucket-wet="+15,071" data-bucket-an="+2,144" data-bucket-bn="-4,526" data-bucket-dry="-11,563" data-bucket-critical="-2,339" data-hold="47" data-project="0" data-project-name="" data-coverage="-47" data-late=""><title>Click for 23N01W09E001M detail</title></path>
+<path d="M 135.4,179.3 L 149.4,116.2 L 189.5,149.2 L 163.5,182.4 L 151.4,184.1 L 135.4,179.3 Z" class="poly" fill="#f0d9a8" data-short="23N01W10M001M" data-ma="North" data-base-year="2002" data-end-year="2025" data-span="23" data-area="2,110" data-rms-wells="23N01W10M001M" data-sy="0.0797" data-sy-source="SVSim" data-avg-dgwe="-0.10" data-cum-stor="-384" data-avg-rate="-17" data-critdry-share="70%" data-crit-share="35%" data-bucket-wet="+4,607" data-bucket-an="+771" data-bucket-bn="-883" data-bucket-dry="-2,561" data-bucket-critical="-2,319" data-hold="17" data-project="0" data-project-name="" data-coverage="-17" data-late="1"><title>Click for 23N01W10M001M detail</title></path>
+<path d="M 208.8,142.3 L 247.5,186.3 L 225.9,215.5 L 204.4,219.4 L 163.5,182.4 L 189.5,149.2 L 208.8,142.3 Z" class="poly" fill="#f0d9a8" data-short="23N01W14R002M" data-ma="North" data-base-year="1999" data-end-year="2025" data-span="26" data-area="3,865" data-rms-wells="23N01W14R002M" data-sy="0.0594" data-sy-source="SVSim" data-avg-dgwe="-0.57" data-cum-stor="-3,421" data-avg-rate="-132" data-critdry-share="79%" data-crit-share="48%" data-bucket-wet="+2,614" data-bucket-an="+719" data-bucket-bn="-555" data-bucket-dry="-2,342" data-bucket-critical="-3,857" data-hold="132" data-project="0" data-project-name="" data-coverage="-132" data-late=""><title>Click for 23N01W14R002M detail</title></path>
+<path d="M 163.5,182.4 L 204.4,219.4 L 163.7,275.5 L 148.3,258.8 L 151.4,184.1 L 163.5,182.4 Z" class="poly" fill="#f0d9a8" data-short="23N01W27L001M" data-ma="North" data-base-year="1999" data-end-year="2025" data-span="26" data-area="3,166" data-rms-wells="23N01W27L001M" data-sy="0.0675" data-sy-source="SVSim" data-avg-dgwe="-0.18" data-cum-stor="-983" data-avg-rate="-38" data-critdry-share="73%" data-crit-share="29%" data-bucket-wet="+8,306" data-bucket-an="+1,146" data-bucket-bn="-1,955" data-bucket-dry="-5,552" data-bucket-critical="-2,928" data-hold="38" data-project="0" data-project-name="" data-coverage="-38" data-late=""><title>Click for 23N01W27L001M detail</title></path>
+<path d="M 148.3,258.8 L 114.0,243.1 L 101.1,219.4 L 104.7,180.2 L 135.4,179.3 L 151.4,184.1 L 148.3,258.8 Z" class="poly" fill="#a8c8b0" data-short="23N01W28M004M" data-ma="North" data-base-year="2009" data-end-year="2025" data-span="16" data-area="3,227" data-rms-wells="23N01W28M004M" data-sy="0.0950" data-sy-source="SVSim" data-avg-dgwe="+0.11" data-cum-stor="+545" data-avg-rate="+34" data-critdry-share="59%" data-crit-share="32%" data-bucket-wet="+8,898" data-bucket-an="+1,198" data-bucket-bn="-4,084" data-bucket-dry="-2,701" data-bucket-critical="-2,765" data-hold="0" data-project="0" data-project-name="" data-coverage="+0" data-late="1"><title>Click for 23N01W28M004M detail</title></path>
+<path d="M 101.1,219.4 L 114.0,243.1 L 89.0,267.0 L 89.0,266.8 L 89.5,262.7 L 90.3,258.3 L 90.3,258.0 L 90.5,254.9 L 89.1,252.5 L 87.0,251.0 L 83.8,251.0 L 79.6,251.9 L 76.0,253.6 L 75.5,253.9 L 73.7,255.2 L 74.0,257.5 L 74.4,258.9 L 74.6,260.4 L 74.6,260.5 L 73.4,262.1 L 71.4,263.3 L 69.8,264.0 L 68.4,263.5 L 66.5,262.4 L 65.0,260.4 L 62.5,257.6 L 60.5,255.6 L 60.3,255.3 L 60.0,254.7 L 59.9,254.4 L 59.2,253.2 L 59.0,252.8 L 58.6,251.8 L 58.3,251.4 L 58.1,250.8 L 58.0,250.4 L 57.7,249.9 L 57.4,249.1 L 57.2,248.7 L 57.0,248.3 L 56.5,246.7 L 56.3,246.2 L 56.0,245.9 L 55.9,245.7 L 55.7,245.7 L 54.9,245.5 L 54.6,245.4 L 54.4,245.3 L 53.8,245.4 L 53.4,245.4 L 52.2,245.5 L 51.9,245.4 L 51.2,245.1 L 51.1,245.1 L 50.6,244.8 L 49.3,243.8 L 49.1,243.7 L 48.6,243.2 L 48.0,242.7 L 47.4,242.3 L 101.1,219.4 Z" class="poly" fill="#a8c8b0" data-short="23N01W31M004M" data-ma="North" data-base-year="2009" data-end-year="2024" data-span="15" data-area="1,575" data-rms-wells="23N01W31M004M" data-sy="0.0864" data-sy-source="SVSim" data-avg-dgwe="+0.05" data-cum-stor="+104" data-avg-rate="+7" data-critdry-share="55%" data-crit-share="21%" data-bucket-wet="+2,368" data-bucket-an="+75" data-bucket-bn="-1,064" data-bucket-dry="-926" data-bucket-critical="-349" data-hold="0" data-project="0" data-project-name="" data-coverage="+0" data-late="1"><title>Click for 23N01W31M004M detail</title></path>
+<path d="M 297.3,258.8 L 297.3,256.5 L 297.4,252.3 L 297.4,249.7 L 293.9,244.2 L 291.3,244.3 L 291.2,244.3 L 291.0,244.3 L 291.0,244.3 L 291.0,244.3 L 291.0,243.3 L 290.9,242.1 L 290.9,241.7 L 291.0,241.0 L 291.0,239.5 L 286.4,232.3 L 286.0,231.8 L 286.0,231.7 L 286.0,231.7 L 285.9,231.6 L 285.6,231.6 L 285.6,231.6 L 285.6,231.6 L 285.6,230.8 L 285.1,230.1 L 284.2,228.8 L 283.9,228.3 L 285.2,227.4 L 285.7,227.1 L 285.7,227.0 L 286.0,227.0 L 286.0,226.4 L 286.0,226.1 L 287.1,226.5 L 287.6,225.5 L 287.6,225.5 L 287.6,225.5 L 287.8,225.7 L 288.7,223.9 L 289.4,222.7 L 293.4,221.4 L 293.4,221.4 L 293.4,221.4 L 295.4,224.4 L 295.4,224.4 L 295.4,224.4 L 295.5,224.4 L 295.5,224.5 L 295.5,224.5 L 295.5,224.5 L 295.5,224.5 L 295.5,224.6 L 295.6,224.7 L 295.9,225.2 L 296.0,225.2 L 296.0,225.3 L 296.0,225.3 L 296.0,225.3 L 296.1,225.4 L 297.5,227.6 L 298.8,229.7 L 300.0,231.5 L 301.4,231.4 L 303.4,231.4 L 303.5,231.4 L 303.5,231.4 L 303.5,231.4 L 303.5,237.2 L 305.3,240.0 L 305.3,241.0 L 305.5,241.0 L 305.6,241.0 L 307.4,241.0 L 307.4,239.7 L 307.4,239.6 L 307.4,239.0 L 307.4,238.6 L 307.4,238.5 L 307.8,238.5 L 309.4,239.1 L 309.4,239.2 L 309.5,239.2 L 310.3,239.2 L 311.1,238.9 L 311.4,238.3 L 311.5,238.3 L 311.5,236.5 L 311.5,234.4 L 311.5,234.2 L 311.5,234.0 L 311.7,234.0 L 313.7,233.6 L 313.1,232.7 L 313.1,232.7 L 313.5,232.6 L 314.2,232.5 L 314.2,232.3 L 314.6,232.3 L 314.6,232.3 L 314.6,232.3 L 314.6,232.4 L 314.6,232.4 L 315.9,232.2 L 315.9,232.1 L 315.9,231.0 L 316.2,231.0 L 317.1,231.0 L 319.0,231.0 L 320.5,231.0 L 321.8,231.0 L 322.3,231.0 L 322.3,231.0 L 322.3,231.0 L 322.1,232.8 L 322.2,235.1 L 322.2,235.5 L 322.2,237.0 L 322.4,244.4 L 322.3,250.2 L 322.3,250.3 L 322.3,250.3 L 322.3,250.4 L 322.3,250.5 L 322.3,250.6 L 322.3,250.7 L 322.3,250.7 L 322.4,250.8 L 322.4,250.9 L 322.4,251.0 L 322.4,251.1 L 322.4,251.1 L 322.4,251.2 L 322.5,251.3 L 322.5,251.4 L 322.5,251.5 L 322.5,251.5 L 322.5,251.6 L 322.6,251.7 L 322.6,251.8 L 322.6,251.8 L 322.7,251.9 L 322.7,252.0 L 322.8,252.1 L 322.8,252.2 L 322.8,252.3 L 322.9,252.3 L 322.9,252.4 L 322.9,252.5 L 323.0,252.6 L 323.0,252.6 L 323.1,252.7 L 323.1,252.8 L 323.2,252.8 L 323.2,252.9 L 323.3,253.0 L 323.3,253.1 L 328.5,253.0 L 328.5,253.0 L 328.5,253.0 L 328.4,255.6 L 328.4,255.7 L 328.4,255.9 L 328.4,257.5 L 328.5,259.1 L 328.6,259.6 L 328.7,260.4 L 328.7,262.0 L 330.0,261.9 L 331.8,261.9 L 331.8,262.0 L 331.9,267.2 L 297.3,258.8 Z M 378.4,278.4 L 382.3,278.3 L 383.4,279.7 L 378.4,278.4 Z M 426.6,290.1 L 427.6,290.0 L 428.9,289.8 L 430.4,289.0 L 433.2,287.5 L 436.3,285.8 L 445.8,294.8 L 426.6,290.1 Z" class="poly" fill="#6b9479" data-short="23N01E33A001M" data-ma="Chico" data-base-year="2003" data-end-year="2025" data-span="22" data-area="1,092" data-rms-wells="23N01E33A001M" data-sy="0.1124" data-sy-source="SVSim" data-avg-dgwe="-0.67" data-cum-stor="-1,799" data-avg-rate="-82" data-critdry-share="81%" data-crit-share="63%" data-bucket-wet="+828" data-bucket-an="-410" data-bucket-bn="+712" data-bucket-dry="-516" data-bucket-critical="-2,413" data-hold="82" data-project="2,000" data-project-name="Recharge project" data-coverage="+1,918" data-late="1"><title>Click for 23N01E33A001M detail</title></path>
+<path d="M 257.4,306.4 L 256.9,306.4 L 256.9,306.4 L 256.9,306.4 L 256.9,306.2 L 257.4,306.4 Z M 501.2,401.1 L 496.9,403.9 L 496.9,403.9 L 496.9,403.9 L 496.9,403.9 L 496.8,403.9 L 496.8,403.9 L 496.8,403.9 L 496.8,403.9 L 496.8,403.9 L 496.8,404.0 L 496.8,404.0 L 496.8,404.0 L 496.8,404.0 L 496.8,404.0 L 496.8,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.1 L 496.6,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.3,404.1 L 496.3,404.1 L 496.3,404.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.2 L 487.8,407.2 L 487.8,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.2,407.4 L 487.2,407.4 L 487.2,407.4 L 487.2,407.4 L 487.2,407.4 L 487.2,407.4 L 482.5,410.0 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.0,414.5 L 474.0,414.5 L 474.0,414.5 L 474.0,414.5 L 474.0,414.5 L 474.0,414.5 L 474.0,414.5 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.4,414.7 L 472.5,414.9 L 462.4,416.2 L 459.7,416.5 L 457.9,416.7 L 441.8,418.8 L 437.4,419.4 L 430.3,420.3 L 429.8,420.3 L 429.3,420.8 L 427.2,421.0 L 424.5,420.9 L 419.2,419.9 L 418.9,420.1 L 418.6,420.3 L 417.6,422.7 L 417.3,423.9 L 418.4,427.9 L 418.5,429.3 L 418.4,431.2 L 416.5,433.2 L 417.6,434.5 L 417.8,434.8 L 421.6,439.2 L 421.8,439.6 L 423.5,441.6 L 423.8,441.9 L 425.5,443.8 L 428.6,447.5 L 428.8,447.7 L 433.3,453.0 L 433.9,453.6 L 434.1,453.9 L 437.2,457.4 L 439.2,459.7 L 438.4,460.4 L 438.2,460.5 L 435.8,463.0 L 430.3,468.5 L 430.3,468.4 L 430.2,468.3 L 430.1,468.2 L 430.1,468.2 L 429.8,467.8 L 429.7,467.6 L 429.6,467.6 L 429.6,467.5 L 429.5,467.5 L 429.5,467.4 L 429.5,467.4 L 429.4,467.4 L 429.4,467.3 L 429.3,467.3 L 429.3,467.2 L 429.2,467.2 L 429.2,467.1 L 429.2,467.1 L 429.1,467.1 L 428.6,466.6 L 428.6,466.6 L 428.5,466.6 L 428.5,466.6 L 428.5,466.6 L 428.5,466.6 L 428.5,466.6 L 428.5,466.6 L 428.5,466.6 L 428.5,466.5 L 428.5,466.5 L 428.5,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.3,466.5 L 428.3,466.5 L 428.3,466.5 L 427.7,466.4 L 427.2,466.4 L 426.5,466.4 L 426.4,466.4 L 426.4,466.4 L 426.4,466.4 L 426.3,466.4 L 426.3,466.4 L 426.3,466.4 L 426.2,466.4 L 426.2,466.4 L 426.2,466.3 L 426.1,466.3 L 426.1,466.3 L 426.1,466.3 L 426.0,466.3 L 426.0,466.3 L 426.0,466.3 L 425.9,466.3 L 425.9,466.3 L 425.9,466.3 L 425.8,466.3 L 425.8,466.2 L 425.8,466.2 L 425.7,466.2 L 425.7,466.2 L 425.7,466.2 L 425.7,466.2 L 425.6,466.2 L 425.6,466.1 L 425.4,466.0 L 423.2,464.9 L 421.7,464.0 L 421.4,463.8 L 420.1,463.2 L 418.0,462.0 L 416.9,461.6 L 416.8,461.4 L 416.7,461.3 L 416.0,461.1 L 415.9,461.0 L 415.4,460.9 L 415.6,460.6 L 415.6,458.9 L 416.5,454.1 L 416.5,454.0 L 416.6,452.4 L 416.1,451.7 L 415.2,450.9 L 414.8,449.3 L 414.7,448.4 L 414.7,448.3 L 414.7,447.3 L 415.2,444.5 L 415.8,442.7 L 415.8,442.1 L 415.7,441.7 L 415.4,441.3 L 414.9,440.4 L 414.7,439.5 L 414.5,438.6 L 412.5,438.6 L 411.1,438.5 L 408.6,438.5 L 406.6,438.5 L 400.3,438.4 L 395.6,438.3 L 395.6,435.7 L 395.6,429.0 L 395.6,428.9 L 395.3,428.9 L 395.2,428.9 L 395.2,428.9 L 395.5,426.7 L 395.5,426.5 L 395.7,425.2 L 395.7,425.2 L 395.9,423.8 L 396.3,420.6 L 396.3,420.5 L 396.4,419.3 L 395.3,420.1 L 394.1,420.8 L 393.0,421.5 L 392.4,421.9 L 391.8,422.3 L 390.9,422.9 L 389.9,423.6 L 388.9,424.2 L 387.9,424.9 L 387.3,425.3 L 386.8,425.6 L 386.2,426.0 L 385.6,426.4 L 384.9,426.9 L 384.8,427.0 L 384.6,427.1 L 378.6,415.8 L 376.6,416.8 L 375.6,417.4 L 375.1,417.8 L 374.4,418.1 L 372.9,418.4 L 372.0,418.9 L 371.8,419.0 L 370.8,419.5 L 369.8,419.9 L 369.5,420.1 L 368.7,420.5 L 368.5,419.9 L 368.3,419.5 L 368.1,419.1 L 367.9,418.6 L 367.8,418.2 L 367.7,418.0 L 367.6,417.7 L 367.4,417.3 L 367.3,416.9 L 367.2,416.9 L 367.0,416.4 L 366.9,416.0 L 366.7,415.6 L 366.6,415.2 L 365.9,415.8 L 365.3,416.3 L 363.9,417.4 L 363.9,417.3 L 362.8,418.2 L 361.5,419.3 L 361.2,419.5 L 360.6,420.1 L 359.8,420.7 L 358.5,421.9 L 358.2,421.7 L 358.2,421.7 L 358.2,421.7 L 357.5,420.8 L 357.4,420.7 L 356.6,419.4 L 356.4,419.2 L 355.9,418.5 L 355.3,417.7 L 354.4,416.5 L 351.7,413.2 L 351.5,413.2 L 349.9,411.4 L 350.3,411.2 L 350.4,410.8 L 350.4,410.7 L 350.6,410.5 L 350.9,410.3 L 351.0,410.3 L 351.1,410.3 L 351.2,410.3 L 351.3,410.2 L 351.4,410.2 L 351.8,410.2 L 352.1,410.2 L 352.4,410.1 L 352.7,410.1 L 352.9,410.2 L 353.2,410.1 L 353.4,410.0 L 353.6,409.9 L 353.8,409.8 L 354.2,409.8 L 354.2,409.8 L 354.3,409.8 L 354.3,409.6 L 354.5,409.5 L 354.5,409.5 L 354.5,409.4 L 355.0,409.0 L 355.1,408.7 L 355.0,408.4 L 355.0,408.1 L 355.1,407.9 L 355.0,407.8 L 355.0,407.8 L 355.0,407.8 L 355.1,407.4 L 355.1,407.3 L 355.5,406.8 L 355.7,406.6 L 355.9,406.4 L 356.3,405.8 L 356.4,405.5 L 356.9,405.5 L 357.2,405.1 L 357.3,404.5 L 357.6,404.1 L 354.9,404.1 L 353.8,404.0 L 353.5,404.1 L 350.7,404.2 L 344.6,404.6 L 344.0,404.6 L 343.7,404.6 L 343.5,404.4 L 341.3,401.7 L 338.6,398.5 L 338.3,398.5 L 333.3,393.2 L 333.3,393.2 L 333.3,393.2 L 333.6,393.2 L 332.8,392.4 L 331.5,390.9 L 331.5,391.1 L 331.4,391.1 L 331.4,391.1 L 331.0,392.3 L 328.9,399.1 L 328.9,399.3 L 328.5,399.3 L 325.7,398.4 L 324.9,398.2 L 324.3,398.6 L 324.2,398.7 L 324.1,399.0 L 324.0,399.2 L 323.8,399.4 L 323.8,399.4 L 323.6,399.7 L 323.5,399.7 L 323.0,399.9 L 322.8,400.1 L 322.5,400.3 L 322.2,400.2 L 321.7,400.2 L 322.1,398.9 L 322.2,398.5 L 322.4,398.1 L 322.5,397.8 L 322.6,397.5 L 322.4,397.4 L 319.8,396.6 L 318.6,396.3 L 318.7,395.8 L 318.7,395.8 L 318.7,395.8 L 318.8,395.6 L 317.2,395.1 L 316.6,394.9 L 316.4,395.6 L 316.5,395.6 L 316.0,397.0 L 315.2,399.2 L 314.7,400.8 L 314.5,401.3 L 314.5,401.3 L 311.9,400.5 L 311.3,400.2 L 309.8,399.7 L 310.0,399.1 L 310.2,398.5 L 310.3,398.2 L 310.4,398.0 L 310.6,397.4 L 310.7,396.9 L 310.9,396.2 L 311.3,395.1 L 311.8,393.4 L 312.0,392.9 L 312.5,392.8 L 312.8,392.7 L 313.7,392.5 L 313.9,392.5 L 314.1,392.5 L 314.4,392.4 L 314.8,392.4 L 315.6,392.2 L 315.9,392.2 L 315.8,391.9 L 315.8,391.6 L 316.5,391.5 L 316.4,390.9 L 316.2,389.6 L 316.2,389.6 L 316.2,389.6 L 316.1,388.4 L 316.0,388.2 L 316.0,387.9 L 315.8,386.9 L 315.5,384.7 L 314.8,384.8 L 314.1,384.9 L 314.1,384.9 L 314.1,384.9 L 314.0,384.5 L 314.0,384.1 L 313.9,383.8 L 313.9,383.4 L 313.8,383.0 L 313.8,382.6 L 313.6,381.7 L 312.2,381.9 L 309.4,382.3 L 307.3,382.6 L 306.5,382.7 L 304.0,383.1 L 303.7,383.2 L 303.8,384.0 L 303.9,384.8 L 302.7,385.0 L 302.0,385.1 L 301.3,385.2 L 301.4,385.5 L 301.4,385.8 L 301.5,386.3 L 301.6,386.8 L 301.2,386.9 L 300.5,387.0 L 300.2,387.0 L 299.8,387.1 L 299.4,387.1 L 299.1,387.2 L 298.8,387.2 L 298.7,386.7 L 298.6,386.3 L 298.6,385.9 L 298.5,385.6 L 298.5,385.3 L 298.4,385.0 L 298.4,384.6 L 298.4,384.3 L 298.3,384.0 L 295.3,384.3 L 294.0,384.5 L 294.0,384.4 L 293.8,383.1 L 293.4,381.0 L 293.4,380.9 L 292.8,381.0 L 292.0,380.7 L 292.0,380.7 L 290.6,380.8 L 290.6,380.8 L 290.6,380.8 L 290.5,380.8 L 290.5,380.8 L 290.5,380.8 L 290.4,380.8 L 290.4,380.7 L 290.3,380.7 L 290.3,380.7 L 290.2,380.7 L 290.2,380.7 L 290.1,380.7 L 290.1,380.6 L 290.0,380.6 L 290.0,380.6 L 290.0,380.6 L 289.9,380.6 L 289.9,380.6 L 289.9,380.6 L 289.9,380.6 L 289.8,380.6 L 289.8,380.6 L 289.8,380.6 L 289.7,380.6 L 289.6,380.7 L 289.6,380.7 L 289.5,380.7 L 289.5,380.7 L 289.5,380.8 L 289.4,380.8 L 289.3,380.8 L 289.3,380.8 L 289.2,380.9 L 289.1,380.9 L 289.1,380.9 L 289.1,380.9 L 289.1,380.9 L 289.0,380.9 L 289.0,380.9 L 288.9,380.9 L 288.7,380.7 L 288.7,380.7 L 288.7,380.7 L 288.6,380.6 L 288.4,380.5 L 288.3,380.4 L 288.3,380.4 L 288.1,380.2 L 288.0,380.2 L 287.8,380.0 L 287.4,379.8 L 287.3,379.8 L 287.3,379.8 L 287.2,379.8 L 287.2,379.7 L 287.0,379.6 L 286.3,379.1 L 286.2,379.1 L 285.5,378.6 L 285.3,378.5 L 285.3,378.5 L 285.2,378.5 L 285.1,378.5 L 284.9,378.5 L 284.9,378.5 L 284.8,378.5 L 284.6,378.5 L 284.5,378.5 L 284.5,378.5 L 284.3,378.5 L 284.3,378.4 L 284.2,378.3 L 283.7,380.1 L 282.0,379.6 L 282.8,377.2 L 282.8,377.2 L 282.7,377.1 L 282.7,377.0 L 282.6,376.9 L 282.6,376.8 L 282.6,376.8 L 282.5,376.6 L 282.4,376.5 L 282.2,376.4 L 281.9,376.3 L 281.6,376.1 L 281.6,376.1 L 281.5,376.0 L 281.4,376.0 L 281.4,375.9 L 281.3,375.9 L 281.2,375.9 L 281.2,375.8 L 281.2,375.8 L 281.0,375.8 L 280.9,375.8 L 280.8,375.8 L 280.7,375.8 L 280.6,375.7 L 280.6,375.8 L 280.5,375.8 L 280.3,375.7 L 280.1,375.6 L 280.0,375.5 L 279.9,375.5 L 279.8,375.3 L 279.7,375.2 L 279.6,375.1 L 279.5,375.0 L 279.3,374.9 L 279.2,374.8 L 279.1,374.7 L 279.1,374.7 L 279.1,374.7 L 279.1,374.7 L 279.0,374.7 L 278.8,374.6 L 278.7,374.6 L 278.7,374.6 L 278.7,374.6 L 278.6,374.6 L 278.6,374.2 L 278.6,374.0 L 278.5,373.2 L 278.5,372.3 L 278.5,371.7 L 278.4,371.2 L 278.4,370.6 L 278.4,370.1 L 278.4,370.1 L 278.4,370.1 L 278.4,369.5 L 278.4,369.2 L 278.3,368.8 L 278.3,368.4 L 278.3,368.0 L 278.4,367.0 L 278.4,365.6 L 278.4,364.0 L 278.4,362.5 L 278.4,362.3 L 278.4,362.3 L 278.4,362.2 L 278.4,362.2 L 278.5,362.2 L 278.5,361.7 L 278.5,361.3 L 278.5,360.9 L 278.5,356.9 L 278.5,356.9 L 278.5,356.1 L 276.6,355.0 L 275.9,354.4 L 275.9,354.4 L 275.9,354.3 L 275.9,354.3 L 276.0,354.3 L 276.1,354.2 L 276.1,354.1 L 276.1,352.4 L 276.1,352.3 L 276.1,352.3 L 276.1,352.2 L 276.1,352.2 L 276.1,352.2 L 276.2,352.1 L 276.2,352.1 L 276.2,352.1 L 276.2,352.1 L 276.2,352.0 L 276.2,352.0 L 276.2,352.0 L 276.2,351.9 L 276.2,351.9 L 276.2,351.9 L 276.2,351.9 L 276.3,351.7 L 276.3,351.7 L 276.3,351.7 L 276.3,351.6 L 276.3,351.6 L 275.7,351.6 L 273.2,351.6 L 271.9,351.6 L 271.9,352.2 L 270.1,352.2 L 270.1,351.6 L 270.1,349.8 L 270.1,349.6 L 269.7,349.6 L 269.8,348.7 L 267.0,348.7 L 267.0,348.6 L 266.8,348.6 L 263.9,348.6 L 262.9,348.6 L 261.8,348.6 L 260.5,348.7 L 259.5,348.7 L 259.5,348.5 L 259.5,347.6 L 259.4,346.2 L 259.4,345.5 L 259.4,341.9 L 256.3,340.1 L 255.1,339.5 L 255.1,340.3 L 255.1,341.5 L 254.3,341.5 L 254.3,340.3 L 254.2,339.0 L 251.2,337.4 L 251.2,338.2 L 251.2,339.2 L 250.1,339.2 L 250.1,338.2 L 250.1,337.3 L 250.0,337.1 L 249.9,337.0 L 249.3,336.6 L 248.8,336.4 L 248.4,336.3 L 247.9,336.1 L 241.4,334.5 L 240.9,334.5 L 240.8,334.5 L 240.9,334.1 L 241.3,332.1 L 242.0,328.7 L 242.1,328.5 L 242.2,328.1 L 249.7,332.3 L 250.4,332.7 L 250.4,332.7 L 253.0,334.1 L 254.2,334.8 L 255.6,335.6 L 256.1,335.9 L 256.5,336.1 L 256.8,336.3 L 257.1,336.5 L 258.3,337.1 L 259.7,337.9 L 261.1,338.6 L 261.1,338.5 L 261.8,338.9 L 262.5,339.3 L 263.2,339.7 L 263.8,340.0 L 266.6,341.5 L 267.1,341.8 L 267.7,342.1 L 268.4,342.6 L 269.3,343.0 L 270.0,343.5 L 272.0,344.6 L 273.7,345.5 L 274.2,345.8 L 274.7,346.0 L 275.8,345.1 L 276.0,345.0 L 276.1,345.0 L 277.2,344.1 L 278.4,343.1 L 278.4,343.1 L 278.4,343.1 L 278.0,342.6 L 277.5,341.9 L 277.4,341.8 L 277.0,341.2 L 276.6,340.8 L 276.5,340.7 L 277.8,339.7 L 279.0,338.7 L 277.1,336.3 L 277.2,336.2 L 279.6,334.3 L 280.4,333.7 L 282.0,332.5 L 282.0,332.5 L 281.5,331.9 L 281.1,331.4 L 280.8,331.0 L 280.4,330.4 L 280.1,330.0 L 278.6,328.1 L 278.2,327.6 L 277.4,326.5 L 276.3,325.1 L 275.1,326.0 L 274.5,326.5 L 274.0,326.9 L 273.2,327.5 L 272.6,327.9 L 272.3,327.4 L 271.9,326.9 L 271.6,326.6 L 271.4,326.3 L 271.2,326.1 L 271.2,326.0 L 271.1,325.9 L 270.5,325.2 L 270.4,325.0 L 271.2,325.0 L 271.7,325.0 L 274.3,325.0 L 275.4,324.9 L 275.4,325.0 L 276.9,325.0 L 273.6,320.6 L 272.3,319.0 L 271.0,317.3 L 271.1,317.2 L 271.8,316.7 L 272.4,316.3 L 273.0,315.8 L 273.6,315.3 L 274.2,314.9 L 274.9,314.4 L 275.3,314.0 L 275.9,313.6 L 501.2,401.1 Z" class="poly" fill="#cb7740" data-short="22N01E20K001M" data-ma="Chico" data-base-year="2000" data-end-year="2022" data-span="22" data-area="12,799" data-rms-wells="22N01E20K001M" data-sy="0.0936" data-sy-source="SVSim" data-avg-dgwe="-0.98" data-cum-stor="-25,756" data-avg-rate="-1,171" data-critdry-share="92%" data-crit-share="53%" data-bucket-wet="+20,784" data-bucket-an="+3,833" data-bucket-bn="+7,367" data-bucket-dry="-24,342" data-bucket-critical="-33,399" data-hold="1,171" data-project="0" data-project-name="" data-coverage="-1,171" data-late="1"><title>Click for 22N01E20K001M detail</title></path>
+<path d="M 256.9,306.2 L 256.9,306.0 L 256.9,305.6 L 256.9,305.2 L 256.9,304.8 L 256.9,304.5 L 256.9,304.1 L 256.9,303.7 L 256.8,300.0 L 256.9,300.0 L 257.9,300.1 L 258.5,299.8 L 258.7,299.7 L 258.9,299.7 L 260.1,298.5 L 260.8,296.9 L 261.1,296.4 L 262.8,294.0 L 263.1,293.3 L 263.1,293.2 L 263.1,293.0 L 263.0,292.5 L 263.0,291.8 L 262.9,291.5 L 263.0,291.0 L 263.0,290.9 L 263.3,290.5 L 263.3,290.2 L 263.6,288.8 L 263.8,288.6 L 264.4,288.4 L 264.7,288.2 L 264.9,287.8 L 265.1,287.2 L 265.4,286.9 L 265.7,286.7 L 266.4,286.1 L 266.5,286.0 L 267.5,284.0 L 268.6,282.7 L 268.7,282.0 L 269.2,281.3 L 269.8,280.5 L 269.8,280.5 L 269.8,280.5 L 267.9,278.2 L 267.8,278.1 L 265.6,275.4 L 260.7,269.6 L 260.2,269.0 L 251.7,258.4 L 250.9,257.4 L 250.7,257.2 L 250.4,257.1 L 251.1,256.9 L 251.8,256.9 L 251.8,256.4 L 251.9,256.4 L 251.9,256.1 L 254.1,256.2 L 254.1,256.8 L 254.8,256.8 L 255.2,256.8 L 255.5,256.8 L 256.2,256.8 L 256.3,256.8 L 256.9,256.8 L 257.5,256.8 L 257.5,257.7 L 257.5,258.0 L 257.5,258.1 L 257.5,259.1 L 258.0,259.1 L 258.5,259.1 L 258.9,259.1 L 259.4,259.1 L 259.7,259.1 L 259.9,259.1 L 260.4,259.1 L 260.8,259.1 L 261.5,260.1 L 261.8,260.5 L 263.1,260.5 L 264.1,260.5 L 265.1,260.5 L 266.1,260.5 L 266.1,260.4 L 266.1,260.3 L 266.1,260.2 L 266.1,260.1 L 266.2,260.0 L 266.2,260.0 L 266.2,259.9 L 266.2,259.9 L 266.4,259.9 L 266.4,260.7 L 266.4,261.4 L 266.4,262.1 L 266.5,263.5 L 266.5,264.0 L 266.5,265.3 L 266.5,266.3 L 266.5,266.7 L 266.4,268.0 L 266.7,268.5 L 267.0,269.0 L 267.3,269.5 L 267.7,270.0 L 268.0,270.5 L 268.3,271.0 L 268.6,271.5 L 268.9,272.0 L 269.2,272.5 L 269.6,273.0 L 269.9,273.5 L 270.3,274.0 L 270.6,274.5 L 271.0,275.0 L 271.0,275.0 L 271.4,275.5 L 271.9,276.1 L 272.0,276.1 L 272.4,276.7 L 272.6,276.8 L 273.1,277.4 L 273.6,277.4 L 273.7,277.4 L 273.9,277.4 L 274.5,277.6 L 275.0,277.0 L 275.3,276.9 L 275.3,276.9 L 275.3,276.9 L 275.3,276.9 L 275.3,276.8 L 275.3,276.8 L 275.3,276.8 L 275.3,276.8 L 275.3,276.8 L 275.3,276.7 L 275.3,276.7 L 275.3,276.7 L 275.3,276.7 L 275.3,276.7 L 275.3,276.7 L 275.3,276.6 L 275.3,276.6 L 275.3,276.6 L 275.3,276.6 L 275.3,276.6 L 275.3,276.5 L 275.3,276.5 L 275.3,276.5 L 275.3,276.5 L 275.3,276.5 L 275.3,276.5 L 275.3,276.4 L 275.3,276.4 L 275.3,276.4 L 275.2,276.4 L 275.2,276.4 L 275.2,276.4 L 275.2,276.3 L 275.2,276.3 L 275.2,276.3 L 275.2,276.3 L 275.2,276.3 L 275.2,276.3 L 275.2,276.2 L 275.2,276.2 L 274.8,275.7 L 274.6,275.3 L 274.5,275.0 L 276.5,274.9 L 276.7,275.1 L 277.1,275.4 L 277.5,275.6 L 277.9,275.6 L 278.1,275.6 L 278.7,275.4 L 280.1,274.9 L 280.7,274.7 L 281.4,274.6 L 282.4,274.6 L 283.3,274.8 L 284.4,275.4 L 284.9,276.0 L 285.0,276.2 L 285.2,276.3 L 285.3,276.6 L 285.3,276.8 L 285.5,277.0 L 285.7,277.3 L 286.2,277.7 L 287.3,278.4 L 288.5,279.1 L 288.9,279.3 L 289.3,279.4 L 291.2,279.3 L 291.3,279.3 L 291.3,279.3 L 291.4,279.4 L 291.5,279.4 L 291.9,279.5 L 292.5,279.7 L 292.8,279.9 L 293.1,280.1 L 294.1,280.9 L 294.7,280.9 L 295.3,281.6 L 295.7,281.9 L 296.3,282.4 L 296.7,282.8 L 297.7,283.4 L 297.7,283.4 L 297.6,281.0 L 297.3,281.0 L 297.3,281.0 L 297.3,281.0 L 297.4,274.7 L 297.4,273.3 L 297.4,271.0 L 292.5,270.9 L 292.5,270.9 L 292.4,270.9 L 292.3,270.5 L 292.2,270.4 L 297.4,270.4 L 297.3,268.4 L 297.3,258.8 L 331.9,267.2 L 331.9,267.9 L 331.8,267.9 L 331.9,268.0 L 330.1,268.1 L 328.9,268.1 L 329.0,274.3 L 328.9,274.3 L 328.9,275.6 L 328.9,276.8 L 328.9,277.0 L 331.0,280.3 L 331.1,280.5 L 331.3,280.4 L 335.0,280.4 L 336.6,280.4 L 337.3,280.4 L 338.2,280.4 L 339.7,280.3 L 339.9,280.3 L 341.3,280.3 L 344.6,280.3 L 348.3,280.2 L 349.3,280.2 L 353.7,280.1 L 377.6,279.3 L 377.6,278.5 L 378.4,278.4 L 383.4,279.7 L 392.0,290.5 L 392.0,290.5 L 392.0,290.5 L 396.1,302.0 L 396.3,302.5 L 395.3,303.4 L 396.4,303.4 L 396.7,303.4 L 396.7,303.3 L 402.9,298.5 L 410.0,292.8 L 417.5,291.2 L 426.6,290.1 L 445.8,294.8 L 452.8,301.4 L 453.7,302.4 L 454.0,302.7 L 454.7,303.4 L 460.0,308.4 L 471.5,322.0 L 474.1,326.0 L 478.3,334.7 L 481.3,339.7 L 486.9,348.2 L 493.3,357.0 L 495.3,360.5 L 497.0,363.5 L 505.0,375.7 L 505.4,376.3 L 507.5,379.0 L 507.8,379.3 L 507.8,379.3 L 508.0,379.6 L 508.6,380.4 L 510.5,382.8 L 511.3,383.8 L 517.0,390.3 L 514.0,392.4 L 510.8,394.5 L 506.4,397.6 L 502.5,400.2 L 501.2,401.1 L 275.9,313.6 L 276.0,313.5 L 275.0,312.3 L 273.1,309.8 L 272.0,308.3 L 271.7,308.0 L 271.2,307.4 L 270.6,306.6 L 270.8,306.4 L 270.6,306.2 L 270.5,306.3 L 270.4,306.3 L 268.9,306.3 L 268.6,306.3 L 268.4,306.3 L 268.2,306.3 L 267.9,306.3 L 267.7,306.3 L 267.5,306.3 L 267.3,306.3 L 267.0,306.3 L 266.8,306.3 L 266.5,306.3 L 266.3,306.3 L 266.1,306.3 L 265.8,306.3 L 265.6,306.3 L 265.4,306.3 L 265.2,306.3 L 265.0,306.3 L 264.8,306.3 L 264.1,306.4 L 264.0,306.4 L 263.2,306.4 L 263.1,306.4 L 262.8,306.4 L 261.8,306.4 L 261.0,306.4 L 260.5,306.4 L 260.1,306.4 L 259.3,306.4 L 257.6,306.4 L 257.4,306.4 L 256.9,306.2 Z" class="poly" fill="#cb7740" data-short="22N01E09B001M" data-ma="Chico" data-base-year="2002" data-end-year="2025" data-span="23" data-area="15,827" data-rms-wells="22N01E09B001M" data-sy="0.0936" data-sy-source="SVSim" data-avg-dgwe="-0.60" data-cum-stor="-20,296" data-avg-rate="-882" data-critdry-share="93%" data-crit-share="57%" data-bucket-wet="+23,185" data-bucket-an="+6,296" data-bucket-bn="+4,444" data-bucket-dry="-20,888" data-bucket-critical="-33,333" data-hold="882" data-project="0" data-project-name="" data-coverage="-882" data-late="1"><title>Click for 22N01E09B001M detail</title></path>
+<path d="M 526.4,569.8 L 598.7,607.5 L 526.4,690.9 L 521.7,686.8 L 521.7,677.7 L 521.7,677.7 L 521.7,677.6 L 512.2,677.8 L 511.4,677.9 L 510.7,677.4 L 509.5,676.3 L 509.5,676.3 L 509.5,676.3 L 509.4,684.9 L 509.5,685.0 L 509.5,703.1 L 508.1,703.0 L 506.1,703.0 L 499.6,703.1 L 499.8,702.3 L 500.0,701.7 L 500.6,699.7 L 500.8,698.7 L 502.3,687.7 L 502.5,685.8 L 502.7,683.6 L 503.0,678.5 L 503.3,675.6 L 503.1,670.6 L 503.1,669.9 L 502.9,667.2 L 502.7,666.2 L 502.8,665.4 L 502.9,664.5 L 502.6,664.0 L 502.4,661.5 L 502.2,656.3 L 501.8,653.3 L 501.8,652.9 L 501.7,652.5 L 501.7,651.6 L 501.8,650.3 L 501.8,648.7 L 501.9,647.3 L 502.0,646.0 L 502.2,644.5 L 502.3,643.6 L 502.3,643.5 L 502.5,643.2 L 503.3,641.9 L 503.4,641.7 L 503.4,641.5 L 503.4,641.3 L 503.3,641.2 L 503.3,641.2 L 503.2,641.2 L 503.1,641.1 L 501.8,641.1 L 499.4,641.2 L 497.1,641.2 L 496.6,641.2 L 496.5,640.5 L 496.5,639.3 L 496.5,634.0 L 496.5,633.3 L 496.5,633.0 L 496.5,627.5 L 496.5,626.7 L 496.5,623.2 L 496.5,623.2 L 496.5,623.2 L 490.9,624.0 L 490.7,624.0 L 490.6,624.0 L 490.4,623.8 L 490.1,623.5 L 487.5,621.2 L 487.1,620.8 L 479.6,614.3 L 479.2,614.1 L 479.1,614.0 L 478.4,613.5 L 475.9,611.5 L 526.4,569.8 Z" class="poly" fill="#a8c8b0" data-short="20N02E24C001M" data-ma="South" data-base-year="2000" data-end-year="2024" data-span="24" data-area="7,861" data-rms-wells="20N02E24C001M" data-sy="0.0930" data-sy-source="SVSim" data-avg-dgwe="-0.97" data-cum-stor="-17,065" data-avg-rate="-711" data-critdry-share="85%" data-crit-share="51%" data-bucket-wet="+1,637" data-bucket-an="+3,220" data-bucket-bn="+558" data-bucket-dry="-8,974" data-bucket-critical="-13,505" data-hold="711" data-project="1,250" data-project-name="Conjunctive use (surface water replaces groundwater)" data-coverage="+539" data-late="1"><title>Click for 20N02E24C001M detail</title></path>
+<path d="M 360.4,432.0 L 366.3,415.4 L 366.6,415.2 L 366.7,415.6 L 366.9,416.0 L 367.0,416.4 L 367.2,416.9 L 367.3,416.9 L 367.4,417.3 L 367.6,417.7 L 367.7,418.0 L 367.8,418.2 L 367.9,418.6 L 368.1,419.1 L 368.3,419.5 L 368.5,419.9 L 368.7,420.5 L 369.5,420.1 L 369.8,419.9 L 370.8,419.5 L 371.8,419.0 L 372.0,418.9 L 372.9,418.4 L 374.4,418.1 L 375.1,417.8 L 375.6,417.4 L 376.6,416.8 L 378.6,415.8 L 384.6,427.1 L 384.8,427.0 L 384.9,426.9 L 385.6,426.4 L 386.2,426.0 L 386.8,425.6 L 387.3,425.3 L 387.9,424.9 L 388.9,424.2 L 389.9,423.6 L 390.9,422.9 L 391.8,422.3 L 392.4,421.9 L 393.0,421.5 L 394.1,420.8 L 395.3,420.1 L 396.4,419.3 L 396.3,420.5 L 396.3,420.6 L 395.9,423.8 L 395.7,425.2 L 395.7,425.2 L 395.5,426.5 L 395.5,426.7 L 395.2,428.9 L 395.2,428.9 L 395.3,428.9 L 395.6,428.9 L 395.6,429.0 L 395.6,435.7 L 395.6,438.3 L 400.3,438.4 L 406.6,438.5 L 408.6,438.5 L 411.1,438.5 L 412.5,438.6 L 414.5,438.6 L 414.7,439.5 L 414.9,440.4 L 415.4,441.3 L 415.7,441.7 L 415.8,442.1 L 415.8,442.7 L 415.2,444.5 L 414.7,447.3 L 414.7,448.3 L 414.7,448.4 L 414.8,449.3 L 415.2,450.9 L 416.1,451.7 L 416.6,452.4 L 416.5,454.0 L 416.5,454.1 L 415.6,458.9 L 415.6,460.6 L 415.4,460.9 L 415.9,461.0 L 416.0,461.1 L 416.7,461.3 L 416.8,461.4 L 416.9,461.6 L 418.0,462.0 L 420.1,463.2 L 421.4,463.8 L 421.7,464.0 L 423.2,464.9 L 425.4,466.0 L 425.6,466.1 L 425.6,466.2 L 425.7,466.2 L 425.7,466.2 L 425.7,466.2 L 425.7,466.2 L 425.8,466.2 L 425.8,466.2 L 425.8,466.3 L 425.9,466.3 L 425.9,466.3 L 425.9,466.3 L 426.0,466.3 L 426.0,466.3 L 426.0,466.3 L 426.1,466.3 L 426.1,466.3 L 426.1,466.3 L 426.2,466.3 L 426.2,466.4 L 426.2,466.4 L 426.3,466.4 L 426.3,466.4 L 426.3,466.4 L 426.4,466.4 L 426.4,466.4 L 426.4,466.4 L 426.5,466.4 L 427.2,466.4 L 427.7,466.4 L 428.3,466.5 L 428.3,466.5 L 428.3,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.4,466.5 L 428.5,466.5 L 428.5,466.5 L 428.5,466.5 L 428.5,466.6 L 428.5,466.6 L 428.5,466.6 L 428.5,466.6 L 428.5,466.6 L 428.5,466.6 L 428.5,466.6 L 428.6,466.6 L 428.6,466.6 L 429.1,467.1 L 429.2,467.1 L 429.2,467.1 L 429.2,467.2 L 429.3,467.2 L 429.3,467.3 L 429.4,467.3 L 429.4,467.4 L 429.5,467.4 L 429.5,467.4 L 429.5,467.5 L 429.6,467.5 L 429.6,467.6 L 429.7,467.6 L 429.8,467.8 L 430.1,468.2 L 430.1,468.2 L 430.2,468.3 L 430.3,468.4 L 430.3,468.5 L 430.5,468.6 L 430.6,468.7 L 430.7,468.3 L 430.9,467.2 L 431.8,466.2 L 435.8,463.0 L 438.2,460.5 L 438.4,460.4 L 439.2,459.7 L 437.2,457.4 L 434.1,453.9 L 433.9,453.6 L 433.3,453.0 L 428.8,447.7 L 428.6,447.5 L 425.5,443.8 L 423.8,441.9 L 423.5,441.6 L 421.8,439.6 L 421.6,439.2 L 417.8,434.8 L 417.6,434.5 L 416.5,433.2 L 418.4,431.2 L 418.5,429.3 L 418.4,427.9 L 417.3,423.9 L 417.6,422.7 L 418.6,420.3 L 418.9,420.1 L 419.2,419.9 L 422.4,420.5 L 424.4,420.9 L 427.2,421.0 L 427.2,421.0 L 429.3,420.8 L 429.8,420.3 L 430.3,420.3 L 437.4,419.4 L 441.8,418.8 L 457.9,416.7 L 459.7,416.5 L 462.4,416.2 L 472.5,414.9 L 473.4,414.7 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 473.9,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.6 L 474.0,414.5 L 474.0,414.5 L 474.0,414.5 L 474.0,414.5 L 474.0,414.5 L 474.0,414.5 L 474.0,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.1,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.2,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.3,414.5 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 474.4,414.4 L 478.3,412.4 L 482.5,410.0 L 487.2,407.4 L 487.2,407.4 L 487.2,407.4 L 487.2,407.4 L 487.2,407.4 L 487.2,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.3,407.4 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.4,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.5,407.3 L 487.6,407.3 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 435.1,488.8 L 401.7,495.5 L 400.3,495.1 L 360.4,432.0 Z" class="poly" fill="#a8c8b0" data-short="21N02E18C003M" data-ma="South" data-base-year="2011" data-end-year="2025" data-span="14" data-area="5,244" data-rms-wells="21N02E18C003M" data-sy="0.1108" data-sy-source="SVSim" data-avg-dgwe="+0.90" data-cum-stor="+7,297" data-avg-rate="+521" data-critdry-share="61%" data-crit-share="37%" data-bucket-wet="+25,607" data-bucket-an="+1,593" data-bucket-bn="-10,396" data-bucket-dry="-5,309" data-bucket-critical="-4,198" data-hold="0" data-project="0" data-project-name="" data-coverage="+0" data-late="1"><title>Click for 21N02E18C003M detail</title></path>
+<path d="M 332.9,537.5 L 381.1,550.8 L 393.7,571.1 L 385.2,608.0 L 385.1,604.4 L 384.9,604.0 L 384.9,604.0 L 384.9,604.0 L 383.6,603.9 L 377.2,603.9 L 377.1,603.9 L 376.8,603.8 L 369.0,603.7 L 368.1,603.4 L 362.7,603.4 L 357.0,603.5 L 356.7,603.6 L 356.2,603.6 L 356.0,603.6 L 354.0,603.6 L 351.7,603.5 L 350.5,603.7 L 348.9,604.2 L 348.7,604.5 L 348.2,605.4 L 347.9,605.9 L 347.2,605.9 L 346.6,605.9 L 346.4,606.0 L 343.7,606.1 L 341.0,606.0 L 340.6,606.1 L 340.2,606.3 L 338.5,607.7 L 338.2,607.8 L 337.4,607.9 L 336.7,608.2 L 336.0,608.5 L 336.0,609.0 L 336.0,609.9 L 336.0,610.0 L 336.1,610.2 L 336.1,610.3 L 336.2,612.3 L 336.2,613.2 L 335.6,613.2 L 331.9,613.2 L 324.4,613.3 L 324.0,613.3 L 323.5,613.2 L 323.3,613.0 L 323.3,611.9 L 323.3,609.0 L 323.2,604.5 L 323.3,603.1 L 323.2,594.2 L 323.2,591.5 L 323.1,590.8 L 323.1,589.7 L 323.0,587.0 L 323.1,585.2 L 323.0,585.0 L 323.0,584.6 L 323.0,582.7 L 323.0,579.0 L 323.0,578.6 L 323.0,578.6 L 323.0,578.6 L 322.7,578.6 L 320.9,578.6 L 314.7,578.6 L 310.7,578.8 L 292.4,579.0 L 292.2,579.0 L 292.0,579.0 L 286.3,579.0 L 286.0,579.1 L 285.8,579.3 L 283.3,579.3 L 332.9,537.5 Z M 261.7,597.6 L 261.8,604.6 L 253.4,604.7 L 261.7,597.6 Z" class="poly" fill="#f0d9a8" data-short="20N01E02H003M" data-ma="South" data-base-year="2002" data-end-year="2025" data-span="23" data-area="4,897" data-rms-wells="20N01E02H003M" data-sy="0.0690" data-sy-source="SVSim" data-avg-dgwe="-0.44" data-cum-stor="-3,429" data-avg-rate="-149" data-critdry-share="84%" data-crit-share="48%" data-bucket-wet="+7,933" data-bucket-an="+1,208" data-bucket-bn="+888" data-bucket-dry="-5,947" data-bucket-critical="-7,511" data-hold="149" data-project="0" data-project-name="" data-coverage="-149" data-late="1"><title>Click for 20N01E02H003M detail</title></path>
+<path d="M 393.7,571.1 L 437.9,552.4 L 460.5,611.0 L 456.9,611.9 L 454.3,615.1 L 454.3,615.3 L 454.3,615.7 L 456.0,617.8 L 451.1,621.5 L 440.2,630.2 L 438.9,629.3 L 438.9,629.3 L 438.8,629.3 L 422.5,635.4 L 421.0,635.8 L 414.0,611.5 L 413.8,611.1 L 411.8,604.0 L 409.4,595.4 L 408.1,591.1 L 407.3,587.5 L 406.5,584.4 L 406.3,583.9 L 406.1,583.2 L 406.0,583.1 L 406.0,583.1 L 406.0,583.1 L 405.8,583.1 L 405.4,583.2 L 405.0,583.4 L 404.6,583.8 L 404.3,584.1 L 403.7,585.4 L 403.4,586.0 L 401.7,588.1 L 400.9,589.1 L 400.1,590.2 L 399.0,591.5 L 397.6,593.2 L 396.6,594.5 L 395.9,595.8 L 394.6,598.0 L 393.1,601.0 L 392.3,602.6 L 390.7,605.0 L 390.0,606.1 L 389.6,607.9 L 388.9,609.8 L 387.8,612.6 L 386.7,614.4 L 385.4,615.5 L 385.2,608.0 L 393.7,571.1 Z" class="poly" fill="#6b9479" data-short="20N02E08H003M" data-ma="South" data-base-year="2008" data-end-year="2025" data-span="17" data-area="3,457" data-rms-wells="20N02E08H003M" data-sy="0.0916" data-sy-source="SVSim" data-avg-dgwe="-0.38" data-cum-stor="-2,058" data-avg-rate="-121" data-critdry-share="69%" data-crit-share="17%" data-bucket-wet="+3,563" data-bucket-an="+285" data-bucket-bn="-1,077" data-bucket-dry="-3,879" data-bucket-critical="-950" data-hold="121" data-project="2,250" data-project-name="Conjunctive use (surface water replaces groundwater)" data-coverage="+2,129" data-late="1"><title>Click for 20N02E08H003M detail</title></path>
+<path d="M 437.9,552.4 L 447.9,533.2 L 520.9,556.4 L 526.4,569.8 L 475.9,611.5 L 471.7,608.3 L 471.7,608.3 L 471.7,608.3 L 460.5,611.0 L 437.9,552.4 Z" class="poly" fill="#6b9479" data-short="20N02E09G001M" data-ma="South" data-base-year="2002" data-end-year="2024" data-span="22" data-area="4,210" data-rms-wells="20N02E09G001M" data-sy="0.0987" data-sy-source="SVSim" data-avg-dgwe="-0.56" data-cum-stor="-5,107" data-avg-rate="-232" data-critdry-share="92%" data-crit-share="43%" data-bucket-wet="+3,744" data-bucket-an="+1,342" data-bucket-bn="+1,138" data-bucket-dry="-6,829" data-bucket-critical="-4,503" data-hold="232" data-project="2,250" data-project-name="Conjunctive use (surface water replaces groundwater)" data-coverage="+2,018" data-late="1"><title>Click for 20N02E09G001M detail</title></path>
+<path d="M 598.7,607.5 L 652.2,600.3 L 649.7,605.8 L 649.6,605.8 L 648.2,608.1 L 646.5,610.2 L 644.9,611.6 L 632.2,621.4 L 629.2,623.0 L 625.9,624.8 L 622.3,626.3 L 616.1,630.0 L 604.5,638.9 L 600.4,641.6 L 598.2,643.4 L 593.4,648.6 L 592.3,651.7 L 592.0,653.8 L 592.3,656.9 L 593.0,659.5 L 596.6,669.4 L 598.9,680.7 L 599.7,689.8 L 601.0,697.9 L 601.0,704.5 L 601.0,704.5 L 599.9,704.5 L 590.2,704.7 L 590.2,706.9 L 590.3,709.9 L 585.7,710.0 L 585.7,713.1 L 571.7,712.9 L 571.6,702.5 L 554.3,702.4 L 552.7,702.5 L 551.4,702.6 L 547.0,702.7 L 547.0,708.8 L 546.9,709.1 L 546.2,709.1 L 541.3,704.6 L 540.1,703.4 L 537.5,701.0 L 534.6,698.3 L 532.5,696.5 L 532.1,696.1 L 526.4,690.9 L 598.7,607.5 Z" class="poly" fill="#a8c8b0" data-short="20N03E33L001M" data-ma="South" data-base-year="2000" data-end-year="2025" data-span="25" data-area="5,186" data-rms-wells="20N03E33L001M" data-sy="0.1172" data-sy-source="SVSim" data-avg-dgwe="-0.69" data-cum-stor="-10,405" data-avg-rate="-416" data-critdry-share="69%" data-crit-share="40%" data-bucket-wet="+4,278" data-bucket-an="+322" data-bucket-bn="-3,670" data-bucket-dry="-4,590" data-bucket-critical="-6,745" data-hold="416" data-project="1,250" data-project-name="Conjunctive use (surface water replaces groundwater)" data-coverage="+834" data-late="1"><title>Click for 20N03E33L001M detail</title></path>
+<path d="M 360.4,432.0 L 326.5,471.3 L 267.3,459.1 L 268.4,457.7 L 269.4,457.2 L 270.4,457.0 L 270.5,457.0 L 271.2,456.6 L 271.3,456.1 L 271.8,454.6 L 272.6,453.9 L 273.6,453.6 L 275.5,452.1 L 275.7,451.9 L 275.9,451.7 L 277.0,451.2 L 278.1,449.9 L 278.5,448.0 L 274.8,445.8 L 274.3,445.4 L 274.0,445.0 L 273.9,444.4 L 274.0,442.3 L 274.1,439.0 L 272.6,439.5 L 270.0,440.4 L 266.3,441.6 L 263.9,440.1 L 258.6,441.7 L 255.0,442.0 L 252.8,441.9 L 251.1,442.0 L 250.7,442.0 L 249.4,442.4 L 248.8,442.4 L 247.8,442.4 L 246.8,442.9 L 246.2,443.7 L 245.6,443.9 L 244.7,443.6 L 244.7,442.0 L 244.5,442.1 L 244.3,442.2 L 244.1,442.4 L 243.9,442.6 L 243.5,442.8 L 243.3,442.8 L 243.0,443.0 L 242.8,443.0 L 242.6,443.1 L 242.2,443.1 L 241.9,443.3 L 241.6,443.5 L 241.5,443.7 L 241.3,444.2 L 241.0,444.4 L 240.7,444.7 L 240.5,444.9 L 240.1,445.1 L 239.8,445.0 L 239.5,445.0 L 239.2,444.9 L 239.0,444.9 L 238.9,444.9 L 238.8,444.9 L 238.6,445.0 L 238.6,443.1 L 238.5,439.9 L 238.5,425.2 L 238.5,424.9 L 243.5,423.0 L 263.7,415.3 L 267.1,414.3 L 271.1,412.9 L 273.3,406.1 L 274.2,403.3 L 275.1,400.6 L 276.1,397.8 L 279.6,397.3 L 279.9,397.2 L 282.1,396.9 L 285.1,396.4 L 285.1,396.1 L 284.5,392.8 L 290.9,391.8 L 293.3,391.4 L 291.0,386.8 L 288.4,387.2 L 288.1,385.3 L 289.9,385.0 L 291.3,384.8 L 290.6,380.8 L 290.6,380.8 L 292.0,380.7 L 292.0,380.7 L 292.8,381.0 L 293.4,380.9 L 293.4,381.0 L 293.8,383.1 L 294.0,384.4 L 294.0,384.5 L 295.3,384.3 L 298.3,384.0 L 298.4,384.3 L 298.4,384.6 L 298.4,385.0 L 298.5,385.3 L 298.5,385.6 L 298.6,385.9 L 298.6,386.3 L 298.7,386.7 L 298.8,387.2 L 299.1,387.2 L 299.4,387.1 L 299.8,387.1 L 300.2,387.0 L 300.5,387.0 L 301.2,386.9 L 301.6,386.8 L 301.5,386.3 L 301.4,385.8 L 301.4,385.5 L 301.3,385.2 L 302.0,385.1 L 302.7,385.0 L 303.9,384.8 L 303.8,384.0 L 303.7,383.2 L 304.0,383.1 L 306.5,382.7 L 307.3,382.6 L 309.4,382.3 L 312.2,381.9 L 313.6,381.7 L 313.8,382.6 L 313.8,383.0 L 313.9,383.4 L 313.9,383.8 L 314.0,384.1 L 314.0,384.5 L 314.1,384.9 L 314.1,384.9 L 314.1,384.9 L 314.8,384.8 L 315.5,384.7 L 315.8,386.9 L 316.0,387.9 L 316.0,388.2 L 316.1,388.4 L 316.2,389.6 L 316.2,389.6 L 316.2,389.6 L 316.4,390.9 L 316.5,391.5 L 315.8,391.6 L 315.8,391.9 L 315.9,392.2 L 315.6,392.2 L 314.8,392.4 L 314.4,392.4 L 314.1,392.5 L 313.9,392.5 L 313.7,392.5 L 312.8,392.7 L 312.5,392.8 L 312.0,392.9 L 311.8,393.4 L 311.3,395.1 L 310.9,396.2 L 310.7,396.9 L 310.6,397.4 L 310.4,398.0 L 310.3,398.2 L 310.2,398.5 L 310.0,399.1 L 309.8,399.7 L 311.3,400.2 L 311.9,400.5 L 314.5,401.3 L 314.5,401.3 L 314.7,400.8 L 315.2,399.2 L 316.0,397.0 L 316.5,395.6 L 316.4,395.6 L 316.6,394.9 L 317.2,395.1 L 318.8,395.6 L 318.7,395.8 L 318.7,395.8 L 318.7,395.8 L 318.6,396.3 L 319.8,396.6 L 322.4,397.4 L 322.6,397.5 L 322.5,397.8 L 322.4,398.1 L 322.2,398.5 L 322.1,398.9 L 321.7,400.2 L 322.2,400.2 L 322.5,400.3 L 322.8,400.1 L 323.0,399.9 L 323.5,399.7 L 323.6,399.7 L 323.8,399.4 L 323.8,399.4 L 324.0,399.2 L 324.1,399.0 L 324.2,398.7 L 324.3,398.6 L 324.9,398.2 L 325.7,398.4 L 328.5,399.3 L 328.9,399.3 L 328.9,399.1 L 331.0,392.3 L 331.4,391.1 L 331.4,391.1 L 331.5,391.1 L 331.5,390.9 L 332.8,392.4 L 333.6,393.2 L 333.3,393.2 L 333.3,393.2 L 333.3,393.2 L 338.3,398.5 L 338.6,398.5 L 341.3,401.7 L 343.5,404.4 L 343.7,404.6 L 344.0,404.6 L 344.6,404.6 L 350.7,404.2 L 353.5,404.1 L 353.8,404.0 L 354.9,404.1 L 357.6,404.1 L 357.3,404.5 L 357.2,405.1 L 356.9,405.5 L 356.4,405.5 L 356.3,405.8 L 355.9,406.4 L 355.7,406.6 L 355.5,406.8 L 355.1,407.3 L 355.1,407.4 L 355.0,407.8 L 355.0,407.8 L 355.0,407.8 L 355.1,407.9 L 355.0,408.1 L 355.0,408.4 L 355.1,408.7 L 355.0,409.0 L 354.5,409.4 L 354.5,409.5 L 354.5,409.5 L 354.3,409.6 L 354.3,409.8 L 354.2,409.8 L 354.2,409.8 L 353.8,409.8 L 353.6,409.9 L 353.4,410.0 L 353.2,410.1 L 352.9,410.2 L 352.7,410.1 L 352.4,410.1 L 352.1,410.2 L 351.8,410.2 L 351.4,410.2 L 351.3,410.2 L 351.2,410.3 L 351.1,410.3 L 351.0,410.3 L 350.9,410.3 L 350.6,410.5 L 350.4,410.7 L 350.4,410.8 L 350.3,411.2 L 349.9,411.4 L 351.5,413.2 L 351.7,413.2 L 354.4,416.5 L 355.3,417.7 L 355.9,418.5 L 356.4,419.2 L 356.6,419.4 L 357.4,420.7 L 357.5,420.8 L 358.2,421.7 L 358.2,421.7 L 358.2,421.7 L 358.5,421.9 L 359.8,420.7 L 360.6,420.1 L 361.2,419.5 L 361.5,419.3 L 362.8,418.2 L 363.9,417.3 L 363.9,417.4 L 365.3,416.3 L 365.9,415.8 L 366.3,415.4 L 360.4,432.0 Z" class="poly" fill="#a8c8b0" data-short="21N01E10B003M" data-ma="South" data-base-year="1999" data-end-year="2025" data-span="26" data-area="6,650" data-rms-wells="21N01E10B003M" data-sy="0.0895" data-sy-source="SVSim" data-avg-dgwe="-0.84" data-cum-stor="-12,975" data-avg-rate="-499" data-critdry-share="84%" data-crit-share="40%" data-bucket-wet="+13,571" data-bucket-an="+4,345" data-bucket-bn="+1,458" data-bucket-dry="-16,874" data-bucket-critical="-15,475" data-hold="499" data-project="1,500" data-project-name="Comanche Creek recharge" data-coverage="+1,001" data-late=""><title>Click for 21N01E10B003M detail</title></path>
+<path d="M 326.5,471.3 L 360.4,432.0 L 400.3,495.1 L 342.7,497.4 L 326.5,471.3 Z" class="poly" fill="#cb7740" data-short="21N01E13L004M" data-ma="South" data-base-year="2012" data-end-year="2025" data-span="13" data-area="2,713" data-rms-wells="21N01E13L004M" data-sy="0.0921" data-sy-source="SVSim" data-avg-dgwe="-4.00" data-cum-stor="-13,005" data-avg-rate="-1,000" data-critdry-share="97%" data-crit-share="28%" data-bucket-wet="+4,386" data-bucket-an="+2,265" data-bucket-bn="+1,417" data-bucket-dry="-15,004" data-bucket-critical="-6,069" data-hold="1,000" data-project="0" data-project-name="" data-coverage="-1,000" data-late="1"><title>Click for 21N01E13L004M detail</title></path>
+<path d="M 342.7,497.4 L 400.3,495.1 L 401.7,495.5 L 381.1,550.8 L 332.9,537.5 L 342.7,497.4 Z" class="poly" fill="#f0d9a8" data-short="21N01E25K001M" data-ma="South" data-base-year="1999" data-end-year="2025" data-span="26" data-area="2,748" data-rms-wells="21N01E25K001M" data-sy="0.0845" data-sy-source="basin-mean fallback" data-avg-dgwe="-0.89" data-cum-stor="-5,386" data-avg-rate="-207" data-critdry-share="89%" data-crit-share="45%" data-bucket-wet="+6,872" data-bucket-an="+789" data-bucket-bn="-70" data-bucket-dry="-6,477" data-bucket-critical="-6,500" data-hold="207" data-project="0" data-project-name="" data-coverage="-207" data-late=""><title>Click for 21N01E25K001M detail</title></path>
+<path d="M 283.3,579.3 L 283.3,579.3 L 261.3,579.5 L 261.4,588.9 L 261.4,591.5 L 261.7,592.8 L 261.7,597.6 L 253.4,604.7 L 244.5,604.7 L 244.4,597.7 L 243.1,532.9 L 214.7,542.6 L 214.4,541.8 L 213.3,535.9 L 213.2,530.3 L 221.4,529.2 L 224.8,526.5 L 224.8,517.6 L 224.9,511.6 L 225.1,505.3 L 231.7,505.4 L 243.2,505.6 L 243.5,505.6 L 243.6,505.6 L 243.7,497.8 L 243.8,481.4 L 243.8,480.6 L 246.3,480.6 L 246.7,469.6 L 249.3,467.6 L 252.4,465.1 L 253.2,464.3 L 254.6,463.2 L 255.1,462.7 L 256.8,461.3 L 257.2,460.8 L 260.6,459.7 L 261.0,460.1 L 264.1,459.2 L 265.1,459.6 L 265.8,459.6 L 266.1,459.7 L 266.3,459.7 L 266.4,459.5 L 266.7,459.6 L 267.0,459.5 L 267.3,459.1 L 326.5,471.3 L 342.7,497.4 L 332.9,537.5 L 283.3,579.3 Z" class="poly" fill="#e3a76f" data-short="21N01E27D001M" data-ma="South" data-base-year="1999" data-end-year="2025" data-span="26" data-area="10,825" data-rms-wells="21N01E27D001M" data-sy="0.0698" data-sy-source="SVSim" data-avg-dgwe="-0.76" data-cum-stor="-14,960" data-avg-rate="-575" data-critdry-share="79%" data-crit-share="45%" data-bucket-wet="+20,740" data-bucket-an="+1,662" data-bucket-bn="-793" data-bucket-dry="-15,640" data-bucket-critical="-20,929" data-hold="575" data-project="0" data-project-name="" data-coverage="-575" data-late=""><title>Click for 21N01E27D001M detail</title></path>
+<path d="M 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.6,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.7,407.2 L 487.8,407.2 L 487.8,407.2 L 487.8,407.2 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.8,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 487.9,407.1 L 488.0,407.1 L 488.0,407.1 L 488.0,407.1 L 488.0,407.1 L 488.0,407.1 L 488.0,407.1 L 488.0,407.1 L 488.0,407.0 L 488.0,407.0 L 488.0,407.0 L 488.1,407.0 L 488.1,407.0 L 488.1,407.0 L 488.1,407.0 L 488.1,407.0 L 488.1,407.0 L 488.1,407.0 L 488.1,407.0 L 488.1,407.0 L 488.1,407.0 L 488.1,407.0 L 488.2,407.0 L 488.2,407.0 L 488.2,407.0 L 488.2,407.0 L 488.2,407.0 L 488.2,407.0 L 488.2,407.0 L 488.2,407.0 L 496.3,404.1 L 496.3,404.1 L 496.3,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.4,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.5,404.1 L 496.6,404.1 L 496.6,404.1 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.6,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.7,404.0 L 496.8,404.0 L 496.8,404.0 L 496.8,404.0 L 496.8,404.0 L 496.8,404.0 L 496.8,404.0 L 496.8,403.9 L 498.0,403.3 L 501.9,400.6 L 502.5,400.2 L 506.4,397.6 L 510.8,394.5 L 514.0,392.4 L 517.0,390.3 L 522.8,396.7 L 526.1,401.3 L 529.3,406.7 L 531.2,409.3 L 534.3,413.5 L 540.7,423.0 L 520.9,556.4 L 447.9,533.2 L 435.1,488.8 L 487.6,407.2 Z" class="poly" fill="#e3a76f" data-short="21N02E26E006M" data-ma="South" data-base-year="2008" data-end-year="2025" data-span="17" data-area="11,480" data-rms-wells="21N02E26E006M" data-sy="0.1066" data-sy-source="SVSim" data-avg-dgwe="-0.43" data-cum-stor="-8,863" data-avg-rate="-521" data-critdry-share="81%" data-crit-share="46%" data-bucket-wet="+3,493" data-bucket-an="+1,693" data-bucket-bn="+4,364" data-bucket-dry="-4,050" data-bucket-critical="-14,364" data-hold="521" data-project="0" data-project-name="" data-coverage="-521" data-late="1"><title>Click for 21N02E26E006M detail</title></path>
+<path d="M 435.1,488.8 L 447.9,533.2 L 437.9,552.4 L 393.7,571.1 L 381.1,550.8 L 401.7,495.5 L 435.1,488.8 Z" class="poly" fill="#a8c8b0" data-short="21N02E32E001M" data-ma="South" data-base-year="2009" data-end-year="2025" data-span="16" data-area="3,692" data-rms-wells="21N02E32E001M" data-sy="0.0716" data-sy-source="SVSim" data-avg-dgwe="+0.00" data-cum-stor="+0" data-avg-rate="+0" data-critdry-share="75%" data-crit-share="58%" data-bucket-wet="+6,370" data-bucket-an="+648" data-bucket-bn="+330" data-bucket-dry="-1,652" data-bucket-critical="-5,696" data-hold="0" data-project="0" data-project-name="" data-coverage="+0" data-late="1"><title>Click for 21N02E32E001M detail</title></path>
+<path d="M 598.7,607.5 L 526.4,569.8 L 520.9,556.4 L 540.7,423.0 L 541.3,423.8 L 548.5,436.2 L 556.1,446.4 L 565.8,457.9 L 572.8,466.8 L 576.5,471.8 L 580.8,477.7 L 585.0,483.1 L 589.4,488.6 L 591.5,491.7 L 593.7,495.0 L 598.1,500.5 L 599.8,502.2 L 600.6,503.1 L 601.5,503.9 L 603.1,505.3 L 607.2,508.7 L 609.9,511.3 L 620.0,521.5 L 631.3,534.3 L 634.5,538.0 L 636.0,539.2 L 639.5,541.7 L 641.8,542.7 L 642.9,542.9 L 655.1,542.9 L 659.0,544.2 L 661.6,545.4 L 663.6,546.9 L 665.8,549.1 L 668.3,553.0 L 670.0,558.0 L 669.5,563.1 L 668.5,565.9 L 667.3,568.1 L 666.1,569.8 L 663.5,571.8 L 661.0,573.6 L 657.7,576.6 L 655.0,580.4 L 653.6,582.2 L 653.6,588.0 L 654.2,593.6 L 654.1,594.8 L 652.7,599.2 L 652.2,600.3 L 598.7,607.5 Z" class="poly" fill="#f0d9a8" data-short="21N03E32B001M" data-ma="South" data-base-year="2000" data-end-year="2025" data-span="25" data-area="14,225" data-rms-wells="21N03E32B001M" data-sy="0.0752" data-sy-source="SVSim" data-avg-dgwe="-0.18" data-cum-stor="-4,921" data-avg-rate="-197" data-critdry-share="70%" data-crit-share="22%" data-bucket-wet="+1,051" data-bucket-an="+11" data-bucket-bn="-243" data-bucket-dry="-3,930" data-bucket-critical="-1,809" data-hold="197" data-project="0" data-project-name="" data-coverage="-197" data-late="1"><title>Click for 21N03E32B001M detail</title></path>
+<circle class="well" cx="108.9" cy="273.7" r="3.0"/>
+<text class="label" x="145.0" y="348.5">05M00</text>
+<circle class="well" cx="248.0" cy="140.0" r="3.0"/>
+<text class="label" x="288.1" y="134.3">07H00</text>
+<circle class="well-project" cx="215.2" cy="256.4" r="4.2"/>
+<text class="label" x="246.8" y="366.2">36P00</text>
+<circle class="well" cx="69.1" cy="213.4" r="3.0"/>
+<text class="label" x="42.2" y="194.3">25C00</text>
+<circle class="well-project" cx="266.0" cy="228.6" r="4.2"/>
+<text class="label" x="301.8" y="257.9">29P00</text>
+<circle class="well" cx="178.9" cy="117.0" r="3.0"/>
+<text class="label" x="184.5" y="121.1">03H00</text>
+<circle class="well" cx="131.4" cy="139.5" r="3.0"/>
+<text class="label" x="73.7" y="120.7">09E00</text>
+<circle class="well" cx="155.8" cy="145.0" r="3.0"/>
+<text class="label" x="154.1" y="165.1">10M00</text>
+<circle class="well" cx="201.7" cy="180.9" r="3.0"/>
+<text class="label" x="206.9" y="176.8">14R00</text>
+<circle class="well" cx="166.0" cy="220.6" r="3.0"/>
+<text class="label" x="165.8" y="217.1">27L00</text>
+<circle class="well" cx="133.8" cy="219.3" r="3.0"/>
+<text class="label" x="129.0" y="217.7">28M00</text>
+<circle class="well" cx="83.2" cy="246.7" r="3.0"/>
+<text class="label" x="66.7" y="251.1">31M00</text>
+<circle class="well-project" cx="303.4" cy="234.9" r="4.2"/>
+<text class="label" x="315.4" y="242.6">33A00</text>
+<circle class="well" cx="267.1" cy="347.0" r="3.0"/>
+<text class="label" x="367.6" y="396.9">20K00</text>
+<circle class="well" cx="291.8" cy="282.9" r="3.0"/>
+<text class="label" x="300.3" y="287.3">09B00</text>
+<circle class="well-project" cx="515.8" cy="628.0" r="4.2"/>
+<text class="label" x="502.8" y="652.5">24C00</text>
+<circle class="well" cx="390.8" cy="454.6" r="3.0"/>
+<text class="label" x="448.6" y="427.9">18C00</text>
+<circle class="well" cx="357.5" cy="568.6" r="3.0"/>
+<text class="label" x="334.3" y="596.9">02H00</text>
+<circle class="well-project" cx="427.2" cy="584.7" r="4.2"/>
+<text class="label" x="411.7" y="600.1">08H00</text>
+<circle class="well-project" cx="467.4" cy="569.1" r="4.2"/>
+<text class="label" x="472.3" y="581.2">09G00</text>
+<circle class="well-project" cx="589.8" cy="692.8" r="4.2"/>
+<text class="label" x="588.9" y="669.7">33L00</text>
+<circle class="well-project" cx="322.5" cy="430.0" r="4.2"/>
+<text class="label" x="308.8" y="409.2">10B00</text>
+<circle class="well" cx="367.8" cy="469.2" r="3.0"/>
+<text class="label" x="351.3" y="473.4">13L00</text>
+<circle class="well" cx="369.9" cy="523.4" r="3.0"/>
+<text class="label" x="366.9" y="512.3">25K00</text>
+<circle class="well" cx="306.5" cy="507.8" r="3.0"/>
+<text class="label" x="255.0" y="510.0">27D00</text>
+<circle class="well" cx="484.4" cy="515.2" r="3.0"/>
+<text class="label" x="493.7" y="408.1">26E00</text>
+<circle class="well" cx="407.4" cy="537.5" r="3.0"/>
+<text class="label" x="418.9" y="525.8">32E00</text>
+<circle class="well" cx="567.7" cy="527.6" r="3.0"/>
+<text class="label" x="620.1" y="532.7">32B00</text>
+<g transform="translate(16,730)">
+<rect class="legend-bg" x="-8" y="-22" width="715" height="86"/>
+<text class="legend-title" x="0" y="-6">Coverage after project portfolio (AF/yr): project allocation − polygon avg loss</text>
+<text class="legend-text" x="0" y="9" font-style="italic" font-size="9.5" fill="#5b5547">greens = surplus / covered  ·  oranges → reds = shortfall by AF/yr</text>
+<rect x="10.0" y="18" width="56" height="18" fill="#6b9479" stroke="#332e22" stroke-width="0.4"/>
+<text class="legend-text" x="38.0" y="48" text-anchor="middle">Surplus</text>
+<rect x="86.0" y="18" width="56" height="18" fill="#a8c8b0" stroke="#332e22" stroke-width="0.4"/>
+<text class="legend-text" x="114.0" y="48" text-anchor="middle">Covered</text>
+<rect x="162.0" y="18" width="56" height="18" fill="#f0d9a8" stroke="#332e22" stroke-width="0.4"/>
+<text class="legend-text" x="190.0" y="48" text-anchor="middle">Near</text>
+<rect x="238.0" y="18" width="56" height="18" fill="#e3a76f" stroke="#332e22" stroke-width="0.4"/>
+<text class="legend-text" x="266.0" y="48" text-anchor="middle">Short <750</text>
+<rect x="314.0" y="18" width="56" height="18" fill="#cb7740" stroke="#332e22" stroke-width="0.4"/>
+<text class="legend-text" x="342.0" y="48" text-anchor="middle">Short <1.5k</text>
+<rect x="390.0" y="18" width="56" height="18" fill="#a84a2c" stroke="#332e22" stroke-width="0.4"/>
+<text class="legend-text" x="418.0" y="48" text-anchor="middle">Short <2.5k</text>
+<rect x="466.0" y="18" width="56" height="18" fill="#7c2820" stroke="#332e22" stroke-width="0.4"/>
+<text class="legend-text" x="494.0" y="48" text-anchor="middle">Short ≥2.5k</text>
+<circle cx="548" cy="22" r="3"/>
+<text class="legend-text" x="558" y="26">2026 GWL RMS well</text>
+<circle class="well-project" cx="548" cy="38" r="4.2"/>
+<text class="legend-text" x="558" y="42">RMS well + project</text>
+</g>
+</svg></div>
+</div>
+<div class="figcaption">Figure 4. Click any polygon for full detail. Color = project allocation minus polygon avg loss rate (AF/yr).</div>
+
+<h3>Residual shortfall polygons</h3><table><thead><tr><th>Polygon</th><th class="num">Avg loss (AF/yr)</th><th class="num">Project alloc (AF/yr)</th><th class="num">Shortfall (AF/yr)</th></tr></thead><tbody><tr>
+      <td><strong>22N01E20K001M</strong> <span style="color:#8a8a8a;font-size:11px;">Chico</span></td>
+      <td class="num">1,171</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-1,171</span></td>
+    </tr>
+<tr>
+      <td><strong>21N01E13L004M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td class="num">1,000</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-1,000</span></td>
+    </tr>
+<tr>
+      <td><strong>22N01E09B001M</strong> <span style="color:#8a8a8a;font-size:11px;">Chico</span></td>
+      <td class="num">882</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-882</span></td>
+    </tr>
+<tr>
+      <td><strong>21N01E27D001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td class="num">575</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-575</span></td>
+    </tr>
+<tr>
+      <td><strong>21N02E26E006M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td class="num">521</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-521</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01E07H001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">442</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-442</span></td>
+    </tr>
+<tr>
+      <td><strong>21N01E25K001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td class="num">207</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-207</span></td>
+    </tr>
+<tr>
+      <td><strong>21N03E32B001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td class="num">197</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-197</span></td>
+    </tr>
+<tr>
+      <td><strong>20N01E02H003M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td class="num">149</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-149</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W14R002M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">132</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-132</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W03H004M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">74</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-74</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W09E001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">47</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-47</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W27L001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">38</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-38</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W10M001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">17</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-17</span></td>
+    </tr></tbody></table>
+
+<h2>Per-polygon detail (technical)</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Polygon</th>
+      <th class="num">Span</th>
+      <th class="num">Sy</th>
+      <th class="num">Cum 2025 obs (AF)</th>
+      <th class="num">Avg obs (AF/yr)</th>
+      <th class="num">Cum 2025 norm (AF)</th>
+      <th class="num">Avg norm (AF/yr)</th>
+      <th class="num">Crit+Dry (AF)</th>
+      <th class="num">Crit+Dry share</th>
+      <th class="num">Hold (AF/yr)</th>
+      <th class="num">Project (AF/yr)</th>
+      <th class="num">Net</th>
+    </tr>
+  </thead>
+  <tbody><tr>
+      <td><strong>22N01E20K001M</strong> <span style="color:#8a8a8a;font-size:11px;">Chico</span> <span class="late" title="Baseline year > 1999">(record starts 2000)</span></td>
+      <td class="num">22 yr (2000–2022)</td>
+      <td class="num">0.0936</td>
+      <td class="num"><span class="loss">-25,756</span></td>
+      <td class="num"><span class="loss">-1,171</span></td>
+      <td class="num"><span class="loss">-11,530</span></td>
+      <td class="num"><span class="loss">-444</span></td>
+      <td class="num"><span class="loss">-57,741</span></td>
+      <td class="num">92%</td>
+      <td class="num">1,171</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-1,171</span></td>
+    </tr>
+<tr>
+      <td><strong>21N01E13L004M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2012)</span></td>
+      <td class="num">13 yr (2012–2025)</td>
+      <td class="num">0.0921</td>
+      <td class="num"><span class="loss">-13,005</span></td>
+      <td class="num"><span class="loss">-1,000</span></td>
+      <td class="num"><span class="loss">-33,417</span></td>
+      <td class="num"><span class="loss">-1,285</span></td>
+      <td class="num"><span class="loss">-21,073</span></td>
+      <td class="num">97%</td>
+      <td class="num">1,000</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-1,000</span></td>
+    </tr>
+<tr>
+      <td><strong>22N01E09B001M</strong> <span style="color:#8a8a8a;font-size:11px;">Chico</span> <span class="late" title="Baseline year > 1999">(record starts 2002)</span></td>
+      <td class="num">23 yr (2002–2025)</td>
+      <td class="num">0.0936</td>
+      <td class="num"><span class="loss">-20,296</span></td>
+      <td class="num"><span class="loss">-882</span></td>
+      <td class="num"><span class="loss">-28,641</span></td>
+      <td class="num"><span class="loss">-1,102</span></td>
+      <td class="num"><span class="loss">-54,221</span></td>
+      <td class="num">93%</td>
+      <td class="num">882</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-882</span></td>
+    </tr>
+<tr>
+      <td><strong>20N02E24C001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2000)</span></td>
+      <td class="num">24 yr (2000–2024)</td>
+      <td class="num">0.0930</td>
+      <td class="num"><span class="loss">-17,065</span></td>
+      <td class="num"><span class="loss">-711</span></td>
+      <td class="num"><span class="loss">-15,664</span></td>
+      <td class="num"><span class="loss">-602</span></td>
+      <td class="num"><span class="loss">-22,479</span></td>
+      <td class="num">85%</td>
+      <td class="num">711</td>
+      <td class="num">1,250</td>
+      <td class="num"><span class="gain">+539</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01E29P002M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">26 yr (1999–2025)</td>
+      <td class="num">0.0629</td>
+      <td class="num"><span class="loss">-16,196</span></td>
+      <td class="num"><span class="loss">-623</span></td>
+      <td class="num"><span class="loss">-16,196</span></td>
+      <td class="num"><span class="loss">-623</span></td>
+      <td class="num"><span class="loss">-38,304</span></td>
+      <td class="num">82%</td>
+      <td class="num">623</td>
+      <td class="num">2,000</td>
+      <td class="num"><span class="gain">+1,377</span></td>
+    </tr>
+<tr>
+      <td><strong>21N01E27D001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td class="num">26 yr (1999–2025)</td>
+      <td class="num">0.0698</td>
+      <td class="num"><span class="loss">-14,960</span></td>
+      <td class="num"><span class="loss">-575</span></td>
+      <td class="num"><span class="loss">-14,960</span></td>
+      <td class="num"><span class="loss">-575</span></td>
+      <td class="num"><span class="loss">-36,569</span></td>
+      <td class="num">79%</td>
+      <td class="num">575</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-575</span></td>
+    </tr>
+<tr>
+      <td><strong>21N02E26E006M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2008)</span></td>
+      <td class="num">17 yr (2008–2025)</td>
+      <td class="num">0.1066</td>
+      <td class="num"><span class="loss">-8,863</span></td>
+      <td class="num"><span class="loss">-521</span></td>
+      <td class="num"><span class="loss">-9,634</span></td>
+      <td class="num"><span class="loss">-370</span></td>
+      <td class="num"><span class="loss">-18,414</span></td>
+      <td class="num">81%</td>
+      <td class="num">521</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-521</span></td>
+    </tr>
+<tr>
+      <td><strong>21N01E10B003M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td class="num">26 yr (1999–2025)</td>
+      <td class="num">0.0895</td>
+      <td class="num"><span class="loss">-12,975</span></td>
+      <td class="num"><span class="loss">-499</span></td>
+      <td class="num"><span class="loss">-12,975</span></td>
+      <td class="num"><span class="loss">-499</span></td>
+      <td class="num"><span class="loss">-32,349</span></td>
+      <td class="num">84%</td>
+      <td class="num">499</td>
+      <td class="num">1,500</td>
+      <td class="num"><span class="gain">+1,001</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01E07H001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span> <span class="late" title="Baseline year > 1999">(record starts 2019)</span></td>
+      <td class="num">6 yr (2019–2025)</td>
+      <td class="num">0.0935</td>
+      <td class="num"><span class="loss">-2,652</span></td>
+      <td class="num"><span class="loss">-442</span></td>
+      <td class="num"><span class="loss">-9,718</span> <span class="fallback" title="Year-type(s) not observed; using polygon overall avg as fallback: bn">(fb)</span></td>
+      <td class="num"><span class="loss">-374</span></td>
+      <td class="num"><span class="loss">-3,666</span></td>
+      <td class="num">86%</td>
+      <td class="num">442</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-442</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W36P001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">26 yr (1999–2025)</td>
+      <td class="num">0.0648</td>
+      <td class="num"><span class="loss">-11,405</span></td>
+      <td class="num"><span class="loss">-439</span></td>
+      <td class="num"><span class="loss">-11,405</span></td>
+      <td class="num"><span class="loss">-439</span></td>
+      <td class="num"><span class="loss">-48,571</span></td>
+      <td class="num">80%</td>
+      <td class="num">439</td>
+      <td class="num">2,000</td>
+      <td class="num"><span class="gain">+1,561</span></td>
+    </tr>
+<tr>
+      <td><strong>20N03E33L001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2000)</span></td>
+      <td class="num">25 yr (2000–2025)</td>
+      <td class="num">0.1172</td>
+      <td class="num"><span class="loss">-10,405</span></td>
+      <td class="num"><span class="loss">-416</span></td>
+      <td class="num"><span class="loss">-10,297</span></td>
+      <td class="num"><span class="loss">-396</span></td>
+      <td class="num"><span class="loss">-11,335</span></td>
+      <td class="num">69%</td>
+      <td class="num">416</td>
+      <td class="num">1,250</td>
+      <td class="num"><span class="gain">+834</span></td>
+    </tr>
+<tr>
+      <td><strong>20N02E09G001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2002)</span></td>
+      <td class="num">22 yr (2002–2024)</td>
+      <td class="num">0.0987</td>
+      <td class="num"><span class="loss">-5,107</span></td>
+      <td class="num"><span class="loss">-232</span></td>
+      <td class="num"><span class="loss">-7,325</span></td>
+      <td class="num"><span class="loss">-282</span></td>
+      <td class="num"><span class="loss">-11,332</span></td>
+      <td class="num">92%</td>
+      <td class="num">232</td>
+      <td class="num">2,250</td>
+      <td class="num"><span class="gain">+2,018</span></td>
+    </tr>
+<tr>
+      <td><strong>21N01E25K001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span></td>
+      <td class="num">26 yr (1999–2025)</td>
+      <td class="num">0.0845 <span class="fallback" title="Insufficient SVSim borehole coverage — using basin area-weighted mean">(mean)</span></td>
+      <td class="num"><span class="loss">-5,386</span></td>
+      <td class="num"><span class="loss">-207</span></td>
+      <td class="num"><span class="loss">-5,386</span></td>
+      <td class="num"><span class="loss">-207</span></td>
+      <td class="num"><span class="loss">-12,977</span></td>
+      <td class="num">89%</td>
+      <td class="num">207</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-207</span></td>
+    </tr>
+<tr>
+      <td><strong>21N03E32B001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2000)</span></td>
+      <td class="num">25 yr (2000–2025)</td>
+      <td class="num">0.0752</td>
+      <td class="num"><span class="loss">-4,921</span></td>
+      <td class="num"><span class="loss">-197</span></td>
+      <td class="num"><span class="loss">-4,917</span></td>
+      <td class="num"><span class="loss">-189</span></td>
+      <td class="num"><span class="loss">-5,739</span></td>
+      <td class="num">70%</td>
+      <td class="num">197</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-197</span></td>
+    </tr>
+<tr>
+      <td><strong>20N01E02H003M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2002)</span></td>
+      <td class="num">23 yr (2002–2025)</td>
+      <td class="num">0.0690</td>
+      <td class="num"><span class="loss">-3,429</span></td>
+      <td class="num"><span class="loss">-149</span></td>
+      <td class="num"><span class="loss">-6,001</span></td>
+      <td class="num"><span class="loss">-231</span></td>
+      <td class="num"><span class="loss">-13,458</span></td>
+      <td class="num">84%</td>
+      <td class="num">149</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-149</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W14R002M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">26 yr (1999–2025)</td>
+      <td class="num">0.0594</td>
+      <td class="num"><span class="loss">-3,421</span></td>
+      <td class="num"><span class="loss">-132</span></td>
+      <td class="num"><span class="loss">-3,421</span></td>
+      <td class="num"><span class="loss">-132</span></td>
+      <td class="num"><span class="loss">-6,199</span></td>
+      <td class="num">79%</td>
+      <td class="num">132</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-132</span></td>
+    </tr>
+<tr>
+      <td><strong>20N02E08H003M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2008)</span></td>
+      <td class="num">17 yr (2008–2025)</td>
+      <td class="num">0.0916</td>
+      <td class="num"><span class="loss">-2,058</span></td>
+      <td class="num"><span class="loss">-121</span></td>
+      <td class="num"><span class="loss">-4,877</span></td>
+      <td class="num"><span class="loss">-188</span></td>
+      <td class="num"><span class="loss">-4,829</span></td>
+      <td class="num">69%</td>
+      <td class="num">121</td>
+      <td class="num">2,250</td>
+      <td class="num"><span class="gain">+2,129</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01E33A001M</strong> <span style="color:#8a8a8a;font-size:11px;">Chico</span> <span class="late" title="Baseline year > 1999">(record starts 2003)</span></td>
+      <td class="num">22 yr (2003–2025)</td>
+      <td class="num">0.1124</td>
+      <td class="num"><span class="loss">-1,799</span></td>
+      <td class="num"><span class="loss">-82</span></td>
+      <td class="num"><span class="loss">-2,467</span></td>
+      <td class="num"><span class="loss">-95</span></td>
+      <td class="num"><span class="loss">-2,929</span></td>
+      <td class="num">81%</td>
+      <td class="num">82</td>
+      <td class="num">2,000</td>
+      <td class="num"><span class="gain">+1,918</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W03H004M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span> <span class="late" title="Baseline year > 1999">(record starts 2012)</span></td>
+      <td class="num">13 yr (2012–2025)</td>
+      <td class="num">0.1098</td>
+      <td class="num"><span class="loss">-964</span></td>
+      <td class="num"><span class="loss">-74</span></td>
+      <td class="num"><span class="loss">-2,028</span></td>
+      <td class="num"><span class="loss">-78</span></td>
+      <td class="num"><span class="loss">-1,955</span></td>
+      <td class="num">58%</td>
+      <td class="num">74</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-74</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W09E001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">26 yr (1999–2025)</td>
+      <td class="num">0.0821</td>
+      <td class="num"><span class="loss">-1,213</span></td>
+      <td class="num"><span class="loss">-47</span></td>
+      <td class="num"><span class="loss">-1,213</span></td>
+      <td class="num"><span class="loss">-47</span></td>
+      <td class="num"><span class="loss">-13,902</span></td>
+      <td class="num">70%</td>
+      <td class="num">47</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-47</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W27L001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">26 yr (1999–2025)</td>
+      <td class="num">0.0675</td>
+      <td class="num"><span class="loss">-983</span></td>
+      <td class="num"><span class="loss">-38</span></td>
+      <td class="num"><span class="loss">-983</span></td>
+      <td class="num"><span class="loss">-38</span></td>
+      <td class="num"><span class="loss">-8,480</span></td>
+      <td class="num">73%</td>
+      <td class="num">38</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-38</span></td>
+    </tr>
+<tr>
+      <td><strong>23N01W10M001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span> <span class="late" title="Baseline year > 1999">(record starts 2002)</span></td>
+      <td class="num">23 yr (2002–2025)</td>
+      <td class="num">0.0797</td>
+      <td class="num"><span class="loss">-384</span></td>
+      <td class="num"><span class="loss">-17</span></td>
+      <td class="num"><span class="loss">-1,407</span></td>
+      <td class="num"><span class="loss">-54</span></td>
+      <td class="num"><span class="loss">-4,880</span></td>
+      <td class="num">70%</td>
+      <td class="num">17</td>
+      <td class="num">—</td>
+      <td class="num"><span class="loss">-17</span></td>
+    </tr>
+<tr>
+      <td><strong>22N01W05M001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">26 yr (1999–2025)</td>
+      <td class="num">0.0825</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-6,849</span></td>
+      <td class="num">82%</td>
+      <td class="num">0</td>
+      <td class="num">—</td>
+      <td class="num">0</td>
+    </tr>
+<tr>
+      <td><strong>23N02W25C001M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span></td>
+      <td class="num">26 yr (1999–2025)</td>
+      <td class="num">0.0845 <span class="fallback" title="Insufficient SVSim borehole coverage — using basin area-weighted mean">(mean)</span></td>
+      <td class="num"><span class="gain">+1,904</span></td>
+      <td class="num"><span class="gain">+73</span></td>
+      <td class="num"><span class="gain">+1,904</span></td>
+      <td class="num"><span class="gain">+73</span></td>
+      <td class="num"><span class="loss">-6,189</span></td>
+      <td class="num">52%</td>
+      <td class="num">0</td>
+      <td class="num">—</td>
+      <td class="num">0</td>
+    </tr>
+<tr>
+      <td><strong>23N01W28M004M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span> <span class="late" title="Baseline year > 1999">(record starts 2009)</span></td>
+      <td class="num">16 yr (2009–2025)</td>
+      <td class="num">0.0950</td>
+      <td class="num"><span class="gain">+545</span></td>
+      <td class="num"><span class="gain">+34</span></td>
+      <td class="num"><span class="loss">-1,197</span></td>
+      <td class="num"><span class="loss">-46</span></td>
+      <td class="num"><span class="loss">-5,466</span></td>
+      <td class="num">59%</td>
+      <td class="num">0</td>
+      <td class="num">—</td>
+      <td class="num">0</td>
+    </tr>
+<tr>
+      <td><strong>23N01W31M004M</strong> <span style="color:#8a8a8a;font-size:11px;">North</span> <span class="late" title="Baseline year > 1999">(record starts 2009)</span></td>
+      <td class="num">15 yr (2009–2024)</td>
+      <td class="num">0.0864</td>
+      <td class="num"><span class="gain">+104</span></td>
+      <td class="num"><span class="gain">+7</span></td>
+      <td class="num"><span class="loss">-692</span></td>
+      <td class="num"><span class="loss">-27</span></td>
+      <td class="num"><span class="loss">-1,275</span></td>
+      <td class="num">55%</td>
+      <td class="num">0</td>
+      <td class="num">—</td>
+      <td class="num">0</td>
+    </tr>
+<tr>
+      <td><strong>21N02E18C003M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2011)</span></td>
+      <td class="num">14 yr (2011–2025)</td>
+      <td class="num">0.1108</td>
+      <td class="num"><span class="gain">+7,297</span></td>
+      <td class="num"><span class="gain">+521</span></td>
+      <td class="num"><span class="gain">+6,282</span></td>
+      <td class="num"><span class="gain">+242</span></td>
+      <td class="num"><span class="loss">-9,507</span></td>
+      <td class="num">61%</td>
+      <td class="num">0</td>
+      <td class="num">—</td>
+      <td class="num">0</td>
+    </tr>
+<tr>
+      <td><strong>21N02E32E001M</strong> <span style="color:#8a8a8a;font-size:11px;">South</span> <span class="late" title="Baseline year > 1999">(record starts 2009)</span></td>
+      <td class="num">16 yr (2009–2025)</td>
+      <td class="num">0.0716</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num"><span class="loss">-1,429</span></td>
+      <td class="num"><span class="loss">-55</span></td>
+      <td class="num"><span class="loss">-7,348</span></td>
+      <td class="num">75%</td>
+      <td class="num">0</td>
+      <td class="num">—</td>
+      <td class="num">0</td>
+    </tr></tbody>
+  <tfoot>
+    <tr>
+      <th>Basin (sum)</th><th class="num">—</th><th class="num">—</th>
+      <th class="num"><strong>-173,395</strong></th>
+      <th class="num">-7,940</th>
+      <th class="num"><strong>-209,594</strong></th>
+      <th class="num">-8,061</th>
+      <th class="num">-468,037</th><th class="num">—</th>
+      <th class="num"><strong>8,575</strong></th>
+      <th class="num"><strong>14,500</strong></th>
+      <th class="num"><strong><span class="gain">+6,560</span></strong></th>
+    </tr>
+  </tfoot>
+</table>
+
+<details>
+<summary>Annual basin time series (2000–2025), gap-attributed</summary>
+<p style="font-size:13px;color:var(--ink-muted);">Sum of all 28 polygons' year-over-year storage change with polygon-by-polygon Sy.</p>
+<table>
+  <thead><tr><th class="num">Year</th><th>Condition</th><th class="num">ΔStor (AF)</th><th class="num">Cumulative (AF)</th></tr></thead>
+  <tbody><tr><td class="num">2000</td><td><span style="background:#eef5ee;color:#3a8050;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Above Normal</span></td><td class="num"><span class="loss">-12,134</span></td><td class="num"><span class="loss">-12,134</span></td></tr>
+<tr><td class="num">2001</td><td><span style="background:#fadcc9;color:#9c4521;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Dry</span></td><td class="num"><span class="loss">-25,720</span></td><td class="num"><span class="loss">-37,854</span></td></tr>
+<tr><td class="num">2002</td><td><span style="background:#fadcc9;color:#9c4521;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Dry</span></td><td class="num"><span class="loss">-14,846</span></td><td class="num"><span class="loss">-52,700</span></td></tr>
+<tr><td class="num">2003</td><td><span style="background:#eef5ee;color:#3a8050;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Above Normal</span></td><td class="num"><span class="gain">+5,836</span></td><td class="num"><span class="loss">-46,864</span></td></tr>
+<tr><td class="num">2004</td><td><span style="background:#f7e8d2;color:#8a5a18;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Below Normal</span></td><td class="num"><span class="gain">+17,333</span></td><td class="num"><span class="loss">-29,531</span></td></tr>
+<tr><td class="num">2005</td><td><span style="background:#eef5ee;color:#3a8050;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Above Normal</span></td><td class="num"><span class="gain">+5,474</span></td><td class="num"><span class="loss">-24,057</span></td></tr>
+<tr><td class="num">2006</td><td><span style="background:#e6f0e8;color:#2e6f3f;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Wet</span></td><td class="num"><span class="gain">+24,582</span></td><td class="num"><span class="gain">+525</span></td></tr>
+<tr><td class="num">2007</td><td><span style="background:#fadcc9;color:#9c4521;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Dry</span></td><td class="num"><span class="loss">-56,015</span></td><td class="num"><span class="loss">-55,490</span></td></tr>
+<tr><td class="num">2008</td><td><span style="background:#fbe6e6;color:#a32d2d;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Critical</span></td><td class="num"><span class="loss">-19,377</span></td><td class="num"><span class="loss">-74,867</span></td></tr>
+<tr><td class="num">2009</td><td><span style="background:#fadcc9;color:#9c4521;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Dry</span></td><td class="num"><span class="loss">-39,345</span></td><td class="num"><span class="loss">-114,212</span></td></tr>
+<tr><td class="num">2010</td><td><span style="background:#f7e8d2;color:#8a5a18;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Below Normal</span></td><td class="num"><span class="gain">+9,489</span></td><td class="num"><span class="loss">-104,723</span></td></tr>
+<tr><td class="num">2011</td><td><span style="background:#e6f0e8;color:#2e6f3f;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Wet</span></td><td class="num"><span class="gain">+3,814</span></td><td class="num"><span class="loss">-100,909</span></td></tr>
+<tr><td class="num">2012</td><td><span style="background:#f7e8d2;color:#8a5a18;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Below Normal</span></td><td class="num"><span class="loss">-5,502</span></td><td class="num"><span class="loss">-106,411</span></td></tr>
+<tr><td class="num">2013</td><td><span style="background:#fadcc9;color:#9c4521;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Dry</span></td><td class="num"><span class="loss">-48,976</span></td><td class="num"><span class="loss">-155,387</span></td></tr>
+<tr><td class="num">2014</td><td><span style="background:#fbe6e6;color:#a32d2d;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Critical</span></td><td class="num"><span class="loss">-65,007</span></td><td class="num"><span class="loss">-220,394</span></td></tr>
+<tr><td class="num">2015</td><td><span style="background:#fbe6e6;color:#a32d2d;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Critical</span></td><td class="num"><span class="loss">-13,159</span></td><td class="num"><span class="loss">-233,553</span></td></tr>
+<tr><td class="num">2016</td><td><span style="background:#f7e8d2;color:#8a5a18;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Below Normal</span></td><td class="num"><span class="gain">+6,708</span></td><td class="num"><span class="loss">-226,845</span></td></tr>
+<tr><td class="num">2017</td><td><span style="background:#e6f0e8;color:#2e6f3f;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Wet</span></td><td class="num"><span class="gain">+100,874</span></td><td class="num"><span class="loss">-125,971</span></td></tr>
+<tr><td class="num">2018</td><td><span style="background:#f7e8d2;color:#8a5a18;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Below Normal</span></td><td class="num"><span class="loss">-47,715</span></td><td class="num"><span class="loss">-173,686</span></td></tr>
+<tr><td class="num">2019</td><td><span style="background:#e6f0e8;color:#2e6f3f;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Wet</span></td><td class="num"><span class="gain">+52,427</span></td><td class="num"><span class="loss">-121,259</span></td></tr>
+<tr><td class="num">2020</td><td><span style="background:#fadcc9;color:#9c4521;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Dry</span></td><td class="num"><span class="loss">-46,704</span></td><td class="num"><span class="loss">-167,963</span></td></tr>
+<tr><td class="num">2021</td><td><span style="background:#fbe6e6;color:#a32d2d;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Critical</span></td><td class="num"><span class="loss">-75,569</span></td><td class="num"><span class="loss">-243,532</span></td></tr>
+<tr><td class="num">2022</td><td><span style="background:#fbe6e6;color:#a32d2d;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Critical</span></td><td class="num"><span class="loss">-63,321</span></td><td class="num"><span class="loss">-306,853</span></td></tr>
+<tr><td class="num">2023</td><td><span style="background:#e6f0e8;color:#2e6f3f;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Wet</span></td><td class="num"><span class="gain">+38,423</span></td><td class="num"><span class="loss">-268,430</span></td></tr>
+<tr><td class="num">2024</td><td><span style="background:#eef5ee;color:#3a8050;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Above Normal</span></td><td class="num"><span class="gain">+50,093</span></td><td class="num"><span class="loss">-218,337</span></td></tr>
+<tr><td class="num">2025</td><td><span style="background:#e6f0e8;color:#2e6f3f;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">Wet</span></td><td class="num"><span class="gain">+44,940</span></td><td class="num"><span class="loss">-173,397</span></td></tr></tbody>
+</table>
+</details>
+</div>
+
+<!-- Shared polygon popup (moved into the active map-wrap on click) -->
+<div id="polygon-popup">
+  <button class="popup-close" type="button">×</button>
+  <h4 id="pp-name">—</h4>
+  <div id="pp-body"></div>
+</div>
+
 <div class="footer">
-<p><strong>Files in this folder.</strong> <code>index.html</code> (this page) · <code>data/condition_analysis.json</code> (per-polygon bucket totals) · <code>data/basin_annual.json</code> (basin annual ΔStor) · <code>data/sustainability_2042.json</code> (per-polygon and basin 2042 targets) · <code>data/model_data.json</code>, <code>data/polygon_storage_2025.csv</code>, <code>data/storage_timeseries.csv</code> (model data) · <code>data/polygon_map.svg</code>, <code>data/basin_buckets_chart.svg</code>, <code>data/basin_cumulative_chart.svg</code>, <code>data/storage_context.svg</code> (figures) · <code>data/polygon_sy_svsim.csv</code> (per-polygon Sy) · <code>data/project_portfolio.json</code> (project allocations).</p>
-<p><strong>Upstream.</strong> Polygons, wells, and DWR periodic GWL measurements come from the companion <a href="https://cosmo1007.github.io/2027-BC-prop-network/">2027-BC-prop-network</a> framework (28 Voronoi polygons, 79 wells including 28 GWL RMS, measurements fetched fresh from DWR CKAN).</p>
-<p><strong>Status.</strong> Independent analysis prepared for AGUBC technical staff and Board. Comments and corrections welcomed; this work is expected to evolve as feedback comes in.</p>
+<p><strong>Files in this folder.</strong> <code>index.html</code> (this page) · <code>data/condition_analysis_{single,three_zone}.json</code> · <code>data/sustainability_2042_{single,three_zone}.json</code> · <code>data/basin_annual_{single,three_zone}.json</code> (observed + normalized) · <code>data/model_data_{single,three_zone}.json</code> · <code>data/polygon_storage_2025_{single,three_zone}.csv</code> · <code>data/storage_timeseries_{single,three_zone}.csv</code> · <code>data/polygon_sy_svsim_{single,three_zone}.csv</code> · <code>data/project_portfolio.json</code> (editable input) · per-method SVGs (<code>polygon_map_*.svg</code>, <code>basin_buckets_chart_*.svg</code>, <code>basin_cumulative_chart_*.svg</code>, <code>storage_context_*.svg</code>).</p>
+<p><strong>Upstream.</strong> Polygons, wells, and DWR periodic GWL measurements come from the companion <a href="https://cosmo1007.github.io/2027-BC-prop-network/">2027-BC-prop-network</a> framework — both <code>polygons-data-single.js</code> (single basin-wide tessellation) and <code>polygons-data-three-zone.js</code> (three independent tessellations per management area) are read here.</p>
+<p><strong>Status.</strong> Independent analysis prepared for AGUBC technical staff and Board. Comments and corrections welcomed.</p>
 </div>
 
 </div>
@@ -1095,7 +2032,6 @@ a:hover { background: #fff1cc; }
   const ppName = document.getElementById('pp-name');
   const ppBody = document.getElementById('pp-body');
   const closeBtn = popup.querySelector('.popup-close');
-  const wrap = document.querySelector('.map-wrap');
 
   function fmtClass(s) {
     if (!s) return '';
@@ -1106,8 +2042,12 @@ a:hover { background: #fff1cc; }
 
   function showPopup(path, evt) {
     const d = path.dataset;
+    const wrap = path.closest('.map-wrap');
     ppName.textContent = d.short + ' (' + d.ma + ')';
     let html = '';
+    if (d.reassigned === '1') {
+      html += `<div class="popup-row"><span class="k">Zone (spatial)</span><span class="v" style="color:#7c4a86;">${d.ma} — reassigned from ${d.workbookMa}</span></div>`;
+    }
     html += `<div class="popup-row"><span class="k">RMS well(s)</span><span class="v">${d.rmsWells.replace(/;/g, ', ')}</span></div>`;
     html += `<div class="popup-row"><span class="k">Area</span><span class="v">${d.area} ac</span></div>`;
     html += `<div class="popup-row"><span class="k">Span</span><span class="v">${d.baseYear}–${d.endYear} (${d.span} yr)</span></div>`;
@@ -1148,9 +2088,12 @@ a:hover { background: #fff1cc; }
     }
     ppBody.innerHTML = html;
 
+    // Position popup relative to the visible map-wrap that owns this path
     const rect = wrap.getBoundingClientRect();
     let x = evt.clientX - rect.left + 12;
     let y = evt.clientY - rect.top + 12;
+    // Move popup into this wrap (so absolute positioning is relative to it)
+    if (popup.parentElement !== wrap) wrap.appendChild(popup);
     popup.style.display = 'block';
     const popRect = popup.getBoundingClientRect();
     if (x + popRect.width > rect.width) x = rect.width - popRect.width - 8;
@@ -1167,6 +2110,23 @@ a:hover { background: #fff1cc; }
     if (!popup.contains(e.target) && !e.target.closest('path.poly')) {
       popup.style.display = 'none';
     }
+  });
+})();
+
+(function() {
+  const popup = document.getElementById('polygon-popup');
+  document.querySelectorAll('.method-toggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const m = btn.dataset.method;
+      document.querySelectorAll('.method-toggle button').forEach(b =>
+        b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.method-content').forEach(c =>
+        c.classList.toggle('hidden', !c.classList.contains('method-' + m)));
+      if (popup) popup.style.display = 'none';
+      // Scroll to top of method content
+      const visible = document.querySelector('.method-content:not(.hidden)');
+      if (visible) visible.scrollIntoView({behavior: 'smooth', block: 'start'});
+    });
   });
 })();
 </script>

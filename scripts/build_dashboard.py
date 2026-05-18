@@ -51,9 +51,18 @@ DATA_DIR = WORKTREE / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 REF_REPO = (WORKTREE / ".." / "2027-BC-prop-network").resolve()
-POLY_JS  = REF_REPO / "js" / "polygons-data.js"
+POLY_JS_BY_METHOD = {
+    "single":     (REF_REPO / "js" / "polygons-data-single.js",     "RMS_POLYGONS_SINGLE"),
+    "three-zone": (REF_REPO / "js" / "polygons-data-three-zone.js", "RMS_POLYGONS_THREE_ZONE"),
+}
 WELLS_JS = REF_REPO / "js" / "wells-data.js"
 MEAS_JS  = REF_REPO / "js" / "measurements-data.js"
+METHODS = ["single", "three-zone"]
+METHOD_LABEL = {
+    "single":     "Single basin-wide tessellation",
+    "three-zone": "Three-zone (per management area) tessellation",
+}
+METHOD_SUFFIX = {"single": "single", "three-zone": "three_zone"}
 
 # --- constants ------------------------------------------------------------
 START_YEAR = 1999
@@ -664,21 +673,23 @@ def render_polygon_map(polygons_meta, pol_summaries, well_lookup, sy_lookup,
     return "\n".join(svg)
 
 
-# --- main analysis --------------------------------------------------------
-def main():
-    polygons = load_js_const(POLY_JS, "RMS_POLYGONS")
-    wells = load_js_const(WELLS_JS, "WELLS")
-    meas = load_js_const(MEAS_JS, "MEASUREMENTS")
-    print(f"loaded {len(polygons)} polygons, {len(wells)} wells, "
-          f"{len(meas)} measurement series")
+# --- per-method analysis --------------------------------------------------
+def compute_method(method, wells_meta, meas, portfolio):
+    """Run the full storage analysis for one polygon method.
 
-    # well_name → site_code (some wells may have no site_code; fall back to name)
+    Loads the method-specific polygons + Sy CSV, computes per-polygon and
+    basin totals (observed + normalized), writes method-suffixed JSON/CSV/SVG
+    outputs, and returns a dict of all numbers the HTML build needs.
+    """
+    poly_js, poly_var = POLY_JS_BY_METHOD[method]
+    suffix = METHOD_SUFFIX[method]
+    polygons = load_js_const(poly_js, poly_var)
+
     site_by_name = {w["well_name"]: w.get("site_code") or w["well_name"]
-                    for w in wells}
-    well_lookup = {w["well_name"]: w for w in wells}
+                    for w in wells_meta}
+    well_lookup = {w["well_name"]: w for w in wells_meta}
 
-    # Track which Sy came from SVSim vs. basin-mean fallback.
-    sy_csv = DATA_DIR / "polygon_sy_svsim.csv"
+    sy_csv = DATA_DIR / f"polygon_sy_svsim_{suffix}.csv"
     sy_svsim_set = set()
     if sy_csv.exists():
         with sy_csv.open() as f:
@@ -687,15 +698,6 @@ def main():
                     sy_svsim_set.add(row["zone_label"])
     sy_lookup = load_sy(sy_csv, polygons)
 
-    # Project portfolio (per polygon).  This is the *proposed* mapping for
-    # the new 28-polygon network — see data/project_portfolio.json.  If the
-    # file is missing, no projects are sited and the dashboard shows the
-    # pre-portfolio shortfall.
-    portfolio_path = DATA_DIR / "project_portfolio.json"
-    if portfolio_path.exists():
-        portfolio = json.loads(portfolio_path.read_text())
-    else:
-        portfolio = {"projects": [], "notes": "no project portfolio loaded"}
     project_by_zone = {p["polygon"]: p for p in portfolio.get("projects", [])}
     project_total_afy = sum(p["af_per_yr"] for p in portfolio.get("projects", []))
 
@@ -911,7 +913,7 @@ def main():
             "measurement."
         ),
     }
-    (DATA_DIR / "condition_analysis.json").write_text(json.dumps(condition_out, indent=2))
+    (DATA_DIR / f"condition_analysis_{suffix}.json").write_text(json.dumps(condition_out, indent=2))
 
     sustainability_out = {
         "framing": ("Hold current conditions: each polygon's sustainability "
@@ -963,9 +965,9 @@ def main():
             for s in pol_summaries
         ],
     }
-    (DATA_DIR / "sustainability_2042.json").write_text(json.dumps(sustainability_out, indent=2))
+    (DATA_DIR / f"sustainability_2042_{suffix}.json").write_text(json.dumps(sustainability_out, indent=2))
 
-    (DATA_DIR / "basin_annual.json").write_text(json.dumps({
+    (DATA_DIR / f"basin_annual_{suffix}.json").write_text(json.dumps({
         "observed": basin_annual,
         "normalized_year_type_weighted": basin_annual_normalized,
         "method_note": ("'observed' = each polygon contributes only years it observed. "
@@ -975,14 +977,14 @@ def main():
     }, indent=2))
 
     # model_data.json (for downstream / debug use)
-    (DATA_DIR / "model_data.json").write_text(json.dumps({
+    (DATA_DIR / f"model_data_{suffix}.json").write_text(json.dumps({
         "constants": {"start_year": START_YEAR, "end_year": END_YEAR,
-                       "n_polygons": len(polygon_models)},
+                       "n_polygons": len(polygon_models), "method": method},
         "polygons": polygon_models,
     }, indent=2))
 
     # polygon_storage_2025.csv
-    with (DATA_DIR / "polygon_storage_2025.csv").open("w", newline="") as f:
+    with (DATA_DIR / f"polygon_storage_2025_{suffix}.csv").open("w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["zone_label", "mgmt_area", "rms_well", "area_acres", "sy",
                     "sy_source", "baseline_year", "baseline_gwe",
@@ -1010,7 +1012,7 @@ def main():
 
     # storage_timeseries.csv
     cum_running = 0.0
-    with (DATA_DIR / "storage_timeseries.csv").open("w", newline="") as f:
+    with (DATA_DIR / f"storage_timeseries_{suffix}.csv").open("w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["year", "year_type", "yoy_delta_AF", "cumulative_AF"])
         for y in range(START_YEAR, END_YEAR + 1):
@@ -1022,13 +1024,13 @@ def main():
     # --- render SVGs ----------------------------------------------------
     polygon_map_svg = render_polygon_map(polygons, pol_summaries, well_lookup,
                                           sy_lookup, portfolio.get("projects", []))
-    (DATA_DIR / "polygon_map.svg").write_text(polygon_map_svg)
+    (DATA_DIR / f"polygon_map_{suffix}.svg").write_text(polygon_map_svg)
 
     n_by_type = {k: sum(1 for y in range(START_YEAR + 1, END_YEAR + 1)
                         if classify_year(y) == k)
                  for k in ["wet", "an", "bn", "dry", "critical"]}
     bar_svg = render_bar_chart(basin_buckets, n_by_type, basin_cumulative_2025)
-    (DATA_DIR / "basin_buckets_chart.svg").write_text(bar_svg)
+    (DATA_DIR / f"basin_buckets_chart_{suffix}.svg").write_text(bar_svg)
 
     cum_running = 0.0
     ts = []
@@ -1038,7 +1040,6 @@ def main():
         else:
             cum_running += basin_yoy.get(y, 0.0)
             ts.append({"year": y, "cumulative_AF": round(cum_running, 0)})
-    # Normalized time series
     cum_norm = 0.0
     ts_norm = []
     for y in range(START_YEAR, END_YEAR + 1):
@@ -1048,7 +1049,7 @@ def main():
             cum_norm += basin_normalized_yoy.get(y, 0.0)
             ts_norm.append({"year": y, "cumulative_AF": round(cum_norm, 0)})
     ts_svg = render_timeseries(ts, ts_norm)
-    (DATA_DIR / "basin_cumulative_chart.svg").write_text(ts_svg)
+    (DATA_DIR / f"basin_cumulative_chart_{suffix}.svg").write_text(ts_svg)
 
     trough_cum = 0.0
     trough_year = START_YEAR
@@ -1060,63 +1061,78 @@ def main():
             trough_year = int(y_str)
     context_svg = render_storage_context(basin_cumulative_2025,
                                           abs(trough_cum), trough_year)
-    (DATA_DIR / "storage_context.svg").write_text(context_svg)
+    (DATA_DIR / f"storage_context_{suffix}.svg").write_text(context_svg)
 
-    # --- index.html -----------------------------------------------------
-    try:
-        from build_html import write_index_html
-        write_index_html(WORKTREE / "index.html",
-                         pol_summaries, basin_buckets, basin_cumulative_2025,
-                         basin_polygon_summed_need, basin_loss_rate,
-                         basin_portfolio_margin, basin_annual,
-                         polygon_map_svg, bar_svg, ts_svg, context_svg, sy_lookup,
-                         trough_cum, trough_year, portfolio, project_total_afy,
-                         n_by_type,
-                         basin_normalized_cumulative_2025,
-                         basin_normalized_avg_rate,
-                         basin_normalized_polygon_summed_need,
-                         basin_normalized_portfolio_margin,
-                         N_BY_TYPE_FULL)
-    except ImportError:
-        print("(build_html.py not yet present; index.html skipped)")
-
-    # --- console summary ------------------------------------------------
+    # Per-method console summary
     print()
-    print("=== Basin totals by Sacramento Valley Index year type (WY 2000–2025) ===")
+    print(f"=== [{method}] Basin totals (WY 2000–2025) ===")
     for k, full in [("wet", "Wet"), ("an", "Above Normal"), ("bn", "Below Normal"),
                     ("dry", "Dry"), ("critical", "Critical")]:
         n = n_by_type[k]
         avg = basin_buckets[k] / n if n else 0
         print(f"  {full:<14}: {basin_buckets[k]:>+12,.0f} AF "
               f"({n} years; avg {avg:>+8,.0f}/yr)")
-    print(f"  {'basin net':<14}: {basin_cumulative_2025:>+12,.0f} AF "
+    print(f"  basin net      : {basin_cumulative_2025:>+12,.0f} AF "
           f"({basin_cumulative_2025 / TOTAL_FRESH_STORAGE_AF * 100:+.2f}% of 16 MAF)")
-    print()
-    print("=== Hold-current target & project portfolio (observed basis) ===")
-    print(f"  Basin avg loss rate          : {basin_loss_rate:>+12,.0f} AF/yr")
-    print(f"  Polygon-summed hold need     : {basin_polygon_summed_need:>+12,.0f} AF/yr")
-    print(f"  Project portfolio (2032)     : {project_total_afy:>+12,.0f} AF/yr")
-    print(f"  Basin recovery margin        : {basin_portfolio_margin:>+12,.0f} AF/yr "
-          f"({basin_portfolio_margin / SUSTAINABLE_YIELD_AFY * 100:+.2f}% of SY)")
-    print()
-    print("=== Year-type-weighted normalization (Option A) ===")
-    print(f"  Basin normalized cum 2025    : {basin_normalized_cumulative_2025:>+12,.0f} AF "
-          f"({basin_normalized_cumulative_2025 / TOTAL_FRESH_STORAGE_AF * 100:+.2f}% of 16 MAF)")
-    print(f"  Basin normalized avg rate    : {basin_normalized_avg_rate:>+12,.0f} AF/yr")
-    print(f"  Normalized hold-steady need  : {basin_normalized_polygon_summed_need:>+12,.0f} AF/yr")
-    print(f"  Normalized recovery margin   : {basin_normalized_portfolio_margin:>+12,.0f} AF/yr "
-          f"({basin_normalized_portfolio_margin / SUSTAINABLE_YIELD_AFY * 100:+.2f}% of SY)")
-    print()
-    print("Per-polygon detail (sorted by avg loss):")
-    print(f"  {'Zone':<18} {'MA':<6} {'Sy':>7} {'Src':<5} {'Cum2025':>10} "
-          f"{'Hold':>8} {'Proj':>8} {'Net':>9}")
-    for s in sorted(pol_summaries, key=lambda x: -x["hold_steady_need_AF_per_yr"]):
-        src = "SVSim" if s["sy_source"] == "SVSim" else "mean"
-        print(f"  {s['zone_label']:<18} {s['ma']:<6} {s['sy']:.4f} {src:<5} "
-              f"{s['endpoint_cum_storage_AF']:>+10,.0f} "
-              f"{s['hold_steady_need_AF_per_yr']:>+8,.0f} "
-              f"{s['project_alloc_AF_per_yr']:>+8,.0f} "
-              f"{s['coverage_net_AF_per_yr']:>+9,.0f}")
+    print(f"  observed avg loss rate    : {basin_loss_rate:>+12,.0f} AF/yr")
+    print(f"  normalized cum 2025       : {basin_normalized_cumulative_2025:>+12,.0f} AF")
+    print(f"  normalized avg loss rate  : {basin_normalized_avg_rate:>+12,.0f} AF/yr")
+    print(f"  portfolio margin (obs/nrm): {basin_portfolio_margin:>+12,.0f} / "
+          f"{basin_normalized_portfolio_margin:>+,.0f} AF/yr")
+
+    return {
+        "method": method,
+        "polygons_meta": polygons,
+        "well_lookup": well_lookup,
+        "sy_lookup": sy_lookup,
+        "pol_summaries": pol_summaries,
+        "basin_buckets": basin_buckets,
+        "basin_cumulative_2025": basin_cumulative_2025,
+        "basin_polygon_summed_need": basin_polygon_summed_need,
+        "basin_loss_rate": basin_loss_rate,
+        "basin_portfolio_margin": basin_portfolio_margin,
+        "basin_annual": basin_annual,
+        "basin_annual_normalized": basin_annual_normalized,
+        "basin_normalized_cumulative_2025": basin_normalized_cumulative_2025,
+        "basin_normalized_avg_rate": basin_normalized_avg_rate,
+        "basin_normalized_polygon_summed_need": basin_normalized_polygon_summed_need,
+        "basin_normalized_portfolio_margin": basin_normalized_portfolio_margin,
+        "polygon_map_svg": polygon_map_svg,
+        "bar_svg": bar_svg,
+        "ts_svg": ts_svg,
+        "context_svg": context_svg,
+        "trough_cum": trough_cum,
+        "trough_year": trough_year,
+        "n_by_type": n_by_type,
+        "n_by_type_full": N_BY_TYPE_FULL,
+        "project_total_afy": project_total_afy,
+    }
+
+
+# --- main analysis --------------------------------------------------------
+def main():
+    wells_meta = load_js_const(WELLS_JS, "WELLS")
+    meas = load_js_const(MEAS_JS, "MEASUREMENTS")
+    print(f"loaded {len(wells_meta)} wells, {len(meas)} measurement series")
+
+    portfolio_path = DATA_DIR / "project_portfolio.json"
+    if portfolio_path.exists():
+        portfolio = json.loads(portfolio_path.read_text())
+    else:
+        portfolio = {"projects": [], "notes": "no project portfolio loaded"}
+
+    results_by_method = {}
+    for method in METHODS:
+        print(f"\n=== Running method: {method} ===")
+        results_by_method[method] = compute_method(method, wells_meta, meas, portfolio)
+
+    # --- index.html with toggle ----------------------------------------
+    try:
+        from build_html import write_index_html
+        write_index_html(WORKTREE / "index.html", results_by_method,
+                         portfolio)
+    except ImportError:
+        print("(build_html.py not yet present; index.html skipped)")
 
 
 if __name__ == "__main__":

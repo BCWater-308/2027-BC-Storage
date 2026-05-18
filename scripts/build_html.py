@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
 Single-file index.html generator for the 28-polygon 2027 BC drought-storage
-dashboard.  Called by build_dashboard.py.
+dashboard.  Builds two method-specific content sections (single basin-wide
+tessellation + three-zone per-management-area tessellation) and wires up a
+toggle UI at the top to switch between them.
+
+Called by scripts/build_dashboard.py with a `results_by_method` dict
+keyed by 'single' and 'three-zone'.
 """
 
 from __future__ import annotations
+from collections import defaultdict as _dd
 
-# Year-type metadata duplicated from build_dashboard.py so this module can
-# format SVI badges without circular imports.
 SVI_YEAR_TYPE = {
     1999: "Wet",            2000: "Above Normal",   2001: "Dry",
     2002: "Dry",            2003: "Above Normal",   2004: "Below Normal",
@@ -25,15 +29,21 @@ PROJECTS_ONLINE_YEAR = 2032
 SUSTAINABLE_YIELD_AFY = 233_500
 TOTAL_FRESH_STORAGE_AF = 16_000_000
 
-
-def classify_year(y: int) -> str:
-    return {"Wet": "wet", "Above Normal": "an", "Below Normal": "bn",
-            "Dry": "dry", "Critical": "critical"}.get(
-        SVI_YEAR_TYPE.get(y, "Wet"), "wet")
+METHOD_LABEL = {
+    "single":     "Single basin-wide tessellation",
+    "three-zone": "Three-zone (per management area)",
+}
+METHOD_SHORT = {"single": "Single", "three-zone": "Three-zone"}
 
 
 def year_type_full(y: int) -> str:
     return SVI_YEAR_TYPE.get(y, "Wet")
+
+
+def loss_or_gain_span(v, decimals=0):
+    cls = "gain" if v > 0 else "loss" if v < 0 else ""
+    fmt = f"{{:+,.{decimals}f}}".format(v) if v != 0 else f"{{:,.{decimals}f}}".format(v)
+    return f'<span class="{cls}">{fmt}</span>' if cls else fmt
 
 
 INDEX_CSS = """
@@ -64,7 +74,7 @@ em { font-style: italic; color: var(--ink); }
 strong { font-weight: 700; }
 code { font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace; font-size: 0.92em; background: #f1ede2; padding: 1px 5px; border-radius: 3px; color: var(--ink); }
 .container { max-width: 980px; margin: 0 auto; padding: 36px 28px 80px 28px; }
-.subtitle { color: var(--ink-muted); font-size: 14px; font-family: 'Inter', sans-serif; margin: 0 0 32px 0; }
+.subtitle { color: var(--ink-muted); font-size: 14px; font-family: 'Inter', sans-serif; margin: 0 0 18px 0; }
 .lead { font-size: 18px; line-height: 1.55; color: var(--ink); }
 .headline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 28px 0 18px 0; }
 @media (max-width: 720px) { .headline { grid-template-columns: 1fr; } }
@@ -93,6 +103,7 @@ tr:hover td { background: #f9f6ee; }
 .loss { color: var(--warn); font-weight: 600; }
 .late { color: var(--tan); font-style: italic; font-weight: 500; }
 .fallback { color: #8a5a18; font-style: italic; font-size: 11px; }
+.reassigned-tag { color: #7c4a86; font-style: italic; font-size: 11px; }
 .figure { margin: 18px 0 6px 0; }
 .figure svg { display: block; max-width: 100%; height: auto; border: 1px solid var(--rule); background: #fafaf7; }
 .figcaption { font-size: 12px; color: var(--ink-muted); margin: 6px 0 18px 2px; font-style: italic; }
@@ -122,6 +133,56 @@ details[open] summary { margin-bottom: 12px; }
 .footer { margin-top: 60px; padding-top: 18px; border-top: 1.5px solid var(--rule); font-size: 13px; color: var(--ink-muted); font-family: 'Inter', sans-serif; line-height: 1.5; }
 a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
 a:hover { background: #fff1cc; }
+
+/* Method toggle */
+.method-toggle {
+  display: inline-flex;
+  gap: 0;
+  margin: 18px 0 32px 0;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-card);
+  padding: 4px;
+  font-family: 'Inter', sans-serif;
+  flex-wrap: wrap;
+}
+.method-toggle button {
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+.method-toggle button:hover { background: #f1ede2; color: var(--ink); }
+.method-toggle button.active {
+  background: var(--accent);
+  color: white;
+}
+.method-toggle-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+  font-weight: 600;
+  margin-right: 12px;
+  align-self: center;
+}
+.method-content { display: block; }
+.method-content.hidden { display: none; }
+.method-banner {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--ink-muted);
+  padding: 6px 0 0 2px;
+  margin-bottom: 6px;
+}
+.method-banner strong { color: var(--ink); }
 """
 
 POPUP_JS = """
@@ -130,7 +191,6 @@ POPUP_JS = """
   const ppName = document.getElementById('pp-name');
   const ppBody = document.getElementById('pp-body');
   const closeBtn = popup.querySelector('.popup-close');
-  const wrap = document.querySelector('.map-wrap');
 
   function fmtClass(s) {
     if (!s) return '';
@@ -141,8 +201,12 @@ POPUP_JS = """
 
   function showPopup(path, evt) {
     const d = path.dataset;
+    const wrap = path.closest('.map-wrap');
     ppName.textContent = d.short + ' (' + d.ma + ')';
     let html = '';
+    if (d.reassigned === '1') {
+      html += `<div class="popup-row"><span class="k">Zone (spatial)</span><span class="v" style="color:#7c4a86;">${d.ma} — reassigned from ${d.workbookMa}</span></div>`;
+    }
     html += `<div class="popup-row"><span class="k">RMS well(s)</span><span class="v">${d.rmsWells.replace(/;/g, ', ')}</span></div>`;
     html += `<div class="popup-row"><span class="k">Area</span><span class="v">${d.area} ac</span></div>`;
     html += `<div class="popup-row"><span class="k">Span</span><span class="v">${d.baseYear}–${d.endYear} (${d.span} yr)</span></div>`;
@@ -183,9 +247,12 @@ POPUP_JS = """
     }
     ppBody.innerHTML = html;
 
+    // Position popup relative to the visible map-wrap that owns this path
     const rect = wrap.getBoundingClientRect();
     let x = evt.clientX - rect.left + 12;
     let y = evt.clientY - rect.top + 12;
+    // Move popup into this wrap (so absolute positioning is relative to it)
+    if (popup.parentElement !== wrap) wrap.appendChild(popup);
     popup.style.display = 'block';
     const popRect = popup.getBoundingClientRect();
     if (x + popRect.width > rect.width) x = rect.width - popRect.width - 8;
@@ -206,31 +273,55 @@ POPUP_JS = """
 })();
 """
 
+TOGGLE_JS = """
+(function() {
+  const popup = document.getElementById('polygon-popup');
+  document.querySelectorAll('.method-toggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const m = btn.dataset.method;
+      document.querySelectorAll('.method-toggle button').forEach(b =>
+        b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.method-content').forEach(c =>
+        c.classList.toggle('hidden', !c.classList.contains('method-' + m)));
+      if (popup) popup.style.display = 'none';
+      // Scroll to top of method content
+      const visible = document.querySelector('.method-content:not(.hidden)');
+      if (visible) visible.scrollIntoView({behavior: 'smooth', block: 'start'});
+    });
+  });
+})();
+"""
 
-def loss_or_gain_span(v, decimals=0):
-    cls = "gain" if v > 0 else "loss" if v < 0 else ""
-    fmt = f"{{:+,.{decimals}f}}".format(v) if v != 0 else f"{{:,.{decimals}f}}".format(v)
-    return f'<span class="{cls}">{fmt}</span>' if cls else fmt
 
+def _render_method_section(method, results, portfolio):
+    """Build the per-method HTML content block.  Returns an HTML string
+    (no <html>/<body> wrappers — to be inserted inside method-content div)."""
+    pol_summaries = results["pol_summaries"]
+    basin_buckets = results["basin_buckets"]
+    basin_net = results["basin_cumulative_2025"]
+    basin_polygon_summed_need = results["basin_polygon_summed_need"]
+    basin_loss_rate = results["basin_loss_rate"]
+    basin_portfolio_margin = results["basin_portfolio_margin"]
+    basin_annual = results["basin_annual"]
+    polygon_map_svg = results["polygon_map_svg"]
+    bar_svg = results["bar_svg"]
+    ts_svg = results["ts_svg"]
+    context_svg = results["context_svg"]
+    sy_lookup = results["sy_lookup"]
+    trough_cum = results["trough_cum"]
+    trough_year = results["trough_year"]
+    n_by_type = results["n_by_type"]
+    basin_normalized_cum_2025 = results["basin_normalized_cumulative_2025"]
+    basin_normalized_avg_rate = results["basin_normalized_avg_rate"]
+    basin_normalized_summed_need = results["basin_normalized_polygon_summed_need"]
+    basin_normalized_margin = results["basin_normalized_portfolio_margin"]
+    n_by_type_full = results["n_by_type_full"]
+    project_total_afy = results["project_total_afy"]
 
-def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
-                     basin_polygon_summed_need, basin_loss_rate,
-                     basin_portfolio_margin, basin_annual,
-                     polygon_map_svg, bar_svg, ts_svg, context_svg, sy_lookup,
-                     trough_cum, trough_year, portfolio, project_total_afy,
-                     n_by_type,
-                     basin_normalized_cum_2025,
-                     basin_normalized_avg_rate,
-                     basin_normalized_summed_need,
-                     basin_normalized_margin,
-                     n_by_type_full):
     worst_year_deficit_int = int(round(abs(trough_cum)))
     abs_2022_cushion_int = int(round(abs(trough_cum) - abs(basin_net)))
     sorted_pols = sorted(pol_summaries,
                          key=lambda s: -s["hold_steady_need_AF_per_yr"])
-    deficit_pols = [s for s in sorted_pols if s["hold_steady_need_AF_per_yr"] > 0]
-    surplus_pols = [s for s in sorted_pols if s["hold_steady_need_AF_per_yr"] == 0]
-
     short_pols = [s for s in pol_summaries if s["coverage_net_AF_per_yr"] < 0]
     short_pols.sort(key=lambda s: s["coverage_net_AF_per_yr"])
     over_pols  = [s for s in pol_summaries if s["coverage_net_AF_per_yr"] > 0
@@ -239,7 +330,6 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
 
     n_polygons = len(pol_summaries)
 
-    # Per-polygon detail rows
     detail_rows = []
     for s in sorted_pols:
         late_marker = (' <span class="late" title="Baseline year > 1999">'
@@ -259,7 +349,6 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
                    else (f'<span class="loss">{int(net):,}</span>' if net < 0 else "0"))
         proj_str = f"{int(proj):,}" if proj > 0 else "—"
         crit_dry_af = s["bucket_storage_AF"]["critical"] + s["bucket_storage_AF"]["dry"]
-        # Fallback indicator if any year-type was unobserved
         fallback_types = [k for k, src in (s.get("rate_per_bucket_source") or {}).items()
                           if "fallback" in src]
         fallback_marker = (f' <span class="fallback" title="Year-type(s) not observed; '
@@ -280,7 +369,6 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
       <td class="num">{net_str}</td>
     </tr>""")
 
-    # Project allocation table — read from portfolio JSON
     project_rows = []
     for proj in portfolio.get("projects", []):
         zone = proj["polygon"]
@@ -301,7 +389,6 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
       <td class="num">{net_str}</td>
     </tr>""")
 
-    # Shortfall table
     short_rows = []
     for s in short_pols:
         short_rows.append(f"""<tr>
@@ -312,7 +399,6 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
     </tr>""")
     short_total = sum(s["coverage_net_AF_per_yr"] for s in short_pols)
 
-    # Annual basin time series rows
     basin_running = 0.0
     annual_rows = []
     SVI_BADGE_STYLE = {
@@ -334,7 +420,6 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
             f'<td class="num">{loss_or_gain_span(basin_running, 0)}</td></tr>'
         )
 
-    # Hero stats by SVI type
     n_critical = n_by_type["critical"]
     n_dry      = n_by_type["dry"]
     n_bn       = n_by_type["bn"]
@@ -352,7 +437,6 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
     fallback_summary = (", ".join(s["zone_label"] for s in fallback_polys)
                         if fallback_polys else "none")
 
-    # Counts by management area
     n_north = sum(1 for s in pol_summaries if s["ma"] == "North")
     n_chico = sum(1 for s in pol_summaries if s["ma"] == "Chico")
     n_south = sum(1 for s in pol_summaries if s["ma"] == "South")
@@ -360,18 +444,31 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
     sy_min = min(sy_lookup.values())
     sy_max = max(sy_lookup.values())
 
-    # Category breakdown for the portfolio summary line.
-    from collections import defaultdict as _dd
+    # Reassignment notice — only for three-zone method
+    reassigned_polys = [s for s in pol_summaries
+                        if any(p.get("reassigned") and p.get("zone_label") == s["zone_label"]
+                                for p in results["polygons_meta"])]
+    reassigned_meta = [p for p in results["polygons_meta"] if p.get("reassigned")]
+    reassignment_callout = ""
+    if reassigned_meta and method == "three-zone":
+        items = "; ".join(
+            f"<code>{p['zone_label']}</code> (workbook tag: {p.get('workbook_mgmt_area', '?')} → spatial: {p.get('mgmt_area_full')})"
+            for p in reassigned_meta
+        )
+        reassignment_callout = (
+            f'<div class="callout tan"><strong>Spatial zone reassignment.</strong> '
+            f'In the three-zone method, polygons are assigned to management areas by '
+            f'<em>spatial containment</em> in the management-area boundary polygons, not by '
+            f'workbook tag. {len(reassigned_meta)} polygon{"s" if len(reassigned_meta) != 1 else ""} '
+            f'reassigned: {items}. This is a deliberate on-the-record boundary call for SMC '
+            f'defensibility (where the well physically sits matters for subsidence/SMC).</div>'
+        )
+
+    # Category breakdown
     cat_totals = _dd(int)
-    cat_names = {
-        "conjunctive-use": "conjunctive use (surface water replaces groundwater)",
-        "recharge": "recharge",
-    }
-    for proj in portfolio.get("projects", []):
-        cat_totals[proj.get("category", "other")] += int(proj.get("af_per_yr", 0))
-    # If recharge spans multiple creeks, separate them out
     recharge_by_name = _dd(int)
     for proj in portfolio.get("projects", []):
+        cat_totals[proj.get("category", "other")] += int(proj.get("af_per_yr", 0))
         if proj.get("category") == "recharge":
             recharge_by_name[proj.get("name", "Recharge project")] += int(proj.get("af_per_yr", 0))
     portfolio_breakdown_parts = []
@@ -382,33 +479,28 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
         portfolio_breakdown_parts.append(f"{afy:,} AF/yr {name}")
     portfolio_breakdown = " + ".join(portfolio_breakdown_parts) if portfolio_breakdown_parts else f"{project_total_afy:,} AF/yr"
 
-    # SVI year listings
     svi_years_listing = []
     for label in ["Wet", "Above Normal", "Below Normal", "Dry", "Critical"]:
         yrs = [str(y) for y, t in SVI_YEAR_TYPE.items() if t == label]
         svi_years_listing.append(
             f'<li><strong>{label}:</strong> {", ".join(yrs)} ({len(yrs)} years)</li>')
 
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Vina Subbasin: Where the Losses Happen — 2027 BC RMS Network (28 polygons)</title>
-<style>{INDEX_CSS}</style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-</head>
-<body>
-<div class="container">
+    method_pretty = METHOD_LABEL[method]
+    method_summary = (
+        f"<strong>{method_pretty}.</strong> "
+        + ("All 28 polygons built as one Voronoi tessellation clipped to the basin boundary; "
+           "cells can cross management-area lines."
+           if method == "single" else
+           "Three independent Voronoi tessellations (one per management area), each clipped to "
+           "its own boundary; cells do NOT cross management-area lines.")
+        + f" {n_polygons} polygons total ({n_north} North · {n_chico} Chico · {n_south} South)."
+    )
 
-<h1>Where the Losses Happen — A Drought-Conditioned Look at the 2027 BC RMS Network</h1>
-<p class="subtitle">May 2026 · Prepared by AGUBC · {n_polygons} Voronoi polygons ({n_north} North · {n_chico} Chico · {n_south} South) · {n_polygons} 2027 GWL RMS wells · polygon-by-polygon Sy from DWR SVSim Texture Data · WY 1999–2025 · ΔGWE × Sy<sub>p</sub> × Area<sub>p</sub>, sliced by hydrologic condition and read against a project-portfolio sustainability target.</p>
+    return f"""<div class="method-banner">{method_summary}</div>
 
-<p class="lead">Two questions: <strong>when and where is the basin losing water, and what would it take to be sustainable by 2042?</strong> Across WY 1999–2025, loss isn't a steady year-over-year decline — it's sharply concentrated in <strong>Critical and Dry</strong> water-year types, with <strong>Wet and Above-Normal</strong> years doing the recovery work. The basin's net deficit is <strong>{abs(basin_net)/1000:.0f}k AF — about {abs(basin_net)/TOTAL_FRESH_STORAGE_AF*100:.2f}% of the {int(TOTAL_FRESH_STORAGE_AF/1_000_000)}+ MAF in basin storage</strong>. <strong>Assuming the next 17 years see a roughly similar mix of year types as WY 1999–2025</strong>, holding current conditions through 2042 takes a basin-wide <strong>{basin_loss_rate:,.0f} AF/yr</strong> of new recharge or demand reduction; a project portfolio totaling <strong>{project_total_afy:,} AF/yr</strong> (online by ~{PROJECTS_ONLINE_YEAR}) would cover that with room to spare.</p>
+<p class="lead">Across WY 1999–2025, loss is sharply concentrated in <strong>Critical and Dry</strong> water-year types, with <strong>Wet and Above-Normal</strong> years doing the recovery work. The basin's <strong>observed</strong> net deficit is <strong>{abs(basin_net)/1000:.0f}k AF — about {abs(basin_net)/TOTAL_FRESH_STORAGE_AF*100:.2f}% of the {int(TOTAL_FRESH_STORAGE_AF/1_000_000)}+ MAF in basin storage</strong>; the <strong>year-type-normalized</strong> deficit is <strong>{abs(basin_normalized_cum_2025)/1000:.0f}k AF</strong> ({abs(basin_normalized_cum_2025)/TOTAL_FRESH_STORAGE_AF*100:.2f}%). Holding current conditions through 2042 takes a basin-wide <strong>{basin_loss_rate:,.0f} AF/yr</strong> (observed) / <strong>{-basin_normalized_avg_rate:,.0f} AF/yr</strong> (normalized) of new recharge or demand reduction; the project portfolio totaling <strong>{project_total_afy:,} AF/yr</strong> (online by ~{PROJECTS_ONLINE_YEAR}) would cover that with margin.</p>
 
-<div class="callout"><strong>What's new vs. the 17-polygon version.</strong> This dashboard uses the 28-polygon Voronoi tessellation from the <em>2027-BC-prop-network</em> framework — every 2027 GWL RMS well gets its own cell (the old build dissolved the three Chico cells and merged some southern wells). New polygon Sy values are recomputed from DWR SVSim Texture Data against the new geometry. The basin deficit comes out smaller here ({basin_net:+,.0f} AF vs. −193,010 AF in the 17-polygon build) because (a) the new <code>21N02E18C003M</code> polygon is larger and posts a recovery surplus, (b) the new Chico cells are smaller and capture less area-weighted drawdown, and (c) the new set adds late-baseline polygons that contribute less to early-record buckets.</div>
+{reassignment_callout}
 
 <div class="headline">
   <div class="stat warn">
@@ -428,47 +520,41 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
   </div>
 </div>
 
-<div class="callout"><strong>The picture in one sentence.</strong> Across 1999–2025, Critical and Dry years removed about <strong>{abs(crit_dry_total):,.0f} AF</strong>, Below-Normal years moved storage by <strong>{basin_buckets["bn"]:+,.0f} AF</strong>, and Wet + Above-Normal years recovered <strong>{wet_an_total:+,.0f} AF</strong>. Net basin deficit through 2025: <strong>{basin_net:+,.0f} AF</strong>, summed across all {n_polygons} polygons.</div>
+<div class="callout"><strong>The picture in one sentence.</strong> Across 1999–2025, Critical and Dry years removed about <strong>{abs(crit_dry_total):,.0f} AF</strong>, Below-Normal years moved storage by <strong>{basin_buckets["bn"]:+,.0f} AF</strong>, and Wet + Above-Normal years recovered <strong>{wet_an_total:+,.0f} AF</strong>. Net basin deficit through 2025: <strong>{basin_net:+,.0f} AF observed / {basin_normalized_cum_2025:+,.0f} AF year-type-normalized</strong>, summed across all {n_polygons} polygons.</div>
 
 <h2>Method, in brief</h2>
-<p>Per polygon: ΔStorage<sub>p,y</sub> = (GWE<sub>p,y</sub> − GWE<sub>p,baseline</sub>) × Sy<sub>p</sub> × Area<sub>p</sub>. GWE<sub>p,y</sub> is the polygon's 2027 GWL RMS well's spring composite (March mean for SWN-named wells; Feb–Apr mean for CWSCH wells), Good-quality DWR records only. In the 28-polygon network there is exactly one RMS well per polygon — the well that seeded the polygon's Voronoi cell. Each polygon is anchored to WY 1999 if it has a Good spring composite that year; otherwise to the polygon's first observation after 1999. We then take the per-polygon cumulative storage time series, compute year-over-year deltas (distributing multi-year DWR gaps evenly), and bucket each year by its <strong>official Sacramento Valley Index water-year type</strong>.</p>
+<p>Per polygon: ΔStorage<sub>p,y</sub> = (GWE<sub>p,y</sub> − GWE<sub>p,baseline</sub>) × Sy<sub>p</sub> × Area<sub>p</sub>. GWE<sub>p,y</sub> is the polygon's 2027 GWL RMS well's spring composite (March mean for SWN-named wells), Good-quality DWR records only. Each polygon is anchored to WY 1999 if it has a Good spring composite that year; otherwise to the polygon's first observation after 1999. We then take the per-polygon cumulative storage time series, compute year-over-year deltas (distributing multi-year DWR gaps evenly), and bucket each year by its <strong>official Sacramento Valley Index water-year type</strong>.</p>
 
-<p><strong>Specific yield is polygon-by-polygon</strong>, derived from DWR's SVSim Texture Data (Sacramento Valley Simulation Model v1.0, CKAN resource <code>544623e2-0cd5-4c5b-827f-affa4abf4e16</code>): coarse-grained sediments → Sy = 0.15, fine-grained → Sy = 0.05, Sy<sub>p</sub> = (% coarse × 0.15) + (% fine × 0.05) over the 0–500 ft below ground surface analysis window across the polygon's boreholes (≥200 ft of valid lithology required per borehole). Polygon Sy values for the 28-polygon network range <strong>{sy_min:.4f}</strong> to <strong>{sy_max:.4f}</strong>; basin area-weighted mean is roughly 0.087.</p>
+<p><strong>Specific yield is polygon-by-polygon</strong>, derived from DWR's SVSim Texture Data (Sacramento Valley Simulation Model v1.0). Coarse-grained sediments → Sy = 0.15, fine-grained → Sy = 0.05, area-weighted by borehole lithology in the 0–500 ft below ground surface analysis window. Polygon Sy values range <strong>{sy_min:.4f}</strong> to <strong>{sy_max:.4f}</strong>; basin area-weighted mean ≈ 0.087.</p>
 
-<p style="font-size:13px;color:var(--ink-muted);">Three polygons ({fallback_summary}) have insufficient SVSim borehole coverage (≤2 boreholes, none meeting the 200-ft valid-thickness threshold) and use the basin area-weighted mean as a Sy fallback. These are flagged in the table below with "(mean)". This is mostly a function of the new polygons being smaller and more numerous than the 17-polygon set, leaving some cells with thin SVSim coverage.</p>
+<p style="font-size:13px;color:var(--ink-muted);">{len(fallback_polys)} polygon{"s" if len(fallback_polys) != 1 else ""} ({fallback_summary}) have insufficient SVSim borehole coverage and use the basin area-weighted mean as a Sy fallback. Flagged with "(mean)" in the table.</p>
 
-<p>Year-type classification uses DWR's Sacramento Valley Index (Northern Sierra 8-Station Index) — the same five-tier system DWR publishes annually:</p>
+<p>Year-type classification uses DWR's Sacramento Valley Index (Northern Sierra 8-Station Index):</p>
 <ul>
 {chr(10).join(svi_years_listing)}
 </ul>
-<p style="font-size:13px;color:var(--ink-muted);">WY 2025 is preliminary (DWR upgraded to Wet in April 2025; final May-1 designation to verify). The 1991–2020 long-term 8SI average is 53.2 inches; SVI thresholds: Wet ≥ 9.2 MAF; Above Normal &gt; 7.8 ≤ 9.2; Below Normal &gt; 6.5 ≤ 7.8; Dry &gt; 5.4 ≤ 6.5; Critical ≤ 5.4.</p>
 
-<p><strong>Baseline asymmetry.</strong> Polygons anchored to WY 1999: those whose 2027 GWL RMS well had a Good March measurement that year. The rest baseline later: {late_summary}. Each polygon contributes year-over-year deltas only for years it has a baseline-anchored record, so early-record buckets reflect fewer polygons than late-record buckets. Polygons with shorter records cannot register pre-baseline drawdown.</p>
+<p><strong>Baseline asymmetry.</strong> Polygons anchored to WY 1999: those whose 2027 GWL RMS well had a Good March measurement that year ({n_polygons - len(late_polys)} of {n_polygons}). The rest baseline later: {late_summary}.</p>
 
 <h2>When and where the basin loses water</h2>
 
 <div class="figure">{bar_svg}</div>
-<div class="figcaption">Figure 1. Sum across all {n_polygons} polygons in the 2027 BC RMS network, gap-attributed by year, bucketed by official Sacramento Valley Index water-year type. Critical years alone average {crit_per_yr:,.0f} AF/yr of loss — about {(crit_per_yr/dry_per_yr if dry_per_yr else 0):.1f}× the per-year loss rate of Dry years.</div>
+<div class="figcaption">Figure 1. Sum across all {n_polygons} polygons, gap-attributed by year, bucketed by official Sacramento Valley Index water-year type. Critical years alone average {crit_per_yr:,.0f} AF/yr of loss — about {(crit_per_yr/dry_per_yr if dry_per_yr else 0):.1f}× the per-year loss rate of Dry years.</div>
 
 <div class="figure">{ts_svg}</div>
-<div class="figcaption">Figure 2. Basin cumulative ΔStorage. <strong>Solid blue line = observed</strong> (each polygon contributes only the years its RMS well actually measured). <strong>Dashed purple line = year-type-weighted normalized</strong> (corrects for late-baseline drag — see methodology section below). Red-tinted vertical bands = Critical years; orange = Dry; light tan = Below Normal. Wet and Above-Normal years remain untinted. Almost every steep drop falls inside a tinted band; almost every recovery falls outside one.</div>
+<div class="figcaption">Figure 2. Basin cumulative ΔStorage. <strong>Solid blue line = observed</strong> (each polygon contributes only years its RMS well actually measured). <strong>Dashed purple line = year-type-weighted normalized</strong> (corrects for late-baseline drag — see callout below).</div>
 
-<div class="callout warn"><strong>Late-baseline drag and the year-type-weighted normalization.</strong> Of the 28 polygons, only 11 have a Good March measurement in WY 1999. The other 17 baseline later — between 2000 and 2019 — because their RMS well wasn't measured in 1999. Each polygon contributes year-over-year deltas only for the years it has a baseline-anchored record, which means the early-record buckets reflect fewer polygons than the late-record buckets. Late-baseline polygons cannot register their pre-baseline drawdown, so the <strong>observed</strong> basin cumulative ({basin_net:+,.0f} AF through 2025) <em>understates</em> what the basin would show if every polygon had a full record.<br><br>The <strong>year-type-weighted normalized</strong> series corrects this. For each polygon, we compute its average ΔStorage <em>per Sacramento Valley Index year type</em> (Wet, Above Normal, Below Normal, Dry, Critical) using <em>only its own observations</em>. We then synthesize what that polygon would have contributed across the full WY 1999–2025 record by applying its per-type rates to the basin's actual year-type mix ({n_by_type_full["wet"]} Wet, {n_by_type_full["an"]} AN, {n_by_type_full["bn"]} BN, {n_by_type_full["dry"]} Dry, {n_by_type_full["critical"]} Critical = 26 transition years). Summed across all 28 polygons, that gives the normalized basin total: <strong>{basin_normalized_cum_2025:+,.0f} AF</strong> through 2025 — an avg loss rate of <strong>{-basin_normalized_avg_rate:,.0f} AF/yr</strong>, vs. the observed {basin_loss_rate:,.0f} AF/yr. The late-baseline drag in the observed series is therefore worth ≈{abs(basin_normalized_cum_2025 - basin_net):,.0f} AF cumulative ({abs(basin_normalized_avg_rate + basin_loss_rate * -1 if basin_loss_rate else 0):,.0f} AF/yr rate equivalent — note: this is the bound from the polygon's own data and is independent of any neighboring-well proxying).</div>
+<div class="callout warn"><strong>Late-baseline drag and the year-type-weighted normalization.</strong> Of the {n_polygons} polygons, only {n_polygons - len(late_polys)} have a Good March measurement in WY 1999. The other {len(late_polys)} baseline later — between 2000 and 2019 — because their 2027 GWL RMS well wasn't measured in 1999. Late-baseline polygons cannot register their pre-baseline drawdown, so the <strong>observed</strong> basin cumulative ({basin_net:+,.0f} AF through 2025) <em>understates</em> what the basin would show if every polygon had a full record.<br><br>The <strong>year-type-weighted normalized</strong> series corrects this. For each polygon, we compute its average ΔStorage <em>per Sacramento Valley Index year type</em> using <em>only its own observations</em>. We then synthesize what that polygon would have contributed across the full WY 1999–2025 record by applying its per-type rates to the basin's actual year-type mix ({n_by_type_full["wet"]} Wet, {n_by_type_full["an"]} AN, {n_by_type_full["bn"]} BN, {n_by_type_full["dry"]} Dry, {n_by_type_full["critical"]} Critical = 26 transition years). Summed across all {n_polygons} polygons, that gives the normalized basin total: <strong>{basin_normalized_cum_2025:+,.0f} AF</strong> through 2025 — an avg loss rate of <strong>{-basin_normalized_avg_rate:,.0f} AF/yr</strong>, vs. the observed {basin_loss_rate:,.0f} AF/yr.</div>
 
 <h3>Putting the deficit in proportion</h3>
-<p>The cumulative deficit looks alarming on a chart that runs from 0 to almost −300k AF, but it is a small fraction of the fresh groundwater that exists in the subbasin. Panel 1 below shows the deficit at full scale (the small red sliver). Panel 2 zooms in so the deficit is actually visible.</p>
 <div class="figure">{context_svg}</div>
-<div class="figcaption">Figure 3. Source: total storage from the Vina Subbasin GSP (Dec 15, 2021), p. ES-5 (BBGM-2020 estimate). Cumulative ΔStorage from this dashboard. WY {trough_year} trough = deepest observed deficit in the 28-polygon analysis.</div>
+<div class="figcaption">Figure 3. Source: total storage from the Vina Subbasin GSP (Dec 15, 2021), p. ES-5 (BBGM-2020 estimate). WY {trough_year} trough = deepest observed deficit in this {method_pretty.lower()}.</div>
 
-<div class="callout good"><strong>Why this matters for project design.</strong> Losses are concentrated in Critical and Dry years; recovery happens in Wet and Above-Normal years. But the project portfolio doesn't have to follow that pattern year by year — it's <em>permanent infrastructure</em> (recharge facilities, surface-water deliveries) that produces yield year after year. Annual yields will vary with hydrology, but the long-run average matters more than year-by-year matching: with portfolio yield at ≈{project_total_afy:,} AF/yr against a basin loss rate of ≈{basin_loss_rate:,.0f} AF/yr, surplus from Wet and Above-Normal years carries through Critical ones. The goal isn't to offset every drought-year loss in the year it happens; it's to install enough permanent supply that the multi-year trend bends back toward equilibrium.</div>
-
-<h2>The 2042 sustainability target — hold current conditions, with the project portfolio</h2>
+<h2>The 2042 sustainability target — hold the line, with the project portfolio</h2>
 
 <p>The Vina Subbasin has lost storage across the WY 1999–2025 record through {n_critical} Critical years, {n_dry} Dry years, {n_bn} Below-Normal years, and a long-term decline rate of about 0.07%/yr. The basin's historic low was the <strong>WY {trough_year} trough</strong> at roughly {worst_year_deficit_int:,} AF below baseline — and even at that low, <strong>no SGMA sustainability indicator registered an undesirable result</strong>.</p>
 
-<p>The framing here is therefore not "recover to the WY 1999 baseline." The operational target is: <strong>GWE at each Groundwater Level RMS well stays at or above its WY {trough_year} level going forward</strong>. MTs for the GSP would be set <em>lower</em> than WY {trough_year}, creating operational range and margin for an unforeseen 7–10 year drought, similar to what the subbasin experienced between 1985 and 1994. The portfolio's job is to ensure the next major drought doesn't push observed GWE below WY {trough_year}, with projects coming online in roughly 3–5 years (by ~{PROJECTS_ONLINE_YEAR} at the latest).</p>
-
-<p>The sizing test below uses the basin's <strong>average annual loss rate</strong> as the volumetric need — a stronger target than "stay above WY {trough_year}" alone, because matching average loss keeps the basin near today's WY 2025 level (which sits ≈{abs_2022_cushion_int:,} AF above the WY {trough_year} trough) and provides built-in cushion against drought. Per polygon, the volume needed to hold steady is just the polygon's average annual loss rate. Surplus polygons need zero. Sum across the {n_polygons} polygons:</p>
+<p>The framing here is therefore not "recover to the WY 1999 baseline." The operational target is: <strong>GWE at each Groundwater Level RMS well stays at or above its WY {trough_year} level going forward</strong>. MTs for the GSP would be set <em>lower</em> than WY {trough_year}, creating operational range and margin for an unforeseen 7–10 year drought, similar to what the subbasin experienced between 1985 and 1994. The portfolio's job is to ensure the next major drought doesn't push observed GWE below WY {trough_year}.</p>
 
 <div class="bigstat">
   <div class="row">
@@ -483,59 +569,35 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
     </div>
     <div>
       <div class="num">+{basin_portfolio_margin:,.0f} <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
-      <div class="lab">Recovery margin (portfolio − observed loss)</div>
+      <div class="lab">Recovery margin (vs. observed loss)</div>
       <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Against normalized loss: <strong>+{basin_normalized_margin:,.0f}</strong> AF/yr</div>
     </div>
-    <div class="desc">Portfolio = {portfolio_breakdown}. The portfolio's recovery margin remains comfortably positive against either the observed or the normalized loss rate, with a cushion of <strong>+{basin_normalized_margin:,.0f} AF/yr against the normalized rate</strong> ({basin_normalized_margin / SUSTAINABLE_YIELD_AFY * 100:+.1f}% of the {SUSTAINABLE_YIELD_AFY:,} AF/yr GSP-stated sustainable yield) starting ~{PROJECTS_ONLINE_YEAR}.</div>
+    <div class="desc">Portfolio = {portfolio_breakdown}. The recovery margin remains comfortably positive against both the observed and normalized loss rates ({basin_normalized_margin / SUSTAINABLE_YIELD_AFY * 100:+.1f}% of the {SUSTAINABLE_YIELD_AFY:,} AF/yr GSP-stated sustainable yield).</div>
   </div>
 </div>
 
 <h2>Where the projects land — coverage by polygon</h2>
-
-<p>Project allocations under the {project_total_afy:,} AF/yr portfolio:</p>
-
 <table>
   <thead>
-    <tr>
-      <th>Polygon</th>
-      <th>Project</th>
-      <th class="num">Allocation (AF/yr)</th>
-      <th class="num">Polygon avg loss (AF/yr)</th>
-      <th class="num">Net coverage</th>
-    </tr>
+    <tr><th>Polygon</th><th>Project</th><th class="num">Allocation (AF/yr)</th><th class="num">Polygon avg loss (AF/yr)</th><th class="num">Net coverage</th></tr>
   </thead>
-  <tbody>
-{chr(10).join(project_rows)}
-  </tbody>
+  <tbody>{chr(10).join(project_rows)}</tbody>
   <tfoot>
-    <tr>
-      <th>Total portfolio</th>
-      <th>—</th>
-      <th class="num"><strong>{project_total_afy:,}</strong></th>
-      <th class="num">{basin_loss_rate:,.0f}</th>
-      <th class="num"><strong><span class="gain">+{basin_portfolio_margin:,.0f}</span></strong></th>
-    </tr>
+    <tr><th>Total portfolio</th><th>—</th><th class="num"><strong>{project_total_afy:,}</strong></th><th class="num">{basin_loss_rate:,.0f}</th><th class="num"><strong><span class="gain">+{basin_portfolio_margin:,.0f}</span></strong></th></tr>
   </tfoot>
 </table>
 
-<p>The polygon map below is colored by <strong>net coverage after the project portfolio comes online</strong>: greens are at-or-above their hold-steady need, oranges and reds remain short. {len(short_pols)} polygons remain partially uncovered (combined shortfall {abs(short_total):,.0f} AF/yr) — most prominently <strong>{short_pols[0]['zone_label'] if short_pols else ''}</strong>{f' at {abs(short_pols[0]["coverage_net_AF_per_yr"]):,.0f} AF/yr below its loss rate' if short_pols else ''}. At basin scale the portfolio's surplus capacity in over-allocated polygons (combined +{sum(s["coverage_net_AF_per_yr"] for s in over_pols):,.0f} AF/yr) more than covers the residual shortfalls; whether that holds at each RMS well depends on lateral connectivity, which is outside this analysis.</p>
+<p>The polygon map below is colored by <strong>net coverage after the project portfolio comes online</strong>. {len(short_pols)} polygons remain partially uncovered (combined shortfall {abs(short_total):,.0f} AF/yr)
+{f' — most prominently <strong>{short_pols[0]["zone_label"]}</strong> at {abs(short_pols[0]["coverage_net_AF_per_yr"]):,.0f} AF/yr below its loss rate' if short_pols else ''}.</p>
 
 <div class="map-wrap">
 <div class="figure">{polygon_map_svg}</div>
-<div id="polygon-popup">
-  <button class="popup-close" type="button">×</button>
-  <h4 id="pp-name">—</h4>
-  <div id="pp-body"></div>
 </div>
-</div>
-<div class="figcaption">Figure 4. Click any polygon for full detail. Color = project allocation minus polygon avg loss rate (AF/yr). Greens = covered or surplus; oranges/reds = polygon-level shortfall after the project portfolio. Larger dots mark polygons hosting a project.</div>
+<div class="figcaption">Figure 4. Click any polygon for full detail. Color = project allocation minus polygon avg loss rate (AF/yr).</div>
 
 {('<h3>Residual shortfall polygons</h3><table><thead><tr><th>Polygon</th><th class="num">Avg loss (AF/yr)</th><th class="num">Project alloc (AF/yr)</th><th class="num">Shortfall (AF/yr)</th></tr></thead><tbody>' + chr(10).join(short_rows) + '</tbody></table>') if short_rows else ''}
 
 <h2>Per-polygon detail (technical)</h2>
-
-<p>Polygons sorted by hold-steady need (avg annual loss rate), descending. Late-baseline polygons (record starts after 1999) are flagged. "Crit+Dry share" is the share of each polygon's <em>gross drawdown</em> (sum of losing years) that occurred in Critical and Dry water-year types. Sy values marked "(mean)" use the basin area-weighted mean as a fallback for polygons with insufficient SVSim borehole coverage.</p>
-
 <table>
   <thead>
     <tr>
@@ -543,30 +605,25 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
       <th class="num">Span</th>
       <th class="num">Sy</th>
       <th class="num">Cum 2025 obs (AF)</th>
-      <th class="num">Avg rate obs (AF/yr)</th>
+      <th class="num">Avg obs (AF/yr)</th>
       <th class="num">Cum 2025 norm (AF)</th>
-      <th class="num">Avg rate norm (AF/yr)</th>
+      <th class="num">Avg norm (AF/yr)</th>
       <th class="num">Crit+Dry (AF)</th>
       <th class="num">Crit+Dry share</th>
-      <th class="num">Hold need (AF/yr)</th>
+      <th class="num">Hold (AF/yr)</th>
       <th class="num">Project (AF/yr)</th>
-      <th class="num">Net coverage</th>
+      <th class="num">Net</th>
     </tr>
   </thead>
-  <tbody>
-{chr(10).join(detail_rows)}
-  </tbody>
+  <tbody>{chr(10).join(detail_rows)}</tbody>
   <tfoot>
     <tr>
-      <th>Basin (sum)</th>
-      <th class="num">—</th>
-      <th class="num">—</th>
+      <th>Basin (sum)</th><th class="num">—</th><th class="num">—</th>
       <th class="num"><strong>{basin_net:+,.0f}</strong></th>
       <th class="num">{-basin_loss_rate:+,.0f}</th>
       <th class="num"><strong>{basin_normalized_cum_2025:+,.0f}</strong></th>
       <th class="num">{-basin_normalized_avg_rate:+,.0f}</th>
-      <th class="num">{crit_dry_total:+,.0f}</th>
-      <th class="num">—</th>
+      <th class="num">{crit_dry_total:+,.0f}</th><th class="num">—</th>
       <th class="num"><strong>{basin_polygon_summed_need:,.0f}</strong></th>
       <th class="num"><strong>{project_total_afy:,}</strong></th>
       <th class="num"><strong><span class="gain">+{basin_portfolio_margin:,.0f}</span></strong></th>
@@ -576,41 +633,84 @@ def write_index_html(out_path, pol_summaries, basin_buckets, basin_net,
 
 <details>
 <summary>Annual basin time series (2000–2025), gap-attributed</summary>
-<p style="font-size:13px;color:var(--ink-muted);">Sum of all {n_polygons} polygons' year-over-year storage change with polygon-by-polygon Sy. Multi-year DWR data gaps within a polygon are distributed evenly across the gap and bucketed by each year's hydrologic condition. Late-baseline polygons contribute zero to years before their baseline.</p>
+<p style="font-size:13px;color:var(--ink-muted);">Sum of all {n_polygons} polygons' year-over-year storage change with polygon-by-polygon Sy.</p>
 <table>
-  <thead>
-    <tr><th class="num">Year</th><th>Condition</th><th class="num">ΔStor (AF)</th><th class="num">Cumulative (AF)</th></tr>
-  </thead>
-  <tbody>
-{chr(10).join(annual_rows)}
-  </tbody>
+  <thead><tr><th class="num">Year</th><th>Condition</th><th class="num">ΔStor (AF)</th><th class="num">Cumulative (AF)</th></tr></thead>
+  <tbody>{chr(10).join(annual_rows)}</tbody>
 </table>
 </details>
+"""
 
-<h2>Caveats</h2>
 
-<ul>
-  <li><strong>Specific yield is polygon-by-polygon</strong> from SVSim Texture Data (range {sy_min:.4f}–{sy_max:.4f}); basin area-weighted mean is ≈0.087. The textural classifier (coarse vs. fine) is documented in <code>scripts/build_sy_svsim.py</code> and is reproducible from the DWR CKAN dataset. Three polygons ({fallback_summary}) lack sufficient SVSim borehole density and use the basin area-weighted mean as a fallback — a known limitation when fragmenting the basin into 28 smaller cells.</li>
-  <li><strong>Baseline asymmetry.</strong> Late-baseline polygons — {late_summary} — have shorter records. <code>21N02E18C003M</code>'s large apparent surplus is partly an artifact of starting near the bottom of the 2011 drought; it cannot register pre-2011 drawdown.</li>
-  <li><strong>Sustainable yield = {SUSTAINABLE_YIELD_AFY:,} AF/yr</strong> per the 2022 GSP (Dec 15, 2021), p. ES-5: 243,500 AFY historical pumping minus 10,000 AFY decrease in storage. Used here as a denominator only; volumetric needs (AF/yr) do not depend on it.</li>
-  <li><strong>Total storage = {int(TOTAL_FRESH_STORAGE_AF/1_000_000)}+ MAF</strong> per the GSP, BBGM-2020 estimate. Used in the proportion visual; not a calibration input.</li>
-  <li><strong>Sustainability target.</strong> "Sustainability" here means GWE at each Groundwater Level RMS well stays at or above its <strong>WY {trough_year}</strong> level going forward — the basin's historic low, at which no sustainability indicator registered an undesirable result. MTs for the GSP would be set <em>lower</em> than WY {trough_year} to create operational range and margin in the event of an unforeseen 7–10 year drought, similar to what the subbasin experienced between 1985 and 1994. The volumetric sizing in this dashboard uses the basin's average annual loss rate as the need, which is a stronger target than "stay above WY {trough_year}" alone — matching average loss keeps the basin near WY 2025 conditions, providing built-in drought cushion.</li>
-  <li><strong>Project portfolio is at-yield, not at-design.</strong> Conjunctive-use figures assume successful surface-water substitution. <strong>Recharge figures assume 2–3 storm events per year</strong> where excess flow can be diverted into recharge basins; drought-year recharge rates will be lower, wet-year rates higher.</li>
-  <li><strong>Per-polygon vs. basin-wide.</strong> The portfolio covers basin loss with margin, but {len(short_pols)} polygons remain locally short. The two Chico cells (<code>22N01E09B001M</code> and <code>22N01E20K001M</code>) together are the largest residual shortfall — Chico may be able to add recharge capacity by directing more flow into Lindo Channel, but evaluating that potential is outside this scope. Whether one polygon's neighbors' surplus reaches its RMS well depends on lateral hydraulic conductivity that this dashboard does not model.</li>
-  <li><strong>Hold-current target assumes a representative year-type mix going forward.</strong> The {basin_loss_rate:,.0f} AF/yr basin avg loss rate is the average over WY 1999–2025, which had {n_wet} Wet, {n_an} Above Normal, {n_bn} Below Normal, {n_dry} Dry, and {n_critical} Critical years. If WY 2026–2042 sees materially more Critical years, the realized loss rate will be higher; if more Wet years, lower. The portfolio's recovery margin (≈{basin_portfolio_margin:,.0f} AF/yr) is the buffer for that uncertainty.</li>
-  <li><strong>Year-type definitions are the official Sacramento Valley Index types,</strong> published annually by DWR from the Northern Sierra 8-Station Index.</li>
-  <li><strong>Comparison to the 17-polygon version.</strong> The basin deficit through WY 2025 is smaller here ({basin_net:+,.0f} AF vs. −193,010 AF in the 17-polygon build), and the avg loss rate is smaller too ({basin_loss_rate:,.0f} AF/yr vs. 8,558). The difference traces to (a) the new <code>21N02E18C003M</code> polygon being larger and posting a recovering surplus, (b) the new Chico cells being smaller than the old dissolved Chico polygon, (c) the addition of late-baseline polygons that contribute less to early-record buckets, and (d) different per-polygon Sy values from the SVSim recompute against the new geometry.</li>
-</ul>
+def write_index_html(out_path, results_by_method, portfolio):
+    """Build the toggle-able single-file dashboard."""
+    method_sections = {
+        m: _render_method_section(m, r, portfolio)
+        for m, r in results_by_method.items()
+    }
+
+    # Buttons in stable order: single first, then three-zone
+    toggle_buttons = []
+    for m in ("single", "three-zone"):
+        if m in method_sections:
+            active = " active" if m == "single" else ""
+            toggle_buttons.append(
+                f'<button data-method="{m}" class="{active.strip()}">{METHOD_LABEL[m]}</button>'
+            )
+    toggle_html = (
+        '<div class="method-toggle">'
+        '<span class="method-toggle-label">Polygon method:</span>'
+        + "".join(toggle_buttons)
+        + '</div>'
+    )
+
+    sections_html = []
+    for m in ("single", "three-zone"):
+        if m in method_sections:
+            hidden = "" if m == "single" else " hidden"
+            sections_html.append(
+                f'<div class="method-content method-{m}{hidden}">'
+                + method_sections[m]
+                + '</div>'
+            )
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vina Subbasin: Where the Losses Happen — 2027 BC RMS Network</title>
+<style>{INDEX_CSS}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+
+<h1>Where the Losses Happen — A Drought-Conditioned Look at the 2027 BC RMS Network</h1>
+<p class="subtitle">May 2026 · Prepared by AGUBC · 28 polygons · polygon-by-polygon Sy from DWR SVSim Texture Data · WY 1999–2025 · ΔGWE × Sy<sub>p</sub> × Area<sub>p</sub>, sliced by hydrologic condition and read against a project-portfolio sustainability target.</p>
+
+{toggle_html}
+
+{chr(10).join(sections_html)}
+
+<!-- Shared polygon popup (moved into the active map-wrap on click) -->
+<div id="polygon-popup">
+  <button class="popup-close" type="button">×</button>
+  <h4 id="pp-name">—</h4>
+  <div id="pp-body"></div>
+</div>
 
 <div class="footer">
-<p><strong>Files in this folder.</strong> <code>index.html</code> (this page) · <code>data/condition_analysis.json</code> (per-polygon bucket totals) · <code>data/basin_annual.json</code> (basin annual ΔStor) · <code>data/sustainability_2042.json</code> (per-polygon and basin 2042 targets) · <code>data/model_data.json</code>, <code>data/polygon_storage_2025.csv</code>, <code>data/storage_timeseries.csv</code> (model data) · <code>data/polygon_map.svg</code>, <code>data/basin_buckets_chart.svg</code>, <code>data/basin_cumulative_chart.svg</code>, <code>data/storage_context.svg</code> (figures) · <code>data/polygon_sy_svsim.csv</code> (per-polygon Sy) · <code>data/project_portfolio.json</code> (project allocations).</p>
-<p><strong>Upstream.</strong> Polygons, wells, and DWR periodic GWL measurements come from the companion <a href="https://cosmo1007.github.io/2027-BC-prop-network/">2027-BC-prop-network</a> framework (28 Voronoi polygons, 79 wells including 28 GWL RMS, measurements fetched fresh from DWR CKAN).</p>
-<p><strong>Status.</strong> Independent analysis prepared for AGUBC technical staff and Board. Comments and corrections welcomed; this work is expected to evolve as feedback comes in.</p>
+<p><strong>Files in this folder.</strong> <code>index.html</code> (this page) · <code>data/condition_analysis_{{single,three_zone}}.json</code> · <code>data/sustainability_2042_{{single,three_zone}}.json</code> · <code>data/basin_annual_{{single,three_zone}}.json</code> (observed + normalized) · <code>data/model_data_{{single,three_zone}}.json</code> · <code>data/polygon_storage_2025_{{single,three_zone}}.csv</code> · <code>data/storage_timeseries_{{single,three_zone}}.csv</code> · <code>data/polygon_sy_svsim_{{single,three_zone}}.csv</code> · <code>data/project_portfolio.json</code> (editable input) · per-method SVGs (<code>polygon_map_*.svg</code>, <code>basin_buckets_chart_*.svg</code>, <code>basin_cumulative_chart_*.svg</code>, <code>storage_context_*.svg</code>).</p>
+<p><strong>Upstream.</strong> Polygons, wells, and DWR periodic GWL measurements come from the companion <a href="https://cosmo1007.github.io/2027-BC-prop-network/">2027-BC-prop-network</a> framework — both <code>polygons-data-single.js</code> (single basin-wide tessellation) and <code>polygons-data-three-zone.js</code> (three independent tessellations per management area) are read here.</p>
+<p><strong>Status.</strong> Independent analysis prepared for AGUBC technical staff and Board. Comments and corrections welcomed.</p>
 </div>
 
 </div>
 
-<script>{POPUP_JS}</script>
+<script>{POPUP_JS}{TOGGLE_JS}</script>
 
 </body>
 </html>

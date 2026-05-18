@@ -1,0 +1,883 @@
+{
+  "year_type_classification": "Sacramento Valley Index (Northern Sierra 8-Station Index)",
+  "year_types_by_year": {
+    "1999": "Wet",
+    "2000": "Above Normal",
+    "2001": "Dry",
+    "2002": "Dry",
+    "2003": "Above Normal",
+    "2004": "Below Normal",
+    "2005": "Above Normal",
+    "2006": "Wet",
+    "2007": "Dry",
+    "2008": "Critical",
+    "2009": "Dry",
+    "2010": "Below Normal",
+    "2011": "Wet",
+    "2012": "Below Normal",
+    "2013": "Dry",
+    "2014": "Critical",
+    "2015": "Critical",
+    "2016": "Below Normal",
+    "2017": "Wet",
+    "2018": "Below Normal",
+    "2019": "Wet",
+    "2020": "Dry",
+    "2021": "Critical",
+    "2022": "Critical",
+    "2023": "Wet",
+    "2024": "Above Normal",
+    "2025": "Wet"
+  },
+  "polygons": [
+    {
+      "zone_label": "22N01W05M001M",
+      "name": "22N01W05M001M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 7467.9,
+      "baseline_year": 1999,
+      "endpoint_year": 2025,
+      "span_years": 26,
+      "baseline_gwe": 140.48,
+      "endpoint_gwe": 140.48,
+      "sy": 0.0825,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": 0.0,
+      "avg_dgwe_ft_per_yr": 0.0,
+      "bucket_storage_AF": {
+        "wet": 3152.0,
+        "an": 4518.0,
+        "bn": -821.0,
+        "dry": -3563.0,
+        "critical": -3286.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 4,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "23N01E07H001M",
+      "name": "23N01E07H001M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 8342.3,
+      "baseline_year": 2019,
+      "endpoint_year": 2025,
+      "span_years": 6,
+      "baseline_gwe": 168.6,
+      "endpoint_gwe": 165.2,
+      "sy": 0.0935,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -2652.0,
+      "avg_dgwe_ft_per_yr": -0.567,
+      "bucket_storage_AF": {
+        "wet": 78.0,
+        "an": 936.0,
+        "bn": 0.0,
+        "dry": -663.0,
+        "critical": -3003.0
+      },
+      "bucket_polygon_years": {
+        "wet": 2,
+        "an": 1,
+        "bn": 0,
+        "dry": 1,
+        "critical": 2
+      }
+    },
+    {
+      "zone_label": "23N01W36P001M",
+      "name": "23N01W36P001M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 15173.3,
+      "baseline_year": 1999,
+      "endpoint_year": 2025,
+      "span_years": 26,
+      "baseline_gwe": 152.05,
+      "endpoint_gwe": 140.45,
+      "sy": 0.0648,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -11405.0,
+      "avg_dgwe_ft_per_yr": -0.446,
+      "bucket_storage_AF": {
+        "wet": 38788.0,
+        "an": 3048.0,
+        "bn": -4670.0,
+        "dry": -33233.0,
+        "critical": -15338.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 4,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "23N02W25C001M",
+      "name": "23N02W25C001M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 4899.8,
+      "baseline_year": 1999,
+      "endpoint_year": 2025,
+      "span_years": 26,
+      "baseline_gwe": 141.4,
+      "endpoint_gwe": 146.0,
+      "sy": 0.0845,
+      "sy_source": "basin-mean fallback",
+      "endpoint_cum_storage_AF": 1904.0,
+      "avg_dgwe_ft_per_yr": 0.177,
+      "bucket_storage_AF": {
+        "wet": 9790.0,
+        "an": 3726.0,
+        "bn": -5423.0,
+        "dry": -3436.0,
+        "critical": -2753.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 4,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "23N01E29P002M",
+      "name": "23N01E29P002M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 14798.4,
+      "baseline_year": 1999,
+      "endpoint_year": 2025,
+      "span_years": 26,
+      "baseline_gwe": 163.94,
+      "endpoint_gwe": 146.54,
+      "sy": 0.0629,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -16196.0,
+      "avg_dgwe_ft_per_yr": -0.669,
+      "bucket_storage_AF": {
+        "wet": 21642.0,
+        "an": 1350.0,
+        "bn": -884.0,
+        "dry": -19501.0,
+        "critical": -18803.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 4,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "23N01W03H004M",
+      "name": "23N01W03H004M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 1996.1,
+      "baseline_year": 2012,
+      "endpoint_year": 2025,
+      "span_years": 13,
+      "baseline_gwe": 182.92,
+      "endpoint_gwe": 178.52,
+      "sy": 0.1098,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -964.0,
+      "avg_dgwe_ft_per_yr": -0.338,
+      "bucket_storage_AF": {
+        "wet": 1705.0,
+        "an": 535.0,
+        "bn": -1249.0,
+        "dry": -662.0,
+        "critical": -1293.0
+      },
+      "bucket_polygon_years": {
+        "wet": 4,
+        "an": 1,
+        "bn": 2,
+        "dry": 2,
+        "critical": 4
+      }
+    },
+    {
+      "zone_label": "23N01W09E001M",
+      "name": "23N01W09E001M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 5275.0,
+      "baseline_year": 1999,
+      "endpoint_year": 2025,
+      "span_years": 26,
+      "baseline_gwe": 163.09,
+      "endpoint_gwe": 160.29,
+      "sy": 0.0821,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -1213.0,
+      "avg_dgwe_ft_per_yr": -0.108,
+      "bucket_storage_AF": {
+        "wet": 15071.0,
+        "an": 2144.0,
+        "bn": -4526.0,
+        "dry": -11563.0,
+        "critical": -2339.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 4,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "23N01W10M001M",
+      "name": "23N01W10M001M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 2109.6,
+      "baseline_year": 2002,
+      "endpoint_year": 2025,
+      "span_years": 23,
+      "baseline_gwe": 167.63054838709675,
+      "endpoint_gwe": 165.3475483870968,
+      "sy": 0.0797,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -384.0,
+      "avg_dgwe_ft_per_yr": -0.099,
+      "bucket_storage_AF": {
+        "wet": 4607.0,
+        "an": 771.0,
+        "bn": -883.0,
+        "dry": -2561.0,
+        "critical": -2319.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 3,
+        "bn": 5,
+        "dry": 4,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "23N01W14R002M",
+      "name": "23N01W14R002M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 3865.3,
+      "baseline_year": 1999,
+      "endpoint_year": 2025,
+      "span_years": 26,
+      "baseline_gwe": 166.36,
+      "endpoint_gwe": 151.46,
+      "sy": 0.0594,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -3421.0,
+      "avg_dgwe_ft_per_yr": -0.573,
+      "bucket_storage_AF": {
+        "wet": 2614.0,
+        "an": 719.0,
+        "bn": -555.0,
+        "dry": -2342.0,
+        "critical": -3857.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 4,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "23N01W27L001M",
+      "name": "23N01W27L001M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 3166.1,
+      "baseline_year": 1999,
+      "endpoint_year": 2025,
+      "span_years": 26,
+      "baseline_gwe": 151.67,
+      "endpoint_gwe": 147.07,
+      "sy": 0.0675,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -983.0,
+      "avg_dgwe_ft_per_yr": -0.177,
+      "bucket_storage_AF": {
+        "wet": 8306.0,
+        "an": 1146.0,
+        "bn": -1955.0,
+        "dry": -5552.0,
+        "critical": -2928.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 4,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "23N01W28M004M",
+      "name": "23N01W28M004M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 3226.7,
+      "baseline_year": 2009,
+      "endpoint_year": 2025,
+      "span_years": 16,
+      "baseline_gwe": 146.4654193548387,
+      "endpoint_gwe": 148.2431935483871,
+      "sy": 0.095,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": 545.0,
+      "avg_dgwe_ft_per_yr": 0.111,
+      "bucket_storage_AF": {
+        "wet": 8898.0,
+        "an": 1198.0,
+        "bn": -4084.0,
+        "dry": -2701.0,
+        "critical": -2765.0
+      },
+      "bucket_polygon_years": {
+        "wet": 5,
+        "an": 1,
+        "bn": 4,
+        "dry": 2,
+        "critical": 4
+      }
+    },
+    {
+      "zone_label": "23N01W31M004M",
+      "name": "23N01W31M004M",
+      "ma": "North",
+      "ma_full": "01-Vina-North",
+      "area_ac": 1574.6,
+      "baseline_year": 2009,
+      "endpoint_year": 2024,
+      "span_years": 15,
+      "baseline_gwe": 139.52332258064516,
+      "endpoint_gwe": 140.28573333333333,
+      "sy": 0.0864,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": 104.0,
+      "avg_dgwe_ft_per_yr": 0.051,
+      "bucket_storage_AF": {
+        "wet": 2368.0,
+        "an": 75.0,
+        "bn": -1064.0,
+        "dry": -926.0,
+        "critical": -349.0
+      },
+      "bucket_polygon_years": {
+        "wet": 4,
+        "an": 1,
+        "bn": 4,
+        "dry": 2,
+        "critical": 4
+      }
+    },
+    {
+      "zone_label": "23N01E33A001M",
+      "name": "23N01E33A001M",
+      "ma": "Chico",
+      "ma_full": "02-Vina-Chico",
+      "area_ac": 1092.3,
+      "baseline_year": 2003,
+      "endpoint_year": 2025,
+      "span_years": 22,
+      "baseline_gwe": 155.34,
+      "endpoint_gwe": 140.69,
+      "sy": 0.1124,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -1799.0,
+      "avg_dgwe_ft_per_yr": -0.666,
+      "bucket_storage_AF": {
+        "wet": 828.0,
+        "an": -410.0,
+        "bn": 712.0,
+        "dry": -516.0,
+        "critical": -2413.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 2,
+        "bn": 5,
+        "dry": 4,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "22N01E20K001M",
+      "name": "22N01E20K001M",
+      "ma": "Chico",
+      "ma_full": "02-Vina-Chico",
+      "area_ac": 12798.6,
+      "baseline_year": 2000,
+      "endpoint_year": 2022,
+      "span_years": 22,
+      "baseline_gwe": 139.94,
+      "endpoint_gwe": 118.44,
+      "sy": 0.0936,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -25756.0,
+      "avg_dgwe_ft_per_yr": -0.977,
+      "bucket_storage_AF": {
+        "wet": 20784.0,
+        "an": 3833.0,
+        "bn": 7367.0,
+        "dry": -24342.0,
+        "critical": -33399.0
+      },
+      "bucket_polygon_years": {
+        "wet": 4,
+        "an": 2,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "22N01E09B001M",
+      "name": "22N01E09B001M",
+      "ma": "Chico",
+      "ma_full": "02-Vina-Chico",
+      "area_ac": 15827.4,
+      "baseline_year": 2002,
+      "endpoint_year": 2025,
+      "span_years": 23,
+      "baseline_gwe": 148.23,
+      "endpoint_gwe": 134.53,
+      "sy": 0.0936,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -20296.0,
+      "avg_dgwe_ft_per_yr": -0.596,
+      "bucket_storage_AF": {
+        "wet": 23185.0,
+        "an": 6296.0,
+        "bn": 4444.0,
+        "dry": -20888.0,
+        "critical": -33333.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 3,
+        "bn": 5,
+        "dry": 4,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "20N02E24C001M",
+      "name": "20N02E24C001M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 7860.7,
+      "baseline_year": 2000,
+      "endpoint_year": 2024,
+      "span_years": 24,
+      "baseline_gwe": 128.02451612903226,
+      "endpoint_gwe": 104.68167741935484,
+      "sy": 0.093,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -17065.0,
+      "avg_dgwe_ft_per_yr": -0.973,
+      "bucket_storage_AF": {
+        "wet": 1637.0,
+        "an": 3220.0,
+        "bn": 558.0,
+        "dry": -8974.0,
+        "critical": -13505.0
+      },
+      "bucket_polygon_years": {
+        "wet": 5,
+        "an": 3,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "21N02E18C003M",
+      "name": "21N02E18C003M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 5243.6,
+      "baseline_year": 2011,
+      "endpoint_year": 2025,
+      "span_years": 14,
+      "baseline_gwe": 156.93270967741935,
+      "endpoint_gwe": 169.4926129032258,
+      "sy": 0.1108,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": 7297.0,
+      "avg_dgwe_ft_per_yr": 0.897,
+      "bucket_storage_AF": {
+        "wet": 25607.0,
+        "an": 1593.0,
+        "bn": -10396.0,
+        "dry": -5309.0,
+        "critical": -4198.0
+      },
+      "bucket_polygon_years": {
+        "wet": 4,
+        "an": 1,
+        "bn": 3,
+        "dry": 2,
+        "critical": 4
+      }
+    },
+    {
+      "zone_label": "20N01E02H003M",
+      "name": "20N01E02H003M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 4896.8,
+      "baseline_year": 2002,
+      "endpoint_year": 2025,
+      "span_years": 23,
+      "baseline_gwe": 113.04809677419355,
+      "endpoint_gwe": 102.89825806451613,
+      "sy": 0.069,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -3429.0,
+      "avg_dgwe_ft_per_yr": -0.441,
+      "bucket_storage_AF": {
+        "wet": 7933.0,
+        "an": 1208.0,
+        "bn": 888.0,
+        "dry": -5947.0,
+        "critical": -7511.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 3,
+        "bn": 5,
+        "dry": 4,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "20N02E08H003M",
+      "name": "20N02E08H003M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 3457.2,
+      "baseline_year": 2008,
+      "endpoint_year": 2025,
+      "span_years": 17,
+      "baseline_gwe": 123.33,
+      "endpoint_gwe": 116.83,
+      "sy": 0.0916,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -2058.0,
+      "avg_dgwe_ft_per_yr": -0.382,
+      "bucket_storage_AF": {
+        "wet": 3563.0,
+        "an": 285.0,
+        "bn": -1077.0,
+        "dry": -3879.0,
+        "critical": -950.0
+      },
+      "bucket_polygon_years": {
+        "wet": 5,
+        "an": 1,
+        "bn": 4,
+        "dry": 3,
+        "critical": 4
+      }
+    },
+    {
+      "zone_label": "20N02E09G001M",
+      "name": "20N02E09G001M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 4209.5,
+      "baseline_year": 2002,
+      "endpoint_year": 2024,
+      "span_years": 22,
+      "baseline_gwe": 126.14,
+      "endpoint_gwe": 113.84745161290323,
+      "sy": 0.0987,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -5107.0,
+      "avg_dgwe_ft_per_yr": -0.559,
+      "bucket_storage_AF": {
+        "wet": 3744.0,
+        "an": 1342.0,
+        "bn": 1138.0,
+        "dry": -6829.0,
+        "critical": -4503.0
+      },
+      "bucket_polygon_years": {
+        "wet": 5,
+        "an": 3,
+        "bn": 5,
+        "dry": 4,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "20N03E33L001M",
+      "name": "20N03E33L001M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 5185.9,
+      "baseline_year": 2000,
+      "endpoint_year": 2025,
+      "span_years": 25,
+      "baseline_gwe": 128.43,
+      "endpoint_gwe": 111.3106129032258,
+      "sy": 0.1172,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -10405.0,
+      "avg_dgwe_ft_per_yr": -0.685,
+      "bucket_storage_AF": {
+        "wet": 4278.0,
+        "an": 322.0,
+        "bn": -3670.0,
+        "dry": -4590.0,
+        "critical": -6745.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 3,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "21N01E10B003M",
+      "name": "21N01E10B003M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 6650.3,
+      "baseline_year": 1999,
+      "endpoint_year": 2025,
+      "span_years": 26,
+      "baseline_gwe": 142.43,
+      "endpoint_gwe": 120.63,
+      "sy": 0.0895,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -12975.0,
+      "avg_dgwe_ft_per_yr": -0.838,
+      "bucket_storage_AF": {
+        "wet": 13571.0,
+        "an": 4345.0,
+        "bn": 1458.0,
+        "dry": -16874.0,
+        "critical": -15475.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 4,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "21N01E13L004M",
+      "name": "21N01E13L004M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 2712.9,
+      "baseline_year": 2012,
+      "endpoint_year": 2025,
+      "span_years": 13,
+      "baseline_gwe": 167.7837857142857,
+      "endpoint_gwe": 115.73238888888889,
+      "sy": 0.0921,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -13005.0,
+      "avg_dgwe_ft_per_yr": -4.004,
+      "bucket_storage_AF": {
+        "wet": 4386.0,
+        "an": 2265.0,
+        "bn": 1417.0,
+        "dry": -15004.0,
+        "critical": -6069.0
+      },
+      "bucket_polygon_years": {
+        "wet": 4,
+        "an": 1,
+        "bn": 2,
+        "dry": 2,
+        "critical": 4
+      }
+    },
+    {
+      "zone_label": "21N01E25K001M",
+      "name": "21N01E25K001M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 2747.9,
+      "baseline_year": 1999,
+      "endpoint_year": 2025,
+      "span_years": 26,
+      "baseline_gwe": 129.23,
+      "endpoint_gwe": 106.03,
+      "sy": 0.0845,
+      "sy_source": "basin-mean fallback",
+      "endpoint_cum_storage_AF": -5386.0,
+      "avg_dgwe_ft_per_yr": -0.892,
+      "bucket_storage_AF": {
+        "wet": 6872.0,
+        "an": 789.0,
+        "bn": -70.0,
+        "dry": -6477.0,
+        "critical": -6500.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 4,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "21N01E27D001M",
+      "name": "21N01E27D001M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 10824.6,
+      "baseline_year": 1999,
+      "endpoint_year": 2025,
+      "span_years": 26,
+      "baseline_gwe": 123.54,
+      "endpoint_gwe": 103.74,
+      "sy": 0.0698,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -14960.0,
+      "avg_dgwe_ft_per_yr": -0.762,
+      "bucket_storage_AF": {
+        "wet": 20740.0,
+        "an": 1662.0,
+        "bn": -793.0,
+        "dry": -15640.0,
+        "critical": -20929.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 4,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "21N02E26E006M",
+      "name": "21N02E26E006M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 11480.0,
+      "baseline_year": 2008,
+      "endpoint_year": 2025,
+      "span_years": 17,
+      "baseline_gwe": 116.73858064516129,
+      "endpoint_gwe": 109.49587096774194,
+      "sy": 0.1066,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -8863.0,
+      "avg_dgwe_ft_per_yr": -0.426,
+      "bucket_storage_AF": {
+        "wet": 3493.0,
+        "an": 1693.0,
+        "bn": 4364.0,
+        "dry": -4050.0,
+        "critical": -14364.0
+      },
+      "bucket_polygon_years": {
+        "wet": 5,
+        "an": 1,
+        "bn": 4,
+        "dry": 3,
+        "critical": 4
+      }
+    },
+    {
+      "zone_label": "21N02E32E001M",
+      "name": "21N02E32E001M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 3691.6,
+      "baseline_year": 2009,
+      "endpoint_year": 2025,
+      "span_years": 16,
+      "baseline_gwe": 121.43,
+      "endpoint_gwe": 121.43,
+      "sy": 0.0716,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": 0.0,
+      "avg_dgwe_ft_per_yr": 0.0,
+      "bucket_storage_AF": {
+        "wet": 6370.0,
+        "an": 648.0,
+        "bn": 330.0,
+        "dry": -1652.0,
+        "critical": -5696.0
+      },
+      "bucket_polygon_years": {
+        "wet": 5,
+        "an": 1,
+        "bn": 4,
+        "dry": 2,
+        "critical": 4
+      }
+    },
+    {
+      "zone_label": "21N03E32B001M",
+      "name": "21N03E32B001M",
+      "ma": "South",
+      "ma_full": "03-Vina-South",
+      "area_ac": 14224.9,
+      "baseline_year": 2000,
+      "endpoint_year": 2025,
+      "span_years": 25,
+      "baseline_gwe": 227.03,
+      "endpoint_gwe": 222.43,
+      "sy": 0.0752,
+      "sy_source": "SVSim",
+      "endpoint_cum_storage_AF": -4921.0,
+      "avg_dgwe_ft_per_yr": -0.184,
+      "bucket_storage_AF": {
+        "wet": 1051.0,
+        "an": 11.0,
+        "bn": -243.0,
+        "dry": -3930.0,
+        "critical": -1809.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 3,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    }
+  ],
+  "basin_total_by_condition_AF": {
+    "wet": 265060.0,
+    "an": 49269.0,
+    "bn": -19687.0,
+    "dry": -231605.0,
+    "critical": -236432.0
+  },
+  "basin_total_net_AF": -173395.0,
+  "notes": "Year-over-year storage deltas from each polygon's cumulative storage series; multi-year DWR gaps distributed evenly across the gap before bucketing. 28 polygons in the 2027 BC RMS network; baseline years are staggered per first Good-quality spring measurement."
+}

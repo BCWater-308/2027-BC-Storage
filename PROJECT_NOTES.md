@@ -213,6 +213,46 @@ the late-baseline drag.
 
 ---
 
+### 10. Added three-zone (per-management-area) polygon method as a toggle
+
+The upstream `2027-BC-prop-network` repo added a new polygon construction
+method: instead of one Voronoi tessellation across the whole basin, build
+three INDEPENDENT tessellations (one per management area), each clipped to
+its own boundary. Cells do not cross management-area lines — important
+because the three areas carry distinct sustainable management criteria.
+
+Adopted both methods in this dashboard with a top-of-page toggle:
+
+- **Single basin-wide tessellation** — the original method (also kept as
+  `polygons-data-single.js` upstream)
+- **Three-zone (per management area)** — `polygons-data-three-zone.js`
+
+The full storage analysis runs against both. All data files
+(`condition_analysis_{method}.json`, `sustainability_2042_{method}.json`,
+`basin_annual_{method}.json`, `model_data_{method}.json`,
+`polygon_storage_2025_{method}.csv`, `storage_timeseries_{method}.csv`,
+plus per-method SVGs) are method-suffixed. The single-file `index.html`
+embeds both analyses with a JS toggle to swap visible content.
+
+**Key methodological note**: the three-zone method assigns each well to a
+management area by spatial containment (not by workbook tag). One well
+(`23N01E33A001M`) was workbook-tagged North but sits in Chico — its
+three-zone polygon belongs to Chico. The audit info (`workbook_mgmt_area`
+and `reassigned` flag) is preserved in `polygons-data-three-zone.js`.
+
+**Sy recompute observation**: smaller management-area-bounded polygons
+sometimes capture *more* relevant boreholes than the basin-wide
+equivalent did. For example, `23N01E29P002M` had no usable SVSim coverage
+in the single-tessellation method (used basin-mean fallback at 0.0868) but
+gets a proper SVSim-derived Sy of 0.0629 in the three-zone method.
+Conversely, the three-zone method has one fewer fallback polygon overall
+(2 vs. 3).
+
+**Side-by-side basin totals (both observed and normalized)** are surfaced
+in the dashboard headlines for both methods so reviewers can compare.
+
+---
+
 ## Outstanding items
 
 - **Project name for `23N01E33A001M`.** Labeled "Recharge project (TBD)"

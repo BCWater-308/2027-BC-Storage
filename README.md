@@ -8,8 +8,51 @@ This is the **28-polygon rebuild** of the original
 (which used a 17-polygon network). The polygons, RMS wells, and DWR
 periodic GWL measurements all come from the companion
 [2027-BC-prop-network](https://cosmo1007.github.io/2027-BC-prop-network/)
-framework, where every 2027 GWL RMS well gets its own Voronoi cell clipped
-to the DWR B118 5-021.57 Vina Subbasin boundary.
+framework, where every 2027 GWL RMS well gets its own Voronoi cell.
+
+## Two polygon methods, one dashboard
+
+The dashboard has a **toggle at the top** to switch between two polygon
+methods. The 28 RMS seed wells are the same in both; only the polygon
+shapes (and therefore the area-weighted storage attribution) differ.
+
+| Method | How polygons are built | Cells cross management-area lines? |
+|---|---|---|
+| **Single basin-wide tessellation** | One Voronoi tessellation across all 28 seed wells, clipped to the DWR B118 Vina Subbasin boundary | Yes |
+| **Three-zone (per management area)** | Three INDEPENDENT Voronoi tessellations — one per management area (Vina-North, Vina-Chico, Vina-South) — each clipped to its own management-area boundary | No — hard seams at management-area lines |
+
+The three-zone method is the more SMC-defensible framework: the three
+management areas carry distinct sustainable management criteria (especially
+for subsidence), so it matters that a polygon's hydrology rolls up to the
+zone where the well physically sits, not across boundaries.
+
+**Spatial reassignment:** The three-zone build assigns each seed well to a
+management area by spatial containment in the management-area boundary
+polygons, not by the workbook tag. **One well (`23N01E33A001M`)** sits in
+Vina-Chico but was workbook-tagged Vina-North — the three-zone view shows
+it as Chico, and the audit trail (`workbook_mgmt_area` + `reassigned`
+flag) is preserved on every polygon for transparency.
+
+### Headline numbers, side by side
+
+|  | Single basin-wide | Three-zone |
+|---|---:|---:|
+| Polygons in North / Chico / South | 13 / 2 / 13 | 12 / 3 / 13 |
+| Basin cumulative WY 2025 (observed, AF) | −145,732 | **−173,395** |
+| Basin cumulative WY 2025 (normalized, AF) | −189,209 | **−209,594** |
+| Basin avg loss rate (observed, AF/yr) | 6,322 | **7,940** |
+| Basin avg loss rate (normalized, AF/yr) | 7,277 | **8,061** |
+| Recovery margin vs. 14,500 AF/yr portfolio (observed) | +8,178 | **+6,560** |
+| Recovery margin vs. 14,500 AF/yr portfolio (normalized) | +7,223 | **+6,439** |
+
+Both methods show the basin in deficit and the portfolio comfortably
+covering the average loss rate. The three-zone method reports a larger
+deficit primarily because `23N01E33A001M` (the spatially-reassigned well)
+contributes a deeper loss when sited in its new Chico polygon, and because
+several polygons get different Sy values after the SVSim recompute against
+the new shapes (e.g. `23N01E29P002M` jumps from a basin-mean fallback to a
+proper 0.0629 SVSim value in three-zone because the smaller Chico-bounded
+polygon now captures enough boreholes).
 
 ## The two questions this dashboard answers
 
@@ -307,16 +350,16 @@ measured in 1999.
 # 1. (one-time) Python deps used by build_sy_svsim.py
 pip3 install --user pyproj shapely
 
-# 2. (one-time per Sy refresh) recompute polygon Sy via SVSim
+# 2. (one-time per Sy refresh) recompute polygon Sy via SVSim for BOTH methods
 python3 scripts/build_sy_svsim.py
 # downloads /tmp/svsim/svsim_texture_data.csv (~9 MB) on first run,
-# writes data/polygon_sy_svsim.csv
+# writes data/polygon_sy_svsim_single.csv and data/polygon_sy_svsim_three_zone.csv
 
 # 3. Build the dashboard
 python3 scripts/build_dashboard.py
-# reads polygons, wells, and measurements from sibling 2027-BC-prop-network/,
-# reads data/polygon_sy_svsim.csv and data/project_portfolio.json,
-# writes all data/*.json, data/*.svg, data/*.csv files and index.html
+# reads polygons (both methods), wells, and measurements from 2027-BC-prop-network/,
+# reads the per-method Sy CSVs and data/project_portfolio.json,
+# writes per-method JSON/CSV/SVG outputs and the single-file index.html with toggle
 ```
 
 Both scripts read polygons + wells + measurements from the sibling

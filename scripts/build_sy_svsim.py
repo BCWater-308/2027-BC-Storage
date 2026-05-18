@@ -39,7 +39,12 @@ WORKTREE = HERE.parent
 DATA_DIR = WORKTREE / "data"
 
 REF_REPO = (WORKTREE / ".." / "2027-BC-prop-network").resolve()
-POLY_JS = REF_REPO / "js" / "polygons-data.js"
+POLY_JS_SINGLE = REF_REPO / "js" / "polygons-data-single.js"
+POLY_JS_THREE_ZONE = REF_REPO / "js" / "polygons-data-three-zone.js"
+POLY_VAR_BY_METHOD = {
+    "single":     ("RMS_POLYGONS_SINGLE",     POLY_JS_SINGLE),
+    "three-zone": ("RMS_POLYGONS_THREE_ZONE", POLY_JS_THREE_ZONE),
+}
 
 SVSIM_DIR = Path("/tmp/svsim")
 SVSIM_CSV = SVSIM_DIR / "svsim_texture_data.csv"
@@ -130,9 +135,9 @@ def aggregate_borehole(layers):
     return total, coarse
 
 
-def load_polygons_from_js(path: Path):
+def load_polygons_from_js(path: Path, var_name: str = "RMS_POLYGONS"):
     text = path.read_text()
-    m = re.search(r"const\s+RMS_POLYGONS\s*=\s*(.*?);\s*$", text,
+    m = re.search(rf"const\s+{var_name}\s*=\s*(.*?);\s*$", text,
                   re.DOTALL | re.MULTILINE)
     return json.loads(m.group(1))
 
@@ -232,20 +237,14 @@ def compute_polygon_sy(by_zone):
     return rows
 
 
-def main():
-    ensure_svsim_csv()
-    polygons = load_polygons_from_js(POLY_JS)
-    print(f"Computing SVSim Sy for 28-polygon 2027 BC network ({len(polygons)} polygons)")
+def run_one_method(method: str, boreholes):
+    var_name, poly_js = POLY_VAR_BY_METHOD[method]
+    print(f"\n=== {method} method ({poly_js.name}) ===")
+    polygons = load_polygons_from_js(poly_js, var_name)
     polygons_shapely = polygons_to_shapely(polygons)
-
-    print(f"Loading SVSim borehole records from {SVSIM_CSV}…")
-    boreholes = build_borehole_records()
-    print(f"  {len(boreholes):,} boreholes total in SVSim")
-
     by_zone = assign_boreholes_to_polygons(boreholes, polygons_shapely)
     rows = compute_polygon_sy(by_zone)
 
-    print()
     print(f"{'Polygon':<18} {'n_bh':>5} {'≥200ft':>7} {'%coarse':>9} {'Sy':>8}")
     print("-" * 54)
     for r in rows:
@@ -255,7 +254,8 @@ def main():
         print(f"{zone:<18} {r['n_boreholes_in_polygon']:>5} "
               f"{r['n_boreholes_with_>=200ft']:>7} {pct_str:>9} {sy_str:>8}")
 
-    out_csv = DATA_DIR / "polygon_sy_svsim.csv"
+    suffix = method.replace("-", "_")
+    out_csv = DATA_DIR / f"polygon_sy_svsim_{suffix}.csv"
     out_csv.parent.mkdir(parents=True, exist_ok=True)
     with out_csv.open("w", newline="") as f:
         w = csv.writer(f)
@@ -270,7 +270,19 @@ def main():
                 f"{r['pct_coarse']:.4f}" if r["pct_coarse"] is not None else "",
                 f"{r['sy']:.4f}" if r["sy"] is not None else "",
             ])
-    print(f"\nWrote {out_csv}")
+    print(f"Wrote {out_csv}")
+
+
+def main():
+    methods = ["single", "three-zone"]
+    if len(sys.argv) > 1 and sys.argv[1] in POLY_VAR_BY_METHOD:
+        methods = [sys.argv[1]]
+    ensure_svsim_csv()
+    print(f"Loading SVSim borehole records from {SVSIM_CSV}…")
+    boreholes = build_borehole_records()
+    print(f"  {len(boreholes):,} boreholes total in SVSim")
+    for m in methods:
+        run_one_method(m, boreholes)
 
 
 if __name__ == "__main__":
