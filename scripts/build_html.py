@@ -548,7 +548,7 @@ def _render_method_section(method, results, portfolio):
 
 <h3>Putting the deficit in proportion</h3>
 <div class="figure">{context_svg}</div>
-<div class="figcaption">Figure 3. Source: total storage from the Vina Subbasin GSP (Dec 15, 2021), p. ES-5 (BBGM-2020 estimate). WY {trough_year} trough = deepest observed deficit in this {method_pretty.lower()}.</div>
+<div class="figcaption">Figure 3. The bar is the full 16 MAF of fresh groundwater in storage (basin total per the 2022 Vina GSP, p. ES-5, BBGM-2020 estimate). The dark-red sliver is the WY 2025 cumulative deficit; the lighter orange behind it is the WY {trough_year} trough (deepest observed deficit). Both are shown at true scale — the deficit is real and worth managing, but small relative to total storage.</div>
 
 <h2>The 2042 sustainability target — hold the line, with the project portfolio</h2>
 

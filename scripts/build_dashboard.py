@@ -502,7 +502,11 @@ def render_timeseries(ts, ts_normalized=None):
 
 # --- storage context (16 MAF proportion) ----------------------------------
 def render_storage_context(basin_cum_2025, worst_year_deficit, worst_year):
-    width, height = 760, 320
+    """Single-panel full-scale view: deficit as a sliver of the 16 MAF basin
+    storage.  Both the WY 2025 cumulative deficit and the WY {worst_year}
+    trough are shown in true proportion — no zoom (which optically inflates
+    the deficit relative to total storage)."""
+    width, height = 760, 210
     out = [
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
         'style="background:#fafaf7;font-family:\'Inter\',ui-sans-serif,system-ui;'
@@ -513,42 +517,35 @@ def render_storage_context(basin_cum_2025, worst_year_deficit, worst_year):
         f'Vina Subbasin total fresh GW in storage: ~16 MAF ({SOURCE_GSP_LABEL})</text>',
     ]
 
-    # Panel 1: full-scale bar
     bar_x, bar_y = 50, 80
-    bar_w, bar_h = width - 100, 32
+    bar_w, bar_h = width - 100, 36
     out.append(f'<rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" '
                'fill="#e6f0e8" stroke="#5b5547" stroke-width="0.7"/>')
+    # Trough first (lighter shade behind), then WY 2025 deficit (dark red on top).
+    trough_frac = worst_year_deficit / TOTAL_FRESH_STORAGE_AF
     deficit_frac_2025 = abs(basin_cum_2025) / TOTAL_FRESH_STORAGE_AF
+    trough_w = max(1.5, bar_w * trough_frac)
     deficit_w_2025 = max(1.5, bar_w * deficit_frac_2025)
+    out.append(f'<rect x="{bar_x}" y="{bar_y}" width="{trough_w:.2f}" height="{bar_h}" '
+               f'fill="#c75a35" fill-opacity="0.55"/>')
     out.append(f'<rect x="{bar_x}" y="{bar_y}" width="{deficit_w_2025:.2f}" height="{bar_h}" '
                'fill="#a32d2d"/>')
-    out.append(f'<text x="{bar_x + bar_w / 2}" y="{bar_y - 6}" text-anchor="middle" '
-               f'font-size="11" fill="#5b5547">Full-scale view (sliver = deficit)</text>')
-    out.append(f'<text x="{bar_x + bar_w / 2}" y="{bar_y + bar_h + 18}" text-anchor="middle" '
-               f'font-size="12" fill="#1a1612">'
-               f'WY 2025 cumulative deficit = <tspan font-weight="700" fill="#a32d2d">'
-               f'{deficit_frac_2025*100:.2f}%</tspan> of 16 MAF</text>')
+    # End-of-storage tick
+    out.append(f'<line x1="{bar_x + bar_w}" y1="{bar_y - 6}" x2="{bar_x + bar_w}" y2="{bar_y + bar_h + 6}" '
+               'stroke="#5b5547" stroke-width="0.8"/>')
+    out.append(f'<text x="{bar_x + bar_w - 4}" y="{bar_y - 10}" text-anchor="end" '
+               'font-size="10" fill="#5b5547">16,000,000 AF</text>')
+    out.append(f'<text x="{bar_x + 4}" y="{bar_y - 10}" font-size="10" fill="#5b5547">0</text>')
 
-    # Panel 2: zoomed
-    zoom = 25
-    panel_y = 180
-    out.append(f'<rect x="{bar_x}" y="{panel_y}" width="{bar_w}" height="{bar_h}" '
-               'fill="#e6f0e8" stroke="#5b5547" stroke-width="0.7"/>')
-    visible_frac = 1 / zoom
-    visible_total_label = TOTAL_FRESH_STORAGE_AF * visible_frac
-    deficit_w_zoom_2025 = bar_w * abs(basin_cum_2025) / visible_total_label
-    deficit_w_zoom_worst = bar_w * worst_year_deficit / visible_total_label
-    out.append(f'<rect x="{bar_x}" y="{panel_y}" width="{deficit_w_zoom_worst:.2f}" height="{bar_h}" '
-               f'fill="#c75a35" fill-opacity="0.5" stroke="#a32d2d" stroke-width="0.5"/>')
-    out.append(f'<rect x="{bar_x}" y="{panel_y}" width="{deficit_w_zoom_2025:.2f}" height="{bar_h}" '
-               'fill="#a32d2d"/>')
-    out.append(f'<text x="{bar_x + bar_w / 2}" y="{panel_y - 6}" text-anchor="middle" '
-               f'font-size="11" fill="#5b5547">{zoom}× zoom (showing {visible_total_label/1e6:.2f} MAF of the 16 MAF total)</text>')
-    out.append(f'<text x="{bar_x + bar_w / 2}" y="{panel_y + bar_h + 18}" text-anchor="middle" '
-               f'font-size="12" fill="#1a1612">'
-               f'WY {worst_year} trough = <tspan font-weight="700" fill="#a32d2d">'
-               f'{worst_year_deficit/TOTAL_FRESH_STORAGE_AF*100:.2f}%</tspan> '
-               f'of 16 MAF ({worst_year_deficit:,.0f} AF deepest deficit)</text>')
+    # Two data lines below the bar
+    out.append(f'<text x="{bar_x}" y="{bar_y + bar_h + 24}" font-size="13" fill="#1a1612">'
+               f'<tspan font-weight="700" fill="#a32d2d">●</tspan> WY 2025 cumulative deficit '
+               f'= <tspan font-weight="700" fill="#a32d2d">{deficit_frac_2025*100:.2f}%</tspan> '
+               f'of 16 MAF ({abs(basin_cum_2025):,.0f} AF)</text>')
+    out.append(f'<text x="{bar_x}" y="{bar_y + bar_h + 44}" font-size="13" fill="#1a1612">'
+               f'<tspan font-weight="700" fill="#c75a35">●</tspan> WY {worst_year} trough '
+               f'(deepest observed) = <tspan font-weight="700" fill="#c75a35">'
+               f'{trough_frac*100:.2f}%</tspan> of 16 MAF ({worst_year_deficit:,.0f} AF)</text>')
 
     out.append("</svg>")
     return "\n".join(out)
