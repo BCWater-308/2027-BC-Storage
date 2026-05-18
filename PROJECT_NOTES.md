@@ -11,7 +11,7 @@ audience-facing methodology document; this file is the project history.
 Re-create the original 17-polygon
 [2027-drought-analysis](https://cosmo1007.github.io/2027-drought-analysis/)
 dashboard against the new **28-polygon Voronoi tessellation** from the
-[2027-BC-prop-network](https://cosmo1007.github.io/2027-BC-prop-network/)
+[2027-BC-prop-network](https://agubc-vina.github.io/2027-BC-prop-network/)
 framework, with appropriate methodological corrections for the late-baseline
 polygons that the new (more granular) network introduces.
 

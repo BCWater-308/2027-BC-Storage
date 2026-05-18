@@ -7,7 +7,7 @@ This is the **28-polygon rebuild** of the original
 [2027-drought-analysis](https://cosmo1007.github.io/2027-drought-analysis/)
 (which used a 17-polygon network). The polygons, RMS wells, and DWR
 periodic GWL measurements all come from the companion
-[2027-BC-prop-network](https://cosmo1007.github.io/2027-BC-prop-network/)
+[2027-BC-prop-network](https://agubc-vina.github.io/2027-BC-prop-network/)
 framework, where every 2027 GWL RMS well gets its own Voronoi cell.
 
 ## Two polygon methods, one dashboard
@@ -363,7 +363,7 @@ python3 scripts/build_dashboard.py
 ```
 
 Both scripts read polygons + wells + measurements from the sibling
-[`2027-BC-prop-network`](https://github.com/cosmo1007/2027-BC-prop-network)
+[`2027-BC-prop-network`](https://github.com/agubc-vina/2027-BC-prop-network)
 repo (`../2027-BC-prop-network/js/*.js`). To refresh upstream data, re-run
 the prop-network repo's `scripts/fetch_dwr_measurements.py` and then
 rebuild here.
