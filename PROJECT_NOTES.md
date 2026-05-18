@@ -161,7 +161,7 @@ and normalized avg rate.
 | Baseline anchoring | First WY 1999–2025 year with Good March data | Honest per-polygon record start |
 | Gap attribution | Linear interpolation across DWR gaps | Standard practice; gap years bucketed by their year type |
 | Year-type classification | Sacramento Valley Index (Northern Sierra 8-Station Index) | DWR's official water-year typing |
-| Project portfolio | User-specified 8 projects, 14,500 AF/yr | Per AGUBC May 2026 allocation memo |
+| Project portfolio | User-specified 7 projects, 15,500 AF/yr (May 17 update) | Per AGUBC May 2026 allocation memo |
 | Late-baseline correction | Year-type-weighted backcast (Option A) | Each polygon uses only its own data; transparent math; standard SGMA technique |
 | Fallback for unobserved year-types | Polygon's overall avg rate | Stays within polygon-own-data principle |
 
@@ -204,8 +204,8 @@ and normalized avg rate.
 | Basin cumulative WY 2025 (AF) | −193,010 | −145,732 | **−189,209** |
 | Basin avg loss rate (AF/yr) | 8,558 | 6,322 | **7,277** |
 | WY 2022 trough (AF) | −347,215 | −285,567 | (not separately computed) |
-| Project portfolio (AF/yr) | 14,500 | 14,500 | 14,500 |
-| Recovery margin (AF/yr) | +5,942 | +8,178 | **+7,223** |
+| Project portfolio (AF/yr) | 14,500 | 15,500 | 15,500 |
+| Recovery margin (AF/yr) | +5,942 | +9,178 | **+8,223** |
 
 The 28-polygon **normalized** numbers are within ~2% of the 17-polygon
 basin total. The 28-polygon **observed** numbers are smaller because of

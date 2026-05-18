@@ -1,7 +1,7 @@
 {
-  "version": "2026-05-15c",
-  "framing": "AGUBC project allocations (May 2026). 8 projects, 14,500 AF/yr total.",
-  "total_AF_per_yr": 14500,
+  "version": "2026-05-17",
+  "framing": "AGUBC project allocations (May 17, 2026). 7 projects, 15,500 AF/yr total. Rock Creek recharge is now concentrated at 36P and 29P (3,500 AF/yr each); the prior 33A allocation was removed because Rock Creek recharge now lands at the two adjacent polygons rather than 33A.",
+  "total_AF_per_yr": 15500,
   "projects": [
     {
       "polygon": "20N02E08H003M",
@@ -48,29 +48,21 @@
       "well_label": "W36P001",
       "name": "Rock Creek recharge",
       "category": "recharge",
-      "af_per_yr": 2000,
-      "source": "AGUBC allocation, May 2026 (carried from original portfolio, AF/yr reduced from 3,000)"
+      "af_per_yr": 3500,
+      "source": "AGUBC allocation, May 17, 2026 (increased from 2,000 to 3,500 as Rock Creek recharge re-sites away from 33A)"
     },
     {
       "polygon": "23N01E29P002M",
       "well_label": "E29P002",
       "name": "Rock Creek recharge",
       "category": "recharge",
-      "af_per_yr": 2000,
-      "source": "AGUBC allocation, May 2026 (carried from original portfolio, AF/yr reduced from 3,000)"
-    },
-    {
-      "polygon": "23N01E33A001M",
-      "well_label": "E33A001",
-      "name": "Recharge project",
-      "category": "recharge",
-      "af_per_yr": 2000,
-      "source": "AGUBC allocation, May 2026 (new project — specific project name/category to be filled in)"
+      "af_per_yr": 3500,
+      "source": "AGUBC allocation, May 17, 2026 (increased from 2,000 to 3,500 as Rock Creek recharge re-sites away from 33A)"
     }
   ],
   "notes": [
     "The two Chico cells in the new 28-set (22N01E09B001M and 22N01E20K001M) receive no project allocation. Their combined deficit is the largest remaining shortfall in the basin.",
     "Project yields are at-average operating conditions. Recharge yields assume 2–3 storm events per year where excess flow can be diverted; drought-year yields will be lower, wet-year yields higher. Conjunctive-use yields vary with surface-water availability.",
-    "The 33A entry is new vs. the original portfolio and is labeled generically — edit the 'name' field in this JSON and re-run scripts/build_dashboard.py to refresh the dashboard."
+    "Rock Creek recharge previously included a 2,000 AF/yr allocation at 23N01E33A001M (May 15 portfolio). After field re-siting (May 17), Rock Creek recharge concentrates at the two polygons that physically front Rock Creek — 36P and 29P — at 3,500 AF/yr each. The 33A polygon now has no project allocation and reverts to a shortfall polygon."
   ]
 }

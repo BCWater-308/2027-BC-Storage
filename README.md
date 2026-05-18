@@ -42,8 +42,8 @@ flag) is preserved on every polygon for transparency.
 | Basin cumulative WY 2025 (normalized, AF) | −189,209 | **−209,594** |
 | Basin avg loss rate (observed, AF/yr) | 6,322 | **7,940** |
 | Basin avg loss rate (normalized, AF/yr) | 7,277 | **8,061** |
-| Recovery margin vs. 14,500 AF/yr portfolio (observed) | +8,178 | **+6,560** |
-| Recovery margin vs. 14,500 AF/yr portfolio (normalized) | +7,223 | **+6,439** |
+| Recovery margin vs. 15,500 AF/yr portfolio (observed) | +9,178 | **+7,560** |
+| Recovery margin vs. 15,500 AF/yr portfolio (normalized) | +8,223 | **+7,439** |
 
 Both methods show the basin in deficit and the portfolio comfortably
 covering the average loss rate. The three-zone method reports a larger
@@ -99,8 +99,8 @@ Year-type classification uses DWR's official **Sacramento Valley Index**
 | Sy method | DWR SVSim Texture Data, area-weighted | Same — recomputed against new polygon geometry |
 | Basin net WY 2025 | −193,010 AF | **−145,732 AF** |
 | Basin avg loss rate | 8,558 AF/yr | **6,322 AF/yr** |
-| Project portfolio | 14,500 AF/yr | **14,500 AF/yr** (same projects, 30L → 32E remap) |
-| Recovery margin | +5,942 AF/yr | **+8,178 AF/yr** |
+| Project portfolio | 14,500 AF/yr | **15,500 AF/yr** (Rock Creek concentrated at 36P + 29P) |
+| Recovery margin | +5,942 AF/yr | **+9,178 AF/yr** (single, observed) |
 
 The basin deficit comes out smaller in the 28-polygon rebuild for three
 reasons:
@@ -206,11 +206,11 @@ is small (~70 AF/yr at most).
 | Basin cumulative WY 2025 | −145,732 AF | **−189,209 AF** | +43,477 AF more deficit |
 | Basin avg loss rate | 6,322 AF/yr | **7,277 AF/yr** | +955 AF/yr more loss |
 | Polygon-summed hold-steady need | 8,122 AF/yr | **8,136 AF/yr** | ~unchanged |
-| Recovery margin (vs. 14,500 AF/yr portfolio) | +8,178 AF/yr | **+7,223 AF/yr** | −955 AF/yr |
+| Recovery margin (vs. 15,500 AF/yr portfolio) | +9,178 AF/yr | **+8,223 AF/yr** | −955 AF/yr |
 
 The portfolio's recovery margin remains comfortably positive against
-either basis (+8,178 AF/yr observed, +7,223 AF/yr normalized — about
-3.1% of GSP-stated sustainable yield).
+either basis (+9,178 AF/yr observed, +8,223 AF/yr normalized — about
+3.5% of GSP-stated sustainable yield).
 
 The normalized basin cumulative (−189k AF) is very close to the original
 17-polygon analysis's −193k AF — strong validation that the late-baseline
@@ -247,8 +247,8 @@ back upward.
 | Metric                                                 | AF/yr        | % of 233,500 AF/yr SY |
 |--------------------------------------------------------|-------------:|----------------------:|
 | Basin avg loss rate (hold-steady need)                 | **6,322**    | 2.7%                  |
-| Project portfolio (online by 2032)                     | **14,500**   | 6.2%                  |
-| **Recovery margin** (portfolio − loss)                 | **+8,178**   | **+3.5%**             |
+| Project portfolio (online by 2032)                     | **15,500**   | 6.6%                  |
+| **Recovery margin** (portfolio − loss)                 | **+9,178**   | **+3.9%**             |
 
 Sustainable yield = 233,500 AF/yr per the 2022 Vina GSP (Dec 15, 2021),
 p. ES-5: 243,500 AFY historical pumping minus 10,000 AFY decrease in
@@ -267,17 +267,16 @@ refresh allocations.
 | `20N02E24C001M` | Conjunctive use | 1,250 |
 | `20N03E33L001M` | Conjunctive use | 1,250 |
 | `21N01E10B003M` | Comanche Creek recharge | 1,500 |
-| `23N01W36P001M` | Rock Creek recharge | 2,000 |
-| `23N01E29P002M` | Rock Creek recharge | 2,000 |
-| `23N01E33A001M` | Recharge project (TBD) | 2,000 |
-| **Total** |  | **14,500** |
+| `23N01W36P001M` | Rock Creek recharge | 3,500 |
+| `23N01E29P002M` | Rock Creek recharge | 3,500 |
+| **Total** |  | **15,500** |
 
 After the portfolio is online, the largest residual shortfalls are:
 **`21N01E13L004M`** (~1,000 AF/yr), **`22N01E20K001M`** Chico-S (~858),
 **`22N01E09B001M`** Chico-N (~622), **`21N01E27D001M`** (~581), and
 **`21N02E26E006M`** (~536) — combined ~3,600 AF/yr deficit not covered by
 any current project. The
-project portfolio's basin-level recovery margin of **+8,178 AF/yr** means
+project portfolio's basin-level recovery margin of **+9,178 AF/yr** means
 surplus capacity in over-allocated polygons more than offsets these
 shortfalls at basin scale; whether that holds at each RMS well depends on
 lateral hydraulic connectivity that this dashboard does not model.

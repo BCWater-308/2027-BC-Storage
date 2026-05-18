@@ -19,10 +19,10 @@
   "basin_normalized_cum_2025_AF": -189209.0,
   "basin_normalized_avg_loss_rate_AF_per_yr": 7277.0,
   "basin_normalized_polygon_summed_hold_need_AF_per_yr": 8136.0,
-  "basin_normalized_portfolio_margin_AF_per_yr": 7223.0,
+  "basin_normalized_portfolio_margin_AF_per_yr": 8223.0,
   "normalization_method": "Year-type-weighted backcast: per polygon, avg \u0394Storage per SVI year-type using only the polygon's own observations; fallback to polygon's overall avg rate for any year-type not observed. Applied to the basin's WY 2000\u20132025 year-type mix (6 Wet, 4 AN, 5 BN, 6 Dry, 5 Critical = 26 transition years).",
-  "project_portfolio_total_AF_per_yr": 14500,
-  "project_portfolio_basin_margin_AF_per_yr": 8178.0,
+  "project_portfolio_total_AF_per_yr": 15500,
+  "project_portfolio_basin_margin_AF_per_yr": 9178.0,
   "project_portfolio": [
     {
       "polygon": "20N02E08H003M",
@@ -69,24 +69,16 @@
       "well_label": "W36P001",
       "name": "Rock Creek recharge",
       "category": "recharge",
-      "af_per_yr": 2000,
-      "source": "AGUBC allocation, May 2026 (carried from original portfolio, AF/yr reduced from 3,000)"
+      "af_per_yr": 3500,
+      "source": "AGUBC allocation, May 17, 2026 (increased from 2,000 to 3,500 as Rock Creek recharge re-sites away from 33A)"
     },
     {
       "polygon": "23N01E29P002M",
       "well_label": "E29P002",
       "name": "Rock Creek recharge",
       "category": "recharge",
-      "af_per_yr": 2000,
-      "source": "AGUBC allocation, May 2026 (carried from original portfolio, AF/yr reduced from 3,000)"
-    },
-    {
-      "polygon": "23N01E33A001M",
-      "well_label": "E33A001",
-      "name": "Recharge project",
-      "category": "recharge",
-      "af_per_yr": 2000,
-      "source": "AGUBC allocation, May 2026 (new project \u2014 specific project name/category to be filled in)"
+      "af_per_yr": 3500,
+      "source": "AGUBC allocation, May 17, 2026 (increased from 2,000 to 3,500 as Rock Creek recharge re-sites away from 33A)"
     }
   ],
   "polygons": [
@@ -152,9 +144,9 @@
       "endpoint_cum_storage_AF": -12808.0,
       "avg_rate_AF_per_yr": -582.2,
       "hold_steady_need_AF_per_yr": 582.0,
-      "project_alloc_AF_per_yr": 2000.0,
-      "project_name": "Recharge project",
-      "coverage_net_AF_per_yr": 1418.0,
+      "project_alloc_AF_per_yr": 0.0,
+      "project_name": "",
+      "coverage_net_AF_per_yr": -582.0,
       "crit_dry_share_of_drawdown_pct": 80.6,
       "crit_share_of_drawdown_pct": 63.4,
       "bucket_storage_AF": {
@@ -177,9 +169,9 @@
       "endpoint_cum_storage_AF": -4991.0,
       "avg_rate_AF_per_yr": -192.0,
       "hold_steady_need_AF_per_yr": 192.0,
-      "project_alloc_AF_per_yr": 2000.0,
+      "project_alloc_AF_per_yr": 3500.0,
       "project_name": "Rock Creek recharge",
-      "coverage_net_AF_per_yr": 1808.0,
+      "coverage_net_AF_per_yr": 3308.0,
       "crit_dry_share_of_drawdown_pct": 80.1,
       "crit_share_of_drawdown_pct": 28.8,
       "bucket_storage_AF": {
@@ -227,9 +219,9 @@
       "endpoint_cum_storage_AF": -5993.0,
       "avg_rate_AF_per_yr": -230.5,
       "hold_steady_need_AF_per_yr": 230.0,
-      "project_alloc_AF_per_yr": 2000.0,
+      "project_alloc_AF_per_yr": 3500.0,
       "project_name": "Rock Creek recharge",
-      "coverage_net_AF_per_yr": 1770.0,
+      "coverage_net_AF_per_yr": 3270.0,
       "crit_dry_share_of_drawdown_pct": 81.8,
       "crit_share_of_drawdown_pct": 40.2,
       "bucket_storage_AF": {
