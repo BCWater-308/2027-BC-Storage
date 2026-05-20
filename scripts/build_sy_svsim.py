@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Compute polygon-by-polygon specific yield from DWR SVSim Texture Data for
-the 28-polygon 2027 BC RMS network.
+the 2027 BC RMS network polygons (both single and three-zone methods).
 
 Method (per the Sacramento Valley Simulation Model TM-1B):
     Coarse-grained sediments → Sy = 0.15
@@ -15,11 +15,13 @@ Inputs:
   - /tmp/svsim/svsim_texture_data.csv
         DWR CKAN resource 544623e2-0cd5-4c5b-827f-affa4abf4e16
         (downloaded automatically on first run; ~9 MB).
-  - ../2027-BC-prop-network/js/polygons-data.js
-        28 Voronoi polygons (lat/lon rings) keyed by full SWN.
+  - ../2027-BC-prop-network/js/polygons-data-single.js
+  - ../2027-BC-prop-network/js/polygons-data-three-zone.js
+        Voronoi polygons (lat/lon rings) keyed by full SWN.
 
 Outputs:
-  - data/polygon_sy_svsim.csv
+  - data/polygon_sy_svsim_single.csv
+  - data/polygon_sy_svsim_three_zone.csv
 """
 
 from __future__ import annotations

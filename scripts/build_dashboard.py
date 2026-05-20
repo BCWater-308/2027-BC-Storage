@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Build the 28-polygon 2027 BC RMS drought-conditioned storage dashboard.
+Build the 2027 BC RMS drought-conditioned storage dashboard.
 
 Reads (from sibling 2027-BC-prop-network/, never modifies):
-  - js/polygons-data.js        28 Voronoi polygons (lat/lon rings)
-  - js/wells-data.js           79 wells, including site_code resolution
-  - js/measurements-data.js    DWR periodic GWL records, keyed by site_code
+  - js/polygons-data-single.js     Single basin-wide Voronoi tessellation
+  - js/polygons-data-three-zone.js Three-zone per-mgmt-area tessellation
+  - js/wells-data.js               Wells, including site_code resolution
+  - js/measurements-data.js        DWR periodic GWL records, keyed by site_code
 
 Reads (local):
   - data/polygon_sy_svsim.csv  Polygon-by-polygon Sy (from build_sy_svsim.py)
@@ -256,25 +257,23 @@ def load_sy(csv_path: Path, polygons_meta: list) -> dict:
 
 
 # --- color ramp -----------------------------------------------------------
-def coverage_color(loss_rate_afy: float, project_afy: float) -> str:
-    if loss_rate_afy <= 0 and project_afy == 0:
-        return "#a8c8b0"
-    net = project_afy - loss_rate_afy
+def loss_color(loss_rate_afy: float) -> str:
+    """Color a polygon by its avg observed loss rate (AF/yr).
+
+    loss_rate_afy is the *positive* loss magnitude (hold-steady need): 0 means
+    the polygon is gaining storage, larger means losing faster.
+    """
     if loss_rate_afy <= 0:
-        return "#6b9479"
-    if net >= 1500:
-        return "#6b9479"
-    if net >= 0:
-        return "#a8c8b0"
-    if net >= -250:
-        return "#f0d9a8"
-    if net >= -750:
+        return "#a8c8b0"   # gaining storage
+    if loss_rate_afy < 250:
+        return "#f0d9a8"   # near-zero loss
+    if loss_rate_afy < 750:
         return "#e3a76f"
-    if net >= -1500:
+    if loss_rate_afy < 1500:
         return "#cb7740"
-    if net >= -2500:
+    if loss_rate_afy < 2500:
         return "#a84a2c"
-    return "#7c2820"
+    return "#7c2820"       # severe loss
 
 
 # --- SVG projection -------------------------------------------------------
@@ -323,7 +322,7 @@ def fmt_int_signed(v):
 
 
 # --- bar chart ------------------------------------------------------------
-def render_bar_chart(buckets, n_by_type, basin_net):
+def render_bar_chart(buckets, n_by_type, basin_net, n_polygons):
     width, height = 880, 420
     zero_y = 200
     bar_w = 110
@@ -352,7 +351,7 @@ def render_bar_chart(buckets, n_by_type, basin_net):
         f'<text x="{width/2}" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1612">'
         'Basin storage change since baseline, by Sacramento Valley Index year type</text>',
         f'<text x="{width/2}" y="42" text-anchor="middle" font-size="11" fill="#5b5547" font-style="italic">'
-        f'Sum across all 28 polygons (WY 2000–2025). '
+        f'Sum across all {n_polygons} polygons (WY 2000–2025). '
         f'Critical years remove about {crit_x:.1f}× per year what Wet+Above-Normal years recover.</text>',
         f'<line x1="60" y1="{zero_y}" x2="{width - 60}" y2="{zero_y}" stroke="#5b5547" stroke-width="0.9"/>',
         f'<text x="{width - 52}" y="{zero_y + 4}" font-size="11" fill="#5b5547">0 AF</text>',
@@ -390,7 +389,7 @@ def render_bar_chart(buckets, n_by_type, basin_net):
 
 
 # --- cumulative time series chart -----------------------------------------
-def render_timeseries(ts, ts_normalized=None):
+def render_timeseries(ts, ts_normalized=None, n_polygons=None):
     """`ts` is the observed time series.  `ts_normalized` is the optional
     year-type-weighted backcast series — drawn as a second line if provided."""
     width, height = 760, 380
@@ -402,7 +401,7 @@ def render_timeseries(ts, ts_normalized=None):
                'width:100%;height:auto;display:block;">')
     out.append('<defs><clipPath id="ts-clip"><rect x="92" y="32" width="644" height="292"/></clipPath></defs>')
     out.append(f'<text x="{width/2}" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1612">'
-               'Basin cumulative ΔStorage (28-polygon network), shaded by hydrologic condition</text>')
+               f'Basin cumulative ΔStorage ({n_polygons}-polygon network), shaded by hydrologic condition</text>')
 
     cum_vals = [t["cumulative_AF"] for t in ts]
     if ts_normalized:
@@ -471,17 +470,18 @@ def render_timeseries(ts, ts_normalized=None):
                    f'text-anchor="end" font-size="11" font-weight="700" fill="#7c4a86">'
                    f'{last_n["cumulative_AF"]:+,.0f} AF (normalized)</text>')
 
-    legend_w, legend_h = 260, 132 if ts_normalized else 102
+    legend_w = 320
+    legend_h = 132 if ts_normalized else 102
     legend_x = plot_x0 + 8
     legend_y = plot_y1 - legend_h - 6
     out.append(f'<g transform="translate({legend_x},{legend_y + 22})">')
     out.append(f'<rect x="-8" y="-22" width="{legend_w}" height="{legend_h}" fill="#fafaf7" fill-opacity="0.92" stroke="#cfc9b8" stroke-width="0.5" rx="2"/>')
     out.append('<line x1="0" y1="-10" x2="22" y2="-10" stroke="#1f3a5f" stroke-width="2.4"/>')
-    out.append('<text x="28" y="-7" font-size="11" fill="#1a1612"><tspan font-weight="700">Observed</tspan> (each polygon contributes only years it observed)</text>')
+    out.append('<text x="28" y="-7" font-size="11" fill="#1a1612"><tspan font-weight="700">Observed</tspan> (years each polygon measured)</text>')
     swatch_y = 2
     if ts_normalized:
         out.append(f'<line x1="0" y1="{swatch_y+5}" x2="22" y2="{swatch_y+5}" stroke="#7c4a86" stroke-width="2.0" stroke-dasharray="6,4"/>')
-        out.append(f'<text x="28" y="{swatch_y+9}" font-size="11" fill="#1a1612"><tspan font-weight="700">Normalized</tspan> (year-type-weighted backcast — see methodology)</text>')
+        out.append(f'<text x="28" y="{swatch_y+9}" font-size="11" fill="#1a1612"><tspan font-weight="700">Normalized</tspan> (year-type-weighted backcast)</text>')
         swatch_y += 18
     for full, color, opacity in [
         ("Critical",      "#a32d2d", 0.32),
@@ -554,7 +554,7 @@ def render_storage_context(basin_cum_2025, worst_year_deficit, worst_year):
 # --- polygon map ---------------------------------------------------------
 def render_polygon_map(polygons_meta, pol_summaries, well_lookup, sy_lookup,
                        projects):
-    width, height, margin = 700, 820, 30
+    width, height, margin = 700, 1080, 30
     rings_all = [r for p in polygons_meta for r in p["rings"]]
     proj = project_factory(rings_all, width, height, margin)
 
@@ -566,7 +566,6 @@ def render_polygon_map(polygons_meta, pol_summaries, well_lookup, sy_lookup,
         '.poly{stroke:#5b5547;stroke-width:0.7;cursor:pointer;}'
         '.poly:hover{stroke-width:2;filter:brightness(1.05);}'
         '.well{fill:#1f1f1f;pointer-events:none;}'
-        '.well-project{fill:#1f3a5f;stroke:#fafaf7;stroke-width:1.2;pointer-events:none;}'
         '.label{font-size:8.5px;fill:#332e22;text-anchor:middle;font-weight:500;pointer-events:none;}'
         '.title{font-size:13px;font-weight:700;fill:#1a1612;text-anchor:middle;}'
         '.subtitle{font-size:11px;fill:#5b5547;text-anchor:middle;font-style:italic;}'
@@ -575,9 +574,9 @@ def render_polygon_map(polygons_meta, pol_summaries, well_lookup, sy_lookup,
         '.legend-bg{fill:#fafaf7;fill-opacity:0.97;stroke:#cfc9b8;stroke-width:0.6;}'
         '</style></defs>',
         f'<text class="title" x="{width/2}" y="18">'
-        'Vina 2027 BC RMS network (28 polygons) — Coverage status after project portfolio (target 2032)</text>',
+        f'Vina 2027 BC RMS network ({len(polygons_meta)} polygons) — Observed avg storage loss rate (AF/yr)</text>',
         f'<text class="subtitle" x="{width/2}" y="32">'
-        'Click any polygon for detail. Color = project allocation minus polygon avg loss rate (AF/yr).</text>',
+        'Click any polygon for detail. Color = polygon avg loss rate (positive = losing storage).</text>',
     ]
 
     summary_by_zone = {s["zone_label"]: s for s in pol_summaries}
@@ -585,7 +584,7 @@ def render_polygon_map(polygons_meta, pol_summaries, well_lookup, sy_lookup,
         zone = poly["zone_label"]
         s = summary_by_zone[zone]
         d_attr = rings_to_path(poly["rings"], proj)
-        fill = coverage_color(s["hold_steady_need_AF_per_yr"], s["project_alloc_AF_per_yr"])
+        fill = loss_color(s["hold_steady_need_AF_per_yr"])
         late_baseline = s["baseline_year"] > START_YEAR
         attrs = {
             "class": "poly",
@@ -627,10 +626,7 @@ def render_polygon_map(polygons_meta, pol_summaries, well_lookup, sy_lookup,
             if not wmeta or wmeta.get("latitude") is None:
                 continue
             cx, cy = proj(wmeta["latitude"], wmeta["longitude"])
-            is_project = s.get("project_alloc_AF_per_yr", 0) > 0
-            cls = "well-project" if is_project else "well"
-            r = 4.2 if is_project else 3.0
-            svg.append(f'<circle class="{cls}" cx="{cx:.1f}" cy="{cy:.1f}" r="{r}"/>')
+            svg.append(f'<circle class="well" cx="{cx:.1f}" cy="{cy:.1f}" r="3.0"/>')
         lat_c, lon_c = polygon_centroid(poly["rings"])
         cx, cy = proj(lat_c, lon_c)
         # Show the section-letter shorthand to keep labels readable.
@@ -640,20 +636,19 @@ def render_polygon_map(polygons_meta, pol_summaries, well_lookup, sy_lookup,
     # Legend
     legend_x, legend_y = 16, height - 90
     legend_swatches = [
-        ("Surplus",      "#6b9479"),
-        ("Covered",      "#a8c8b0"),
-        ("Near",         "#f0d9a8"),
-        ("Short <750",   "#e3a76f"),
-        ("Short <1.5k",  "#cb7740"),
-        ("Short <2.5k",  "#a84a2c"),
-        ("Short ≥2.5k",  "#7c2820"),
+        ("Gaining",        "#a8c8b0"),
+        ("Loss < 250",     "#f0d9a8"),
+        ("Loss < 750",     "#e3a76f"),
+        ("Loss < 1,500",   "#cb7740"),
+        ("Loss < 2,500",   "#a84a2c"),
+        ("Loss ≥ 2,500",   "#7c2820"),
     ]
-    swatch_w, col_w = 56, 76
+    swatch_w, col_w = 60, 82
     legend_w = 8 + col_w * len(legend_swatches) + 175
     svg.append(f'<g transform="translate({legend_x},{legend_y})">')
     svg.append(f'<rect class="legend-bg" x="-8" y="-22" width="{legend_w}" height="86"/>')
-    svg.append('<text class="legend-title" x="0" y="-6">Coverage after project portfolio (AF/yr): project allocation − polygon avg loss</text>')
-    svg.append('<text class="legend-text" x="0" y="9" font-style="italic" font-size="9.5" fill="#5b5547">greens = surplus / covered  ·  oranges → reds = shortfall by AF/yr</text>')
+    svg.append('<text class="legend-title" x="0" y="-6">Polygon avg observed storage loss rate (AF/yr)</text>')
+    svg.append('<text class="legend-text" x="0" y="9" font-style="italic" font-size="9.5" fill="#5b5547">light green = gaining storage  ·  oranges → reds = loss magnitude per year</text>')
     swatch_y = 18
     for i, (label, color) in enumerate(legend_swatches):
         sx = i * col_w + (col_w - swatch_w) / 2
@@ -662,9 +657,7 @@ def render_polygon_map(polygons_meta, pol_summaries, well_lookup, sy_lookup,
         svg.append(f'<text class="legend-text" x="{cx:.1f}" y="{swatch_y + 30}" text-anchor="middle">{label}</text>')
     well_x = len(legend_swatches) * col_w + 16
     svg.append(f'<circle cx="{well_x}" cy="{swatch_y + 4}" r="3"/>')
-    svg.append(f'<text class="legend-text" x="{well_x + 10}" y="{swatch_y + 8}">2026 GWL RMS well</text>')
-    svg.append(f'<circle class="well-project" cx="{well_x}" cy="{swatch_y + 20}" r="4.2"/>')
-    svg.append(f'<text class="legend-text" x="{well_x + 10}" y="{swatch_y + 24}">RMS well + project</text>')
+    svg.append(f'<text class="legend-text" x="{well_x + 10}" y="{swatch_y + 8}">Proposed 2027 RMS well</text>')
     svg.append('</g>')
     svg.append("</svg>")
     return "\n".join(svg)
@@ -719,6 +712,9 @@ def compute_method(method, wells_meta, meas, portfolio):
     for poly in polygons:
         zone = poly["zone_label"]
         rms_wells = [poly.get("rms_well_swn")] if poly.get("rms_well_swn") else []
+        # Aggregate polygon (e.g., dissolved Chico): use the full nested-completion list.
+        if not rms_wells and poly.get("rms_well_swns"):
+            rms_wells = poly["rms_well_swns"]
         # Fallback if the older multi-well key is used.
         if not rms_wells and poly.get("rms_wells_2026"):
             rms_wells = poly["rms_wells_2026"]
@@ -905,7 +901,7 @@ def compute_method(method, wells_meta, meas, portfolio):
         "notes": (
             "Year-over-year storage deltas from each polygon's cumulative "
             "storage series; multi-year DWR gaps distributed evenly across "
-            "the gap before bucketing. 28 polygons in the 2027 BC RMS network; "
+            f"the gap before bucketing. {len(pol_summaries)} polygons in the 2027 BC RMS network; "
             "baseline years are staggered per first Good-quality spring "
             "measurement."
         ),
@@ -1026,7 +1022,8 @@ def compute_method(method, wells_meta, meas, portfolio):
     n_by_type = {k: sum(1 for y in range(START_YEAR + 1, END_YEAR + 1)
                         if classify_year(y) == k)
                  for k in ["wet", "an", "bn", "dry", "critical"]}
-    bar_svg = render_bar_chart(basin_buckets, n_by_type, basin_cumulative_2025)
+    bar_svg = render_bar_chart(basin_buckets, n_by_type, basin_cumulative_2025,
+                               n_polygons=len(pol_summaries))
     (DATA_DIR / f"basin_buckets_chart_{suffix}.svg").write_text(bar_svg)
 
     cum_running = 0.0
@@ -1045,7 +1042,7 @@ def compute_method(method, wells_meta, meas, portfolio):
         else:
             cum_norm += basin_normalized_yoy.get(y, 0.0)
             ts_norm.append({"year": y, "cumulative_AF": round(cum_norm, 0)})
-    ts_svg = render_timeseries(ts, ts_norm)
+    ts_svg = render_timeseries(ts, ts_norm, n_polygons=len(pol_summaries))
     (DATA_DIR / f"basin_cumulative_chart_{suffix}.svg").write_text(ts_svg)
 
     trough_cum = 0.0
@@ -1068,6 +1065,14 @@ def compute_method(method, wells_meta, meas, portfolio):
         if not s:
             continue
         seed_latlng = p_meta.get("seed_latlng") or [None, None]
+        # One lat/lon pair per RMS well in the polygon's network membership.
+        # For single-well polygons this is just the seed; for the Chico
+        # aggregate it's all 10 nested completions at their actual locations.
+        well_latlngs = []
+        for wname in s["rms_wells_2026"]:
+            wmeta = well_lookup.get(wname)
+            if wmeta and wmeta.get("latitude") is not None:
+                well_latlngs.append([wmeta["latitude"], wmeta["longitude"]])
         polygons_for_js.append({
             "zone_label": zone,
             "ma": s["ma"],
@@ -1076,6 +1081,8 @@ def compute_method(method, wells_meta, meas, portfolio):
             "reassigned": bool(p_meta.get("reassigned", False)),
             "area_ac": round(s["area_ac"], 1),
             "rms_wells": s["rms_wells_2026"],
+            "is_aggregate": bool(p_meta.get("is_aggregate", False)),
+            "rms_label": p_meta.get("rms_label") or "",
             "baseline_year": s["baseline_year"],
             "endpoint_year": s["endpoint_year"],
             "span_years": s["span_years"],
@@ -1098,8 +1105,8 @@ def compute_method(method, wells_meta, meas, portfolio):
             "late_baseline": s["baseline_year"] > START_YEAR,
             "rings": p_meta.get("rings", []),
             "seed_latlng": seed_latlng,
-            "fill_color": coverage_color(s["hold_steady_need_AF_per_yr"],
-                                          s["project_alloc_AF_per_yr"]),
+            "well_latlngs": well_latlngs,
+            "fill_color": loss_color(s["hold_steady_need_AF_per_yr"]),
         })
 
     # Per-method console summary

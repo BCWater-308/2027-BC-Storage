@@ -2,11 +2,11 @@
 <text x="380.0" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1612">How big is the deficit, relative to total fresh groundwater in storage?</text>
 <text x="380.0" y="40" text-anchor="middle" font-size="11" fill="#5b5547" font-style="italic">Vina Subbasin total fresh GW in storage: ~16 MAF (Vina Subbasin GSP (Dec 15, 2021), p. ES-5)</text>
 <rect x="50" y="80" width="660" height="36" fill="#e6f0e8" stroke="#5b5547" stroke-width="0.7"/>
-<rect x="50" y="80" width="12.66" height="36" fill="#c75a35" fill-opacity="0.55"/>
-<rect x="50" y="80" width="7.15" height="36" fill="#a32d2d"/>
+<rect x="50" y="80" width="14.12" height="36" fill="#c75a35" fill-opacity="0.55"/>
+<rect x="50" y="80" width="8.17" height="36" fill="#a32d2d"/>
 <line x1="710" y1="74" x2="710" y2="122" stroke="#5b5547" stroke-width="0.8"/>
 <text x="706" y="70" text-anchor="end" font-size="10" fill="#5b5547">16,000,000 AF</text>
 <text x="54" y="70" font-size="10" fill="#5b5547">0</text>
-<text x="50" y="140" font-size="13" fill="#1a1612"><tspan font-weight="700" fill="#a32d2d">●</tspan> WY 2025 cumulative deficit = <tspan font-weight="700" fill="#a32d2d">1.08%</tspan> of 16 MAF (173,395 AF)</text>
-<text x="50" y="160" font-size="13" fill="#1a1612"><tspan font-weight="700" fill="#c75a35">●</tspan> WY 2022 trough (deepest observed) = <tspan font-weight="700" fill="#c75a35">1.92%</tspan> of 16 MAF (306,853 AF)</text>
+<text x="50" y="140" font-size="13" fill="#1a1612"><tspan font-weight="700" fill="#a32d2d">●</tspan> WY 2025 cumulative deficit = <tspan font-weight="700" fill="#a32d2d">1.24%</tspan> of 16 MAF (198,094 AF)</text>
+<text x="50" y="160" font-size="13" fill="#1a1612"><tspan font-weight="700" fill="#c75a35">●</tspan> WY 2022 trough (deepest observed) = <tspan font-weight="700" fill="#c75a35">2.14%</tspan> of 16 MAF (342,214 AF)</text>
 </svg>

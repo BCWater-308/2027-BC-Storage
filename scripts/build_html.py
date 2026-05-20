@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Single-file index.html generator for the 28-polygon 2027 BC drought-storage
+Single-file index.html generator for the 2027 BC drought-storage
 dashboard.  Builds two method-specific content sections (single basin-wide
 tessellation + three-zone per-management-area tessellation) and wires up a
 toggle UI at the top to switch between them.
@@ -114,7 +114,7 @@ tr:hover td { background: #f9f6ee; }
 .bigstat .pct { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 700; color: var(--ink); }
 .bigstat .desc { flex: 1 1 280px; font-size: 14px; color: var(--ink); line-height: 1.55; }
 .map-wrap { position: relative; }
-.leaflet-map { width: 100%; height: 620px; border: 1px solid var(--rule); background: #fafaf7; border-radius: 2px; }
+.leaflet-map { width: 100%; height: 900px; border: 1px solid var(--rule); background: #fafaf7; border-radius: 2px; }
 .leaflet-map .polygon-label { font-family: 'Inter', sans-serif; font-size: 9.5px; font-weight: 600; color: #332e22; text-align: center; text-shadow: 0 0 2px rgba(255,255,255,0.85), 0 0 2px rgba(255,255,255,0.85); pointer-events: none; line-height: 1; white-space: nowrap; }
 .map-toolbar { display: flex; flex-wrap: wrap; gap: 16px; padding: 10px 14px; margin: 10px 0 4px 0; background: var(--bg-card); border: 1px solid var(--rule); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 12px; align-items: center; }
 .map-toolbar-label { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); }
@@ -233,7 +233,12 @@ MAP_JS = r"""
     if (p.reassigned) {
       html += `<div class="popup-row"><span class="k">Zone (spatial)</span><span class="v" style="color:#7c4a86;">${p.ma_full} — reassigned from ${p.workbook_ma}</span></div>`;
     }
-    html += `<div class="popup-row"><span class="k">RMS well(s)</span><span class="v">${(p.rms_wells || []).join(', ')}</span></div>`;
+    if (p.is_aggregate && p.rms_label) {
+      html += `<div class="popup-row"><span class="k">RMS wells</span><span class="v">${p.rms_label}</span></div>`;
+      html += `<div class="popup-row"><span class="k">Completions</span><span class="v" style="font-size:10px;color:#5b5547;">${(p.rms_wells || []).join(', ')}</span></div>`;
+    } else {
+      html += `<div class="popup-row"><span class="k">RMS well(s)</span><span class="v">${(p.rms_wells || []).join(', ')}</span></div>`;
+    }
     html += `<div class="popup-row"><span class="k">Area</span><span class="v">${p.area_ac.toLocaleString()} ac</span></div>`;
     html += `<div class="popup-row"><span class="k">Span</span><span class="v">${p.baseline_year}–${p.endpoint_year} (${p.span_years} yr)</span></div>`;
     html += `<div class="popup-row"><span class="k">Avg ΔGWE/yr</span><span class="v ${gainLossClass(p.avg_dgwe)}">${fmtSignedFt(p.avg_dgwe)} ft</span></div>`;
@@ -249,27 +254,6 @@ MAP_JS = r"""
     html += `<div class="popup-row"><span class="k">Critical</span><span class="v ${gainLossClass(p.buckets.critical)}">${fmtSigned(p.buckets.critical)} AF</span></div>`;
     const syExtra = p.sy_source === 'SVSim' ? '' : ' <span style="color:#8a5a18;font-style:italic;font-size:11px;">(basin-mean fallback)</span>';
     html += `<div class="popup-row"><span class="k">Specific yield</span><span class="v">${p.sy.toFixed(4)}${syExtra}</span></div>`;
-    html += `<div class="popup-section">Hold-current sustainability</div>`;
-    const hold = p.hold || 0;
-    const project = p.project_afy || 0;
-    html += `<div class="popup-row"><span class="k">Avg loss rate</span><span class="v">${hold.toLocaleString()} AF/yr</span></div>`;
-    const projDisplay = project > 0
-      ? `${project.toLocaleString()} AF/yr <span style="font-weight:400;color:#5b5547;font-size:11px;">(${p.project_name})</span>`
-      : '— none here —';
-    html += `<div class="popup-row"><span class="k">Project allocation</span><span class="v">${projDisplay}</span></div>`;
-    const coverage = p.coverage || 0;
-    let coverageBg, coverageColor, coverageLabel;
-    if (hold === 0 && project === 0) {
-      coverageBg = '#ecf3ed'; coverageColor = '#2e6f3f';
-      coverageLabel = 'Surplus polygon — no loss to offset, no project sited here.';
-    } else if (coverage >= 0) {
-      coverageBg = '#ecf3ed'; coverageColor = '#2e6f3f';
-      coverageLabel = `Project covers loss with +${coverage.toLocaleString()} AF/yr to spare.`;
-    } else {
-      coverageBg = '#fbf0e7'; coverageColor = '#8a3a18';
-      coverageLabel = `Polygon-level shortfall of ${Math.abs(coverage).toLocaleString()} AF/yr after project portfolio.`;
-    }
-    html += `<div class="popup-need" style="background:${coverageBg};border-left-color:${coverageColor}"><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:#5b5547;font-weight:700;">Net coverage after portfolio</div><span class="big" style="color:${coverageColor}">${fmtSigned(coverage)} AF/yr</span><div style="font-size:12px;margin-top:4px;color:#5b5547;">${coverageLabel}</div></div>`;
     if (p.late_baseline) {
       html += `<div class="popup-late">Late baseline: this polygon's RMS well wasn't measured in 1999, so its record starts at ${p.baseline_year}. Pre-${p.baseline_year} drawdown is not captured.</div>`;
     }
@@ -334,19 +318,19 @@ MAP_JS = r"""
       });
       labelLayer.addLayer(label);
 
-      // Seed-well marker
-      if (p.seed_latlng && p.seed_latlng[0] !== null) {
-        const isProject = (p.project_afy || 0) > 0;
-        const wellMarker = L.circleMarker(p.seed_latlng, {
-          radius: isProject ? 5 : 3.5,
+      // Proposed 2027 RMS well markers — one per well in the polygon's
+      // network membership (10 for the Chico aggregate, 1 for the others).
+      (p.well_latlngs || []).forEach(latlng => {
+        const wellMarker = L.circleMarker(latlng, {
+          radius: 3,
           color: '#fafaf7',
-          weight: isProject ? 1.5 : 1,
-          fillColor: isProject ? '#1f3a5f' : '#1f1f1f',
-          fillOpacity: 1,
+          weight: 0.8,
+          fillColor: '#1f1f1f',
+          fillOpacity: 0.95,
           interactive: false,
         });
         wellLayer.addLayer(wellMarker);
-      }
+      });
     });
 
     polyLayer.addTo(map);
@@ -528,9 +512,6 @@ def _render_method_section(method, results, portfolio):
       <td class="num">{loss_or_gain_span(norm_avg, 0)}</td>
       <td class="num">{loss_or_gain_span(crit_dry_af, 0)}</td>
       <td class="num">{s["crit_dry_share_of_drawdown_pct"]:.0f}%</td>
-      <td class="num">{int(hold):,}</td>
-      <td class="num">{proj_str}</td>
-      <td class="num">{net_str}</td>
     </tr>""")
 
     project_rows = []
@@ -652,7 +633,7 @@ def _render_method_section(method, results, portfolio):
     method_pretty = METHOD_LABEL[method]
     method_summary = (
         f"<strong>{method_pretty}.</strong> "
-        + ("All 28 polygons built as one Voronoi tessellation clipped to the basin boundary; "
+        + (f"All {n_polygons} polygons built as one Voronoi tessellation clipped to the basin boundary; "
            "cells can cross management-area lines."
            if method == "single" else
            "Three independent Voronoi tessellations (one per management area), each clipped to "
@@ -662,7 +643,7 @@ def _render_method_section(method, results, portfolio):
 
     return f"""<div class="method-banner">{method_summary}</div>
 
-<p class="lead">Across WY 1999–2025, loss is sharply concentrated in <strong>Critical and Dry</strong> water-year types, with <strong>Wet and Above-Normal</strong> years doing the recovery work. The basin's <strong>observed</strong> net deficit is <strong>{abs(basin_net)/1000:.0f}k AF — about {abs(basin_net)/TOTAL_FRESH_STORAGE_AF*100:.2f}% of the {int(TOTAL_FRESH_STORAGE_AF/1_000_000)}+ MAF in basin storage</strong>; the <strong>year-type-normalized</strong> deficit is <strong>{abs(basin_normalized_cum_2025)/1000:.0f}k AF</strong> ({abs(basin_normalized_cum_2025)/TOTAL_FRESH_STORAGE_AF*100:.2f}%). Holding current conditions through 2042 takes a basin-wide <strong>{basin_loss_rate:,.0f} AF/yr</strong> (observed) / <strong>{-basin_normalized_avg_rate:,.0f} AF/yr</strong> (normalized) of new recharge or demand reduction; the project portfolio totaling <strong>{project_total_afy:,} AF/yr</strong> (online by ~{PROJECTS_ONLINE_YEAR}) would cover that with margin.</p>
+<p class="lead">Across WY 1999–2025, loss is sharply concentrated in <strong>Critical and Dry</strong> water-year types, with <strong>Wet and Above-Normal</strong> years doing the recovery work. The basin's <strong>observed</strong> net deficit is <strong>{abs(basin_net)/1000:.0f}k AF — about {abs(basin_net)/TOTAL_FRESH_STORAGE_AF*100:.2f}% of the {int(TOTAL_FRESH_STORAGE_AF/1_000_000)}+ MAF in basin storage</strong>; the <strong>year-type-normalized</strong> deficit is <strong>{abs(basin_normalized_cum_2025)/1000:.0f}k AF</strong> ({abs(basin_normalized_cum_2025)/TOTAL_FRESH_STORAGE_AF*100:.2f}%). Basin avg loss rate: <strong>{basin_loss_rate:,.0f} AF/yr observed</strong> / <strong>{-basin_normalized_avg_rate:,.0f} AF/yr normalized</strong>.</p>
 
 {reassignment_callout}
 
@@ -714,45 +695,9 @@ def _render_method_section(method, results, portfolio):
 <div class="figure">{context_svg}</div>
 <div class="figcaption">Figure 3. The bar is the full 16 MAF of fresh groundwater in storage (basin total per the 2022 Vina GSP, p. ES-5, BBGM-2020 estimate). The dark-red sliver is the WY 2025 cumulative deficit; the lighter orange behind it is the WY {trough_year} trough (deepest observed deficit). Both are shown at true scale — the deficit is real and worth managing, but small relative to total storage.</div>
 
-<h2>The 2042 sustainability target — hold the line, with the project portfolio</h2>
+<h2>Where the basin loses storage — by polygon</h2>
 
-<p>The Vina Subbasin has lost storage across the WY 1999–2025 record through {n_critical} Critical years, {n_dry} Dry years, {n_bn} Below-Normal years, and a long-term decline rate of about 0.07%/yr. The basin's historic low was the <strong>WY {trough_year} trough</strong> at roughly {worst_year_deficit_int:,} AF below baseline — and even at that low, <strong>no SGMA sustainability indicator registered an undesirable result</strong>.</p>
-
-<p>The framing here is therefore not "recover to the WY 1999 baseline." The operational target is: <strong>GWE at each Groundwater Level RMS well stays at or above its WY {trough_year} level going forward</strong>. MTs for the GSP would be set <em>lower</em> than WY {trough_year}, creating operational range and margin for an unforeseen 7–10 year drought, similar to what the subbasin experienced between 1985 and 1994. The portfolio's job is to ensure the next major drought doesn't push observed GWE below WY {trough_year}.</p>
-
-<div class="bigstat">
-  <div class="row">
-    <div>
-      <div class="num">{basin_loss_rate:,.0f} <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
-      <div class="lab">Basin avg loss rate — observed</div>
-      <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Normalized: <strong>{-basin_normalized_avg_rate:,.0f}</strong> AF/yr</div>
-    </div>
-    <div>
-      <div class="num" style="color:var(--accent);">{project_total_afy:,} <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
-      <div class="lab">Project portfolio (online by {PROJECTS_ONLINE_YEAR})</div>
-    </div>
-    <div>
-      <div class="num">+{basin_portfolio_margin:,.0f} <span style="font-size:18px;color:var(--ink-muted);">AF/yr</span></div>
-      <div class="lab">Recovery margin (vs. observed loss)</div>
-      <div style="font-size:12px;color:var(--ink-muted);margin-top:2px;">Against normalized loss: <strong>+{basin_normalized_margin:,.0f}</strong> AF/yr</div>
-    </div>
-    <div class="desc">Portfolio = {portfolio_breakdown}. The recovery margin remains comfortably positive against both the observed and normalized loss rates ({basin_normalized_margin / SUSTAINABLE_YIELD_AFY * 100:+.1f}% of the {SUSTAINABLE_YIELD_AFY:,} AF/yr GSP-stated sustainable yield).</div>
-  </div>
-</div>
-
-<h2>Where the projects land — coverage by polygon</h2>
-<table>
-  <thead>
-    <tr><th>Polygon</th><th>Project</th><th class="num">Allocation (AF/yr)</th><th class="num">Polygon avg loss (AF/yr)</th><th class="num">Net coverage</th></tr>
-  </thead>
-  <tbody>{chr(10).join(project_rows)}</tbody>
-  <tfoot>
-    <tr><th>Total portfolio</th><th>—</th><th class="num"><strong>{project_total_afy:,}</strong></th><th class="num">{basin_loss_rate:,.0f}</th><th class="num"><strong><span class="gain">+{basin_portfolio_margin:,.0f}</span></strong></th></tr>
-  </tfoot>
-</table>
-
-<p>The polygon map below is colored by <strong>net coverage after the project portfolio comes online</strong>. {len(short_pols)} polygons remain partially uncovered (combined shortfall {abs(short_total):,.0f} AF/yr)
-{f' — most prominently <strong>{short_pols[0]["zone_label"]}</strong> at {abs(short_pols[0]["coverage_net_AF_per_yr"]):,.0f} AF/yr below its loss rate' if short_pols else ''}.</p>
+<p>The map below colors each polygon by its <strong>average observed storage loss rate</strong> (AF/yr) across its measurement record. Light green = polygon is gaining storage; oranges → reds = magnitude of average annual loss. Click a polygon for full detail including the year-type-normalized rate.</p>
 
 <div class="map-toolbar">
   <span class="map-toolbar-label">Layers:</span>
@@ -771,22 +716,18 @@ def _render_method_section(method, results, portfolio):
 </div>
 <div id="map-{method}" class="leaflet-map" aria-label="Interactive polygon map for {method_pretty}"></div>
 <div class="map-legend-row">
-  <div class="map-legend-title">Coverage after project portfolio (AF/yr): project allocation − polygon avg loss</div>
+  <div class="map-legend-title">Polygon avg observed storage loss rate (AF/yr)</div>
   <div class="map-legend-swatches">
-    <div><span class="sw" style="background:#6b9479"></span> Surplus</div>
-    <div><span class="sw" style="background:#a8c8b0"></span> Covered</div>
-    <div><span class="sw" style="background:#f0d9a8"></span> Near</div>
-    <div><span class="sw" style="background:#e3a76f"></span> Short &lt; 750</div>
-    <div><span class="sw" style="background:#cb7740"></span> Short &lt; 1.5k</div>
-    <div><span class="sw" style="background:#a84a2c"></span> Short &lt; 2.5k</div>
-    <div><span class="sw" style="background:#7c2820"></span> Short ≥ 2.5k</div>
-    <div><span class="dot" style="background:#1f1f1f"></span> 2026 GWL RMS well</div>
-    <div><span class="dot" style="background:#1f3a5f"></span> RMS well + project</div>
+    <div><span class="sw" style="background:#a8c8b0"></span> Gaining</div>
+    <div><span class="sw" style="background:#f0d9a8"></span> Loss &lt; 250</div>
+    <div><span class="sw" style="background:#e3a76f"></span> Loss &lt; 750</div>
+    <div><span class="sw" style="background:#cb7740"></span> Loss &lt; 1,500</div>
+    <div><span class="sw" style="background:#a84a2c"></span> Loss &lt; 2,500</div>
+    <div><span class="sw" style="background:#7c2820"></span> Loss ≥ 2,500</div>
+    <div><span class="dot" style="background:#1f1f1f"></span> Proposed 2027 RMS well</div>
   </div>
 </div>
-<div class="figcaption">Figure 4. Click any polygon for full detail. Toggle the basemap on to see streets / parcels / hydrology under the cells; toggle the fill off to see what's underneath without re-coloring. Click any row in the tables above or below to fly to that polygon and flash it briefly.</div>
-
-{('<h3>Residual shortfall polygons</h3><table><thead><tr><th>Polygon</th><th class="num">Avg loss (AF/yr)</th><th class="num">Project alloc (AF/yr)</th><th class="num">Shortfall (AF/yr)</th></tr></thead><tbody>' + chr(10).join(short_rows) + '</tbody></table>') if short_rows else ''}
+<div class="figcaption">Figure 4. Click any polygon for full detail. Toggle the basemap on to see streets / parcels / hydrology under the cells; toggle the fill off to see what's underneath without re-coloring. Click any row in the tables below to fly to that polygon and flash it briefly.</div>
 
 <h2>Per-polygon detail (technical)</h2>
 <table>
@@ -801,9 +742,6 @@ def _render_method_section(method, results, portfolio):
       <th class="num">Avg norm (AF/yr)</th>
       <th class="num">Crit+Dry (AF)</th>
       <th class="num">Crit+Dry share</th>
-      <th class="num">Hold (AF/yr)</th>
-      <th class="num">Project (AF/yr)</th>
-      <th class="num">Net</th>
     </tr>
   </thead>
   <tbody>{chr(10).join(detail_rows)}</tbody>
@@ -815,9 +753,6 @@ def _render_method_section(method, results, portfolio):
       <th class="num"><strong>{basin_normalized_cum_2025:+,.0f}</strong></th>
       <th class="num">{-basin_normalized_avg_rate:+,.0f}</th>
       <th class="num">{crit_dry_total:+,.0f}</th><th class="num">—</th>
-      <th class="num"><strong>{basin_polygon_summed_need:,.0f}</strong></th>
-      <th class="num"><strong>{project_total_afy:,}</strong></th>
-      <th class="num"><strong><span class="gain">+{basin_portfolio_margin:,.0f}</span></strong></th>
     </tr>
   </tfoot>
 </table>
@@ -871,6 +806,12 @@ def write_index_html(out_path, results_by_method, portfolio):
                 + '</div>'
             )
 
+    # Polygon count for the subtitle; both methods produce the same count today.
+    n_polygons_total = max(
+        (len(r.get("polygons_for_js", [])) for r in results_by_method.values()),
+        default=0,
+    )
+
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -888,7 +829,7 @@ def write_index_html(out_path, results_by_method, portfolio):
 <div class="container">
 
 <h1>Where the Losses Happen — A Drought-Conditioned Look at the 2027 BC RMS Network</h1>
-<p class="subtitle">May 2026 · Prepared by AGUBC · 28 polygons · polygon-by-polygon Sy from DWR SVSim Texture Data · WY 1999–2025 · ΔGWE × Sy<sub>p</sub> × Area<sub>p</sub>, sliced by hydrologic condition and read against a project-portfolio sustainability target.</p>
+<p class="subtitle">May 2026 · Prepared by AGUBC · {n_polygons_total} polygons · polygon-by-polygon Sy from DWR SVSim Texture Data · WY 1999–2025 · ΔGWE × Sy<sub>p</sub> × Area<sub>p</sub>, sliced by hydrologic condition · observed vs. year-type-normalized cumulative storage change.</p>
 
 {toggle_html}
 
