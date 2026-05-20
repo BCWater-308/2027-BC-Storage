@@ -120,6 +120,35 @@ tr:hover td { background: #f9f6ee; }
 .map-toolbar-label { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); }
 .map-toggle { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--ink); user-select: none; }
 .map-toggle input { cursor: pointer; }
+.map-basemap-select { font-family: 'Inter', sans-serif; font-size: 12px; padding: 3px 6px; border: 1px solid var(--rule); border-radius: 3px; background: #fff; color: var(--ink); cursor: pointer; }
+.map-basemap-select:hover { border-color: var(--ink-muted); }
+.readme-section { margin-top: 28px; }
+.readme-section > summary { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: var(--ink); padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--rule); border-radius: 4px; cursor: pointer; list-style: none; }
+.readme-section > summary::-webkit-details-marker { display: none; }
+.readme-section > summary::before { content: '▸  '; display: inline-block; transition: transform 0.15s; }
+.readme-section[open] > summary::before { content: '▾  '; }
+.readme-section > summary:hover { background: #f1efe6; }
+.readme-content { padding: 18px 22px; background: var(--bg-card); border: 1px solid var(--rule); border-top: none; border-radius: 0 0 4px 4px; max-width: none; font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.6; color: var(--ink); }
+.readme-content h1 { font-family: 'Spectral', serif; font-size: 22px; margin: 16px 0 8px 0; color: var(--ink); }
+.readme-content h2 { font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 700; margin: 22px 0 8px 0; padding-bottom: 4px; border-bottom: 1px solid var(--rule); color: var(--ink); }
+.readme-content h3 { font-family: 'Inter', sans-serif; font-size: 14.5px; font-weight: 700; margin: 18px 0 6px 0; color: var(--ink); }
+.readme-content h4 { font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 700; margin: 14px 0 4px 0; color: var(--ink); }
+.readme-content p { margin: 6px 0 10px 0; }
+.readme-content ul, .readme-content ol { margin: 6px 0 10px 0; padding-left: 24px; }
+.readme-content li { margin: 3px 0; }
+.readme-content code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; background: #f0ede2; padding: 1px 5px; border-radius: 2px; color: #5b4a1f; }
+.readme-content pre { background: #f0ede2; border: 1px solid var(--rule); padding: 10px 12px; border-radius: 3px; overflow-x: auto; font-size: 12px; line-height: 1.45; }
+.readme-content pre code { background: transparent; padding: 0; color: var(--ink); font-size: 12px; }
+.readme-content blockquote { margin: 10px 0; padding: 8px 14px; border-left: 3px solid var(--accent); background: #f7f3e8; color: var(--ink-muted); font-style: italic; }
+.readme-content table { border-collapse: collapse; margin: 8px 0 14px 0; font-size: 12.5px; }
+.readme-content th, .readme-content td { border: 1px solid var(--rule); padding: 5px 9px; }
+.readme-content th { background: #f1efe6; font-weight: 700; text-align: left; }
+.readme-content tr:nth-child(even) td { background: #fbf9f1; }
+.readme-content a { color: #1f3a5f; text-decoration: underline; }
+.readme-content a:hover { color: #2e6f3f; }
+.readme-content hr { border: none; border-top: 1px solid var(--rule); margin: 18px 0; }
+.readme-stale-callout { background: #faedda; border-left: 4px solid #c75a35; padding: 10px 14px; margin: 0 0 16px 0; font-size: 13px; color: var(--ink); border-radius: 2px; }
+.readme-stale-callout strong { color: #8a3a18; }
 .map-legend-row { padding: 10px 14px; margin: 4px 0 4px 0; background: var(--bg-card); border: 1px solid var(--rule); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink); }
 .map-legend-title { font-weight: 700; font-size: 11px; color: var(--ink); margin-bottom: 6px; }
 .map-legend-swatches { display: flex; flex-wrap: wrap; gap: 10px 18px; }
@@ -207,8 +236,37 @@ MAP_JS = r"""
     return;
   }
 
-  const BASEMAP_URL = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-  const BASEMAP_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>';
+  const BASEMAPS = {
+    'carto': {
+      url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+      options: {
+        subdomains: 'abcd',
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      },
+    },
+    'esri-topo': {
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+      options: {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, USGS, NPS, and the GIS User Community',
+      },
+    },
+    'esri-sat': {
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      options: {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, USDA, USGS, AeroGRID, IGN, and the GIS User Community',
+      },
+    },
+    'osm': {
+      url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      options: {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      },
+    },
+  };
 
   function fmtSigned(v) {
     if (v === null || v === undefined) return 'n/a';
@@ -279,11 +337,12 @@ MAP_JS = r"""
       preferCanvas: false,
     });
 
-    const basemap = L.tileLayer(BASEMAP_URL, {
-      attribution: BASEMAP_ATTR,
-      subdomains: 'abcd',
-      maxZoom: 19,
+    // Build all available basemap layers up-front; only one is added at a time.
+    const basemapLayers = {};
+    Object.entries(BASEMAPS).forEach(([key, def]) => {
+      basemapLayers[key] = L.tileLayer(def.url, def.options);
     });
+    let currentBasemap = null;
 
     const polyLayer = L.featureGroup();
     const labelLayer = L.layerGroup();
@@ -338,11 +397,21 @@ MAP_JS = r"""
     wellLayer.addTo(map);
     map.fitBounds(polyLayer.getBounds(), { padding: [14, 14] });
 
-    const basemapToggle = document.getElementById(`basemap-toggle-${method}`);
+    const basemapSelect = document.getElementById(`basemap-select-${method}`);
     const fillToggle = document.getElementById(`fill-toggle-${method}`);
     const labelToggle = document.getElementById(`label-toggle-${method}`);
-    if (basemapToggle) basemapToggle.addEventListener('change', () => {
-      if (basemapToggle.checked) basemap.addTo(map); else map.removeLayer(basemap);
+    if (basemapSelect) basemapSelect.addEventListener('change', () => {
+      if (currentBasemap) {
+        map.removeLayer(currentBasemap);
+        currentBasemap = null;
+      }
+      const key = basemapSelect.value;
+      if (key !== 'none' && basemapLayers[key]) {
+        currentBasemap = basemapLayers[key];
+        currentBasemap.addTo(map);
+        // Keep polygons / labels / wells on top.
+        currentBasemap.bringToBack();
+      }
     });
     if (fillToggle) fillToggle.addEventListener('change', () => {
       polyLayer.eachLayer(l => l.setStyle({ fillOpacity: fillToggle.checked ? 0.82 : 0 }));
@@ -351,7 +420,7 @@ MAP_JS = r"""
       if (labelToggle.checked) labelLayer.addTo(map); else map.removeLayer(labelLayer);
     });
 
-    MAPS[method] = { map, basemap, polyLayer, labelLayer, wellLayer };
+    MAPS[method] = { map, basemapLayers, polyLayer, labelLayer, wellLayer };
     return MAPS[method];
   }
 
@@ -700,14 +769,18 @@ def _render_method_section(method, results, portfolio):
 <p>The map below colors each polygon by its <strong>average observed storage loss rate</strong> (AF/yr) across its measurement record. Light green = polygon is gaining storage; oranges → reds = magnitude of average annual loss. Click a polygon for full detail including the year-type-normalized rate.</p>
 
 <div class="map-toolbar">
-  <span class="map-toolbar-label">Layers:</span>
-  <label class="map-toggle">
-    <input type="checkbox" id="basemap-toggle-{method}"/>
-    <span>CartoDB Positron basemap</span>
-  </label>
+  <span class="map-toolbar-label">Basemap:</span>
+  <select class="map-basemap-select" id="basemap-select-{method}">
+    <option value="none" selected>None</option>
+    <option value="carto">CartoDB Positron</option>
+    <option value="esri-topo">Esri World Topo</option>
+    <option value="esri-sat">Satellite (Esri World Imagery)</option>
+    <option value="osm">OpenStreetMap</option>
+  </select>
+  <span class="map-toolbar-label" style="margin-left:8px;">Layers:</span>
   <label class="map-toggle">
     <input type="checkbox" id="fill-toggle-{method}" checked/>
-    <span>Polygon fill (coverage colors)</span>
+    <span>Polygon fill (loss-rate colors)</span>
   </label>
   <label class="map-toggle">
     <input type="checkbox" id="label-toggle-{method}" checked/>
@@ -812,6 +885,40 @@ def write_index_html(out_path, results_by_method, portfolio):
         default=0,
     )
 
+    # Render README.md → HTML for the embedded methodology section.
+    readme_html = ""
+    readme_path = out_path.parent / "README.md"
+    if readme_path.exists():
+        try:
+            import markdown as _md
+            md_text = readme_path.read_text(encoding="utf-8")
+            body = _md.markdown(
+                md_text,
+                extensions=["tables", "fenced_code", "sane_lists"],
+                output_format="html5",
+            )
+            readme_html = (
+                '<details class="readme-section" open>'
+                '<summary>Methodology — full README</summary>'
+                '<div class="readme-content">'
+                '<div class="readme-stale-callout">'
+                '<strong>Heads-up:</strong> This README reflects the pre-revision '
+                '(28-polygon, project-portfolio) framing. Headline numbers, '
+                'polygon-count breakdowns, and project-portfolio references are '
+                'out of date as of the 2026-05-19 network revision. The '
+                'methodology sections — specific-yield computation, year-type-'
+                'weighted normalization, gap attribution, baseline anchoring — '
+                'remain accurate. See the live dashboard above for current numbers.'
+                '</div>'
+                + body +
+                '</div>'
+                '</details>'
+            )
+        except Exception as _e:
+            readme_html = (
+                f'<div class="readme-stale-callout">README render failed: {_e}</div>'
+            )
+
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -834,6 +941,8 @@ def write_index_html(out_path, results_by_method, portfolio):
 {toggle_html}
 
 {chr(10).join(sections_html)}
+
+{readme_html}
 
 <div class="footer">
 <p><strong>Files in this folder.</strong> <code>index.html</code> (this page) · <code>data/condition_analysis_{{single,three_zone}}.json</code> · <code>data/sustainability_2042_{{single,three_zone}}.json</code> · <code>data/basin_annual_{{single,three_zone}}.json</code> (observed + normalized) · <code>data/model_data_{{single,three_zone}}.json</code> · <code>data/polygon_storage_2025_{{single,three_zone}}.csv</code> · <code>data/storage_timeseries_{{single,three_zone}}.csv</code> · <code>data/polygon_sy_svsim_{{single,three_zone}}.csv</code> · <code>data/project_portfolio.json</code> (editable input) · per-method SVGs (<code>polygon_map_*.svg</code>, <code>basin_buckets_chart_*.svg</code>, <code>basin_cumulative_chart_*.svg</code>, <code>storage_context_*.svg</code>).</p>
