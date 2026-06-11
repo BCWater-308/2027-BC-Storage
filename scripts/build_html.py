@@ -21,7 +21,7 @@ SVI_YEAR_TYPE = {
     2014: "Critical",       2015: "Critical",       2016: "Below Normal",
     2017: "Wet",            2018: "Below Normal",   2019: "Wet",
     2020: "Dry",            2021: "Critical",       2022: "Critical",
-    2023: "Wet",            2024: "Above Normal",   2025: "Wet",
+    2023: "Wet",            2024: "Above Normal",   2025: "Above Normal",
 }
 START_YEAR = 1999
 END_YEAR = 2025
@@ -901,15 +901,6 @@ def write_index_html(out_path, results_by_method, portfolio):
                 '<details class="readme-section" open>'
                 '<summary>Methodology — full README</summary>'
                 '<div class="readme-content">'
-                '<div class="readme-stale-callout">'
-                '<strong>Heads-up:</strong> This README reflects the pre-revision '
-                '(28-polygon, project-portfolio) framing. Headline numbers, '
-                'polygon-count breakdowns, and project-portfolio references are '
-                'out of date as of the 2026-05-19 network revision. The '
-                'methodology sections — specific-yield computation, year-type-'
-                'weighted normalization, gap attribution, baseline anchoring — '
-                'remain accurate. See the live dashboard above for current numbers.'
-                '</div>'
                 + body +
                 '</div>'
                 '</details>'

@@ -86,7 +86,7 @@ SVI_YEAR_TYPE = {
     2014: "Critical",       2015: "Critical",       2016: "Below Normal",
     2017: "Wet",            2018: "Below Normal",   2019: "Wet",
     2020: "Dry",            2021: "Critical",       2022: "Critical",
-    2023: "Wet",            2024: "Above Normal",   2025: "Wet",
+    2023: "Wet",            2024: "Above Normal",   2025: "Above Normal",
 }
 SVI_TYPE_KEY = {
     "Wet": "wet",            "Above Normal": "an",   "Below Normal": "bn",

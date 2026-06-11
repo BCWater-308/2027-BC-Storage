@@ -27,7 +27,7 @@
     "2022": "Critical",
     "2023": "Wet",
     "2024": "Above Normal",
-    "2025": "Wet"
+    "2025": "Above Normal"
   },
   "polygons": [
     {
@@ -46,15 +46,15 @@
       "endpoint_cum_storage_AF": 0.0,
       "avg_dgwe_ft_per_yr": 0.0,
       "bucket_storage_AF": {
-        "wet": 3033.0,
-        "an": 4347.0,
+        "wet": 2559.0,
+        "an": 4821.0,
         "bn": -790.0,
         "dry": -3428.0,
         "critical": -3161.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -76,15 +76,15 @@
       "endpoint_cum_storage_AF": -2630.0,
       "avg_dgwe_ft_per_yr": -0.567,
       "bucket_storage_AF": {
-        "wet": 77.0,
-        "an": 928.0,
+        "wet": -619.0,
+        "an": 1624.0,
         "bn": 0.0,
         "dry": -657.0,
         "critical": -2978.0
       },
       "bucket_polygon_years": {
-        "wet": 2,
-        "an": 1,
+        "wet": 1,
+        "an": 2,
         "bn": 0,
         "dry": 1,
         "critical": 2
@@ -106,15 +106,15 @@
       "endpoint_cum_storage_AF": -10288.0,
       "avg_dgwe_ft_per_yr": -0.666,
       "bucket_storage_AF": {
-        "wet": 4733.0,
-        "an": -2345.0,
+        "wet": 3378.0,
+        "an": -990.0,
         "bn": 4073.0,
         "dry": -2949.0,
         "critical": -13799.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 2,
+        "wet": 5,
+        "an": 3,
         "bn": 5,
         "dry": 4,
         "critical": 5
@@ -136,15 +136,15 @@
       "endpoint_cum_storage_AF": -4991.0,
       "avg_dgwe_ft_per_yr": -0.446,
       "bucket_storage_AF": {
-        "wet": 16974.0,
-        "an": 1334.0,
+        "wet": 13747.0,
+        "an": 4561.0,
         "bn": -2044.0,
         "dry": -14543.0,
         "critical": -6712.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -166,15 +166,15 @@
       "endpoint_cum_storage_AF": 2675.0,
       "avg_dgwe_ft_per_yr": 0.177,
       "bucket_storage_AF": {
-        "wet": 13752.0,
-        "an": 5233.0,
+        "wet": 12473.0,
+        "an": 6513.0,
         "bn": -7618.0,
         "dry": -4826.0,
         "critical": -3867.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -196,15 +196,15 @@
       "endpoint_cum_storage_AF": -5842.0,
       "avg_dgwe_ft_per_yr": -0.669,
       "bucket_storage_AF": {
-        "wet": 7806.0,
-        "an": 487.0,
+        "wet": 6463.0,
+        "an": 1830.0,
         "bn": -319.0,
         "dry": -7033.0,
         "critical": -6782.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -226,15 +226,15 @@
       "endpoint_cum_storage_AF": -1221.0,
       "avg_dgwe_ft_per_yr": -0.108,
       "bucket_storage_AF": {
-        "wet": 15173.0,
-        "an": 2158.0,
+        "wet": 13298.0,
+        "an": 4033.0,
         "bn": -4556.0,
         "dry": -11641.0,
         "critical": -2354.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -256,15 +256,15 @@
       "endpoint_cum_storage_AF": -740.0,
       "avg_dgwe_ft_per_yr": -0.099,
       "bucket_storage_AF": {
-        "wet": 8877.0,
-        "an": 1486.0,
+        "wet": 7575.0,
+        "an": 2788.0,
         "bn": -1701.0,
         "dry": -4934.0,
         "critical": -4468.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 3,
+        "wet": 5,
+        "an": 4,
         "bn": 5,
         "dry": 4,
         "critical": 5
@@ -286,15 +286,15 @@
       "endpoint_cum_storage_AF": -3518.0,
       "avg_dgwe_ft_per_yr": -0.573,
       "bucket_storage_AF": {
-        "wet": 2688.0,
-        "an": 740.0,
+        "wet": 2003.0,
+        "an": 1424.0,
         "bn": -571.0,
         "dry": -2408.0,
         "critical": -3966.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -316,15 +316,15 @@
       "endpoint_cum_storage_AF": -983.0,
       "avg_dgwe_ft_per_yr": -0.177,
       "bucket_storage_AF": {
-        "wet": 8306.0,
-        "an": 1146.0,
+        "wet": 6974.0,
+        "an": 2478.0,
         "bn": -1955.0,
         "dry": -5552.0,
         "critical": -2928.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -346,15 +346,15 @@
       "endpoint_cum_storage_AF": 567.0,
       "avg_dgwe_ft_per_yr": 0.111,
       "bucket_storage_AF": {
-        "wet": 9263.0,
-        "an": 1247.0,
+        "wet": 8182.0,
+        "an": 2328.0,
         "bn": -4252.0,
         "dry": -2812.0,
         "critical": -2879.0
       },
       "bucket_polygon_years": {
-        "wet": 5,
-        "an": 1,
+        "wet": 4,
+        "an": 2,
         "bn": 4,
         "dry": 2,
         "critical": 4
@@ -406,15 +406,15 @@
       "endpoint_cum_storage_AF": -4309.0,
       "avg_dgwe_ft_per_yr": -0.596,
       "bucket_storage_AF": {
-        "wet": 4922.0,
-        "an": 1337.0,
+        "wet": 3601.0,
+        "an": 2658.0,
         "bn": 944.0,
         "dry": -4435.0,
         "critical": -7077.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 3,
+        "wet": 5,
+        "an": 4,
         "bn": 5,
         "dry": 4,
         "critical": 5
@@ -466,15 +466,15 @@
       "endpoint_cum_storage_AF": 8546.0,
       "avg_dgwe_ft_per_yr": 0.897,
       "bucket_storage_AF": {
-        "wet": 29990.0,
-        "an": 1866.0,
+        "wet": 27949.0,
+        "an": 3907.0,
         "bn": -12175.0,
         "dry": -6218.0,
         "critical": -4917.0
       },
       "bucket_polygon_years": {
-        "wet": 4,
-        "an": 1,
+        "wet": 3,
+        "an": 2,
         "bn": 3,
         "dry": 2,
         "critical": 4
@@ -496,15 +496,15 @@
       "endpoint_cum_storage_AF": -3643.0,
       "avg_dgwe_ft_per_yr": -0.441,
       "bucket_storage_AF": {
-        "wet": 8428.0,
-        "an": 1283.0,
+        "wet": 7208.0,
+        "an": 2503.0,
         "bn": 943.0,
         "dry": -6319.0,
         "critical": -7979.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 3,
+        "wet": 5,
+        "an": 4,
         "bn": 5,
         "dry": 4,
         "critical": 5
@@ -556,15 +556,15 @@
       "endpoint_cum_storage_AF": -10397.0,
       "avg_dgwe_ft_per_yr": -0.685,
       "bucket_storage_AF": {
-        "wet": 4275.0,
-        "an": 322.0,
+        "wet": 2553.0,
+        "an": 2044.0,
         "bn": -3667.0,
         "dry": -4587.0,
         "critical": -6740.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 3,
+        "wet": 5,
+        "an": 4,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -586,15 +586,15 @@
       "endpoint_cum_storage_AF": -12309.0,
       "avg_dgwe_ft_per_yr": -0.838,
       "bucket_storage_AF": {
-        "wet": 12874.0,
-        "an": 4122.0,
+        "wet": 10841.0,
+        "an": 6154.0,
         "bn": 1383.0,
         "dry": -16007.0,
         "critical": -14680.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -616,15 +616,15 @@
       "endpoint_cum_storage_AF": -13005.0,
       "avg_dgwe_ft_per_yr": -4.004,
       "bucket_storage_AF": {
-        "wet": 4386.0,
-        "an": 2265.0,
+        "wet": 3722.0,
+        "an": 2929.0,
         "bn": 1417.0,
         "dry": -15004.0,
         "critical": -6069.0
       },
       "bucket_polygon_years": {
-        "wet": 4,
-        "an": 1,
+        "wet": 3,
+        "an": 2,
         "bn": 2,
         "dry": 2,
         "critical": 4
@@ -646,15 +646,15 @@
       "endpoint_cum_storage_AF": -5394.0,
       "avg_dgwe_ft_per_yr": -0.892,
       "bucket_storage_AF": {
-        "wet": 6882.0,
-        "an": 790.0,
+        "wet": 5696.0,
+        "an": 1976.0,
         "bn": -70.0,
         "dry": -6486.0,
         "critical": -6510.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -676,15 +676,15 @@
       "endpoint_cum_storage_AF": -15107.0,
       "avg_dgwe_ft_per_yr": -0.762,
       "bucket_storage_AF": {
-        "wet": 20943.0,
-        "an": 1679.0,
+        "wet": 17815.0,
+        "an": 4807.0,
         "bn": -801.0,
         "dry": -15793.0,
         "critical": -21134.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -706,15 +706,15 @@
       "endpoint_cum_storage_AF": -8542.0,
       "avg_dgwe_ft_per_yr": -0.426,
       "bucket_storage_AF": {
-        "wet": 3366.0,
-        "an": 1632.0,
+        "wet": -252.0,
+        "an": 5250.0,
         "bn": 4206.0,
         "dry": -3903.0,
         "critical": -13843.0
       },
       "bucket_polygon_years": {
-        "wet": 5,
-        "an": 1,
+        "wet": 4,
+        "an": 2,
         "bn": 4,
         "dry": 3,
         "critical": 4
@@ -736,15 +736,15 @@
       "endpoint_cum_storage_AF": 0.0,
       "avg_dgwe_ft_per_yr": 0.0,
       "bucket_storage_AF": {
-        "wet": 7824.0,
-        "an": 795.0,
+        "wet": 5162.0,
+        "an": 3458.0,
         "bn": 406.0,
         "dry": -2029.0,
         "critical": -6996.0
       },
       "bucket_polygon_years": {
-        "wet": 5,
-        "an": 1,
+        "wet": 4,
+        "an": 2,
         "bn": 4,
         "dry": 2,
         "critical": 4
@@ -766,15 +766,15 @@
       "endpoint_cum_storage_AF": -4920.0,
       "avg_dgwe_ft_per_yr": -0.184,
       "bucket_storage_AF": {
-        "wet": 1051.0,
-        "an": 11.0,
+        "wet": 195.0,
+        "an": 866.0,
         "bn": -243.0,
         "dry": -3929.0,
         "critical": -1809.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 3,
+        "wet": 5,
+        "an": 4,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -796,15 +796,15 @@
       "endpoint_cum_storage_AF": -8259.0,
       "avg_dgwe_ft_per_yr": -0.731,
       "bucket_storage_AF": {
-        "wet": 10215.0,
-        "an": -1956.0,
+        "wet": 9128.0,
+        "an": -869.0,
         "bn": -1087.0,
         "dry": -4564.0,
         "critical": -10867.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 4,
+        "wet": 5,
+        "an": 5,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -826,15 +826,15 @@
       "endpoint_cum_storage_AF": -3554.0,
       "avg_dgwe_ft_per_yr": -0.52,
       "bucket_storage_AF": {
-        "wet": 1777.0,
-        "an": 1641.0,
+        "wet": 820.0,
+        "an": 2597.0,
         "bn": 4922.0,
         "dry": -10527.0,
         "critical": -1367.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 3,
+        "wet": 5,
+        "an": 4,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -863,8 +863,8 @@
         "critical": -14285.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 3,
+        "wet": 5,
+        "an": 4,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -886,15 +886,15 @@
       "endpoint_cum_storage_AF": -14935.0,
       "avg_dgwe_ft_per_yr": -0.64,
       "bucket_storage_AF": {
-        "wet": 7467.0,
-        "an": -8868.0,
+        "wet": 8401.0,
+        "an": -9801.0,
         "bn": 13068.0,
         "dry": -10734.0,
         "critical": -15868.0
       },
       "bucket_polygon_years": {
-        "wet": 6,
-        "an": 3,
+        "wet": 5,
+        "an": 4,
         "bn": 5,
         "dry": 6,
         "critical": 5
@@ -902,8 +902,8 @@
     }
   ],
   "basin_total_by_condition_AF": {
-    "wet": 229858.0,
-    "an": 33117.0,
+    "wet": 193649.0,
+    "an": 69327.0,
     "bn": 1471.0,
     "dry": -202518.0,
     "critical": -231661.0

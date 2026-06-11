@@ -3,16 +3,16 @@
 <text x="440.0" y="42" text-anchor="middle" font-size="11" fill="#5b5547" font-style="italic">Sum across all 29 polygons (WY 2000–2025). Critical years remove about 1.8× per year what Wet+Above-Normal years recover.</text>
 <line x1="60" y1="200" x2="820" y2="200" stroke="#5b5547" stroke-width="0.9"/>
 <text x="828" y="204" font-size="11" fill="#5b5547">0 AF</text>
-<rect x="73.0" y="90.8559194534513" width="110" height="109.1440805465487" fill="#2e6f3f" stroke="#1a1612" stroke-width="0.6"/>
-<text x="128.0" y="76.8559194534513" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+229,858</text>
-<text x="128.0" y="88.8559194534513" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<rect x="73.0" y="108.04935060268666" width="110" height="91.95064939731334" fill="#2e6f3f" stroke="#1a1612" stroke-width="0.6"/>
+<text x="128.0" y="94.04935060268666" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+193,649</text>
+<text x="128.0" y="106.04935060268666" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
 <text x="128.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Wet</text>
-<text x="128.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(6 years)</text>
-<rect x="229.0" y="184.27479688867163" width="110" height="15.725203111328376" fill="#7eb585" stroke="#1a1612" stroke-width="0.6"/>
-<text x="284.0" y="170.27479688867163" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+33,117</text>
-<text x="284.0" y="182.27479688867163" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<text x="128.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(5 years)</text>
+<rect x="229.0" y="167.08136573943625" width="110" height="32.918634260563735" fill="#7eb585" stroke="#1a1612" stroke-width="0.6"/>
+<text x="284.0" y="153.08136573943625" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+69,327</text>
+<text x="284.0" y="165.08136573943625" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
 <text x="284.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Above Normal</text>
-<text x="284.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(4 years)</text>
+<text x="284.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(5 years)</text>
 <rect x="385.0" y="199.3017460372198" width="110" height="0.6982539627801962" fill="#d99a4f" stroke="#1a1612" stroke-width="0.6"/>
 <text x="440.0" y="185.3017460372198" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+1,471</text>
 <text x="440.0" y="197.3017460372198" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>

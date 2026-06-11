@@ -8,18 +8,18 @@
   "basin_total_cum_2025_AF": -197112.0,
   "basin_pct_of_total_storage": -1.232,
   "basin_buckets_AF": {
-    "wet": 267224.0,
-    "an": 18956.0,
+    "wet": 226415.0,
+    "an": 59766.0,
     "bn": -20344.0,
     "dry": -217913.0,
     "critical": -245035.0
   },
   "basin_avg_loss_rate_AF_per_yr": 8663.0,
   "basin_polygon_summed_hold_need_AF_per_yr": 9320.0,
-  "basin_normalized_cum_2025_AF": -233856.0,
-  "basin_normalized_avg_loss_rate_AF_per_yr": 8994.0,
-  "basin_normalized_polygon_summed_hold_need_AF_per_yr": 9337.0,
-  "basin_normalized_portfolio_margin_AF_per_yr": 6506.0,
+  "basin_normalized_cum_2025_AF": -229492.0,
+  "basin_normalized_avg_loss_rate_AF_per_yr": 8827.0,
+  "basin_normalized_polygon_summed_hold_need_AF_per_yr": 9330.0,
+  "basin_normalized_portfolio_margin_AF_per_yr": 6673.0,
   "normalization_method": "Year-type-weighted backcast: per polygon, avg \u0394Storage per SVI year-type using only the polygon's own observations; fallback to polygon's overall avg rate for any year-type not observed. Applied to the basin's WY 2000\u20132025 year-type mix (6 Wet, 4 AN, 5 BN, 6 Dry, 5 Critical = 26 transition years).",
   "project_portfolio_total_AF_per_yr": 15500,
   "project_portfolio_basin_margin_AF_per_yr": 6837.0,
@@ -100,8 +100,8 @@
       "crit_dry_share_of_drawdown_pct": 67.3,
       "crit_share_of_drawdown_pct": 41.3,
       "bucket_storage_AF": {
-        "wet": 60690.0,
-        "an": -20662.0,
+        "wet": 54142.0,
+        "an": -14115.0,
         "bn": 29.0,
         "dry": -43622.0,
         "critical": -61122.0
@@ -125,8 +125,8 @@
       "crit_dry_share_of_drawdown_pct": 82.1,
       "crit_share_of_drawdown_pct": 39.4,
       "bucket_storage_AF": {
-        "wet": 3033.0,
-        "an": 4347.0,
+        "wet": 2559.0,
+        "an": 4821.0,
         "bn": -790.0,
         "dry": -3428.0,
         "critical": -3161.0
@@ -150,8 +150,8 @@
       "crit_dry_share_of_drawdown_pct": 85.5,
       "crit_share_of_drawdown_pct": 70.0,
       "bucket_storage_AF": {
-        "wet": 77.0,
-        "an": 928.0,
+        "wet": -619.0,
+        "an": 1624.0,
         "bn": 0.0,
         "dry": -657.0,
         "critical": -2978.0
@@ -175,8 +175,8 @@
       "crit_dry_share_of_drawdown_pct": 80.6,
       "crit_share_of_drawdown_pct": 63.4,
       "bucket_storage_AF": {
-        "wet": 4224.0,
-        "an": -2093.0,
+        "wet": 3014.0,
+        "an": -884.0,
         "bn": 3635.0,
         "dry": -2632.0,
         "critical": -12314.0
@@ -200,8 +200,8 @@
       "crit_dry_share_of_drawdown_pct": 80.1,
       "crit_share_of_drawdown_pct": 28.8,
       "bucket_storage_AF": {
-        "wet": 16974.0,
-        "an": 1334.0,
+        "wet": 13747.0,
+        "an": 4561.0,
         "bn": -2044.0,
         "dry": -14543.0,
         "critical": -6712.0
@@ -225,8 +225,8 @@
       "crit_dry_share_of_drawdown_pct": 52.4,
       "crit_share_of_drawdown_pct": 24.6,
       "bucket_storage_AF": {
-        "wet": 13752.0,
-        "an": 5233.0,
+        "wet": 12473.0,
+        "an": 6513.0,
         "bn": -7618.0,
         "dry": -4826.0,
         "critical": -3867.0
@@ -250,8 +250,8 @@
       "crit_dry_share_of_drawdown_pct": 81.8,
       "crit_share_of_drawdown_pct": 40.2,
       "bucket_storage_AF": {
-        "wet": 7752.0,
-        "an": 483.0,
+        "wet": 6418.0,
+        "an": 1817.0,
         "bn": -317.0,
         "dry": -6985.0,
         "critical": -6735.0
@@ -275,8 +275,8 @@
       "crit_dry_share_of_drawdown_pct": 70.0,
       "crit_share_of_drawdown_pct": 13.7,
       "bucket_storage_AF": {
-        "wet": 15173.0,
-        "an": 2158.0,
+        "wet": 13298.0,
+        "an": 4033.0,
         "bn": -4556.0,
         "dry": -11641.0,
         "critical": -2354.0
@@ -300,8 +300,8 @@
       "crit_dry_share_of_drawdown_pct": 69.6,
       "crit_share_of_drawdown_pct": 35.1,
       "bucket_storage_AF": {
-        "wet": 8877.0,
-        "an": 1486.0,
+        "wet": 7575.0,
+        "an": 2788.0,
         "bn": -1701.0,
         "dry": -4934.0,
         "critical": -4468.0
@@ -325,8 +325,8 @@
       "crit_dry_share_of_drawdown_pct": 78.7,
       "crit_share_of_drawdown_pct": 47.8,
       "bucket_storage_AF": {
-        "wet": 2688.0,
-        "an": 740.0,
+        "wet": 2003.0,
+        "an": 1424.0,
         "bn": -571.0,
         "dry": -2408.0,
         "critical": -3966.0
@@ -350,8 +350,8 @@
       "crit_dry_share_of_drawdown_pct": 73.1,
       "crit_share_of_drawdown_pct": 29.2,
       "bucket_storage_AF": {
-        "wet": 8306.0,
-        "an": 1146.0,
+        "wet": 6974.0,
+        "an": 2478.0,
         "bn": -1955.0,
         "dry": -5552.0,
         "critical": -2928.0
@@ -375,8 +375,8 @@
       "crit_dry_share_of_drawdown_pct": 58.7,
       "crit_share_of_drawdown_pct": 32.5,
       "bucket_storage_AF": {
-        "wet": 9263.0,
-        "an": 1247.0,
+        "wet": 8182.0,
+        "an": 2328.0,
         "bn": -4252.0,
         "dry": -2812.0,
         "critical": -2879.0
@@ -425,8 +425,8 @@
       "crit_dry_share_of_drawdown_pct": 92.9,
       "crit_share_of_drawdown_pct": 56.9,
       "bucket_storage_AF": {
-        "wet": 2633.0,
-        "an": 715.0,
+        "wet": 1926.0,
+        "an": 1421.0,
         "bn": 505.0,
         "dry": -2372.0,
         "critical": -3785.0
@@ -475,8 +475,8 @@
       "crit_dry_share_of_drawdown_pct": 60.8,
       "crit_share_of_drawdown_pct": 37.0,
       "bucket_storage_AF": {
-        "wet": 25607.0,
-        "an": 1593.0,
+        "wet": 23864.0,
+        "an": 3336.0,
         "bn": -10396.0,
         "dry": -5309.0,
         "critical": -4198.0
@@ -500,8 +500,8 @@
       "crit_dry_share_of_drawdown_pct": 84.0,
       "crit_share_of_drawdown_pct": 47.5,
       "bucket_storage_AF": {
-        "wet": 8425.0,
-        "an": 1282.0,
+        "wet": 7205.0,
+        "an": 2502.0,
         "bn": 943.0,
         "dry": -6316.0,
         "critical": -7976.0
@@ -550,8 +550,8 @@
       "crit_dry_share_of_drawdown_pct": 69.3,
       "crit_share_of_drawdown_pct": 39.7,
       "bucket_storage_AF": {
-        "wet": 4278.0,
-        "an": 322.0,
+        "wet": 2555.0,
+        "an": 2046.0,
         "bn": -3670.0,
         "dry": -4590.0,
         "critical": -6745.0
@@ -575,8 +575,8 @@
       "crit_dry_share_of_drawdown_pct": 84.1,
       "crit_share_of_drawdown_pct": 40.2,
       "bucket_storage_AF": {
-        "wet": 13571.0,
-        "an": 4345.0,
+        "wet": 11428.0,
+        "an": 6488.0,
         "bn": 1458.0,
         "dry": -16874.0,
         "critical": -15475.0
@@ -600,8 +600,8 @@
       "crit_dry_share_of_drawdown_pct": 96.7,
       "crit_share_of_drawdown_pct": 27.8,
       "bucket_storage_AF": {
-        "wet": 4386.0,
-        "an": 2265.0,
+        "wet": 3722.0,
+        "an": 2929.0,
         "bn": 1417.0,
         "dry": -15004.0,
         "critical": -6069.0
@@ -625,8 +625,8 @@
       "crit_dry_share_of_drawdown_pct": 89.3,
       "crit_share_of_drawdown_pct": 44.7,
       "bucket_storage_AF": {
-        "wet": 6961.0,
-        "an": 800.0,
+        "wet": 5762.0,
+        "an": 1999.0,
         "bn": -71.0,
         "dry": -6561.0,
         "critical": -6585.0
@@ -650,8 +650,8 @@
       "crit_dry_share_of_drawdown_pct": 78.7,
       "crit_share_of_drawdown_pct": 45.0,
       "bucket_storage_AF": {
-        "wet": 20740.0,
-        "an": 1662.0,
+        "wet": 17642.0,
+        "an": 4760.0,
         "bn": -793.0,
         "dry": -15640.0,
         "critical": -20929.0
@@ -675,8 +675,8 @@
       "crit_dry_share_of_drawdown_pct": 81.4,
       "crit_share_of_drawdown_pct": 45.9,
       "bucket_storage_AF": {
-        "wet": 3493.0,
-        "an": 1693.0,
+        "wet": -261.0,
+        "an": 5448.0,
         "bn": 4364.0,
         "dry": -4050.0,
         "critical": -14364.0
@@ -700,8 +700,8 @@
       "crit_dry_share_of_drawdown_pct": 75.2,
       "crit_share_of_drawdown_pct": 58.4,
       "bucket_storage_AF": {
-        "wet": 7824.0,
-        "an": 795.0,
+        "wet": 5162.0,
+        "an": 3457.0,
         "bn": 406.0,
         "dry": -2029.0,
         "critical": -6996.0
@@ -725,8 +725,8 @@
       "crit_dry_share_of_drawdown_pct": 69.7,
       "crit_share_of_drawdown_pct": 22.0,
       "bucket_storage_AF": {
-        "wet": 1051.0,
-        "an": 11.0,
+        "wet": 195.0,
+        "an": 866.0,
         "bn": -243.0,
         "dry": -3930.0,
         "critical": -1809.0
