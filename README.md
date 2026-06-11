@@ -1,9 +1,9 @@
-# Vina Subbasin — Where the Losses Happen (2027 BC RMS Network · 28 polygons)
+# Vina Subbasin — Where the Losses Happen (2027 BC RMS Network · 29 polygons)
 
 A drought-conditioned look at groundwater storage in the Vina Subbasin,
 prepared by **AGUBC** for the Vina GSA technical group and AGUBC Board.
 
-This is the **28-polygon rebuild** of the original
+This is the **29-polygon rebuild** of the original
 [2027-drought-analysis](https://cosmo1007.github.io/2027-drought-analysis/)
 (which used a 17-polygon network). The polygons, RMS wells, and DWR
 periodic GWL measurements all come from the companion
@@ -91,10 +91,10 @@ Year-type classification uses DWR's official **Sacramento Valley Index**
 
 ## What's different from the 17-polygon original
 
-| Aspect | 17-polygon original | 28-polygon rebuild |
+| Aspect | 17-polygon original | 29-polygon rebuild |
 |--------|---------------------|--------------------|
-| Polygons | 17 LWA-authored cells | 28 Voronoi cells, one per 2027 GWL RMS well |
-| RMS wells | 21 wells (some polygons had 2+) | 28 wells (1:1 with polygons) |
+| Polygons | 17 LWA-authored cells | 29 Voronoi cells, one per 2027 GWL RMS well |
+| RMS wells | 21 wells (some polygons had 2+) | 29 wells (1:1 with polygons) |
 | Chico | Single dissolved cell | Split into two cells (22N01E09B001M, 22N01E20K001M) |
 | Sy method | DWR SVSim Texture Data, area-weighted | Same — recomputed against new polygon geometry |
 | Basin net WY 2025 | −193,010 AF | **−145,732 AF** |
@@ -102,7 +102,7 @@ Year-type classification uses DWR's official **Sacramento Valley Index**
 | Project portfolio | 14,500 AF/yr | **15,500 AF/yr** (Rock Creek concentrated at 36P + 29P) |
 | Recovery margin | +5,942 AF/yr | **+9,178 AF/yr** (single, observed) |
 
-The basin deficit comes out smaller in the 28-polygon rebuild for three
+The basin deficit comes out smaller in the 29-polygon rebuild for three
 reasons:
 
 1. **`21N02E18C003M` is larger** in the new tessellation (no Chico-dissolve
@@ -119,7 +119,7 @@ Wet/Above-Normal years recovering) is unchanged.
 
 ### The problem this corrects
 
-Of the 28 polygons, only **11 have a Good-quality March measurement in WY
+Of the 29 polygons, only **11 have a Good-quality March measurement in WY
 1999** and can baseline there. The other 17 baseline later — between 2000
 and 2019 — because their 2027 GWL RMS well wasn't measured in 1999. Each
 polygon contributes year-over-year deltas only for the years it has a
@@ -283,7 +283,7 @@ lateral hydraulic connectivity that this dashboard does not model.
 
 ## Polygon set + baseline anchoring
 
-The 2027 BC RMS network is **28 Voronoi polygons** (one per 2027 GWL RMS
+The 2027 BC RMS network is **29 Voronoi polygons** (one per 2027 GWL RMS
 well, clipped to the DWR B118 Vina Subbasin boundary, projected through
 EPSG:3310 NAD-83 California Albers Equal Area). Polygon roster comes from
 the `2027-BC-prop-network` build (`scripts/build_polygons.py` there), tied
@@ -302,7 +302,7 @@ measured in 1999.
   `544623e2-0cd5-4c5b-827f-affa4abf4e16`). Coarse-grained sediments →
   0.15, fine-grained → 0.05, area-weighted by borehole lithology in the
   0–500 ft below ground surface analysis window. Polygon Sy values for
-  the 28-polygon network range **0.0594 to 0.1172**; basin area-weighted
+  the 29-polygon network range **0.0594 to 0.1172**; basin area-weighted
   mean ≈ 0.087. Three polygons with insufficient SVSim borehole density
   (`23N02W25C001M`, `23N01E29P002M`, `21N01E25K001M`) use the basin
   area-weighted mean as a fallback. See [`scripts/build_sy_svsim.py`](scripts/build_sy_svsim.py)
