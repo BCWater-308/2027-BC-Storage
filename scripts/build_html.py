@@ -960,4 +960,4 @@ window.POLYGONS_BY_METHOD = {polygons_json};
 </body>
 </html>
 """
-    out_path.write_text(html)
+    out_path.write_text(html, encoding="utf-8")

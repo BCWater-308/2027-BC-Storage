@@ -39,18 +39,18 @@
       "baseline_year": 1999,
       "endpoint_year": 2025,
       "span_years": 26,
-      "baseline_gwe": 149.8875,
-      "endpoint_gwe": 126.82115483870966,
+      "baseline_gwe": 148.18666666666667,
+      "endpoint_gwe": 125.46541218637994,
       "sy": 0.0958,
       "sy_source": "SVSim",
-      "endpoint_cum_storage_AF": -65670.0,
-      "avg_dgwe_ft_per_yr": -0.887,
+      "endpoint_cum_storage_AF": -64688.0,
+      "avg_dgwe_ft_per_yr": -0.874,
       "bucket_storage_AF": {
-        "wet": 63104.0,
-        "an": -19271.0,
-        "bn": -1866.0,
-        "dry": -45156.0,
-        "critical": -62482.0
+        "wet": 60690.0,
+        "an": -20662.0,
+        "bn": 29.0,
+        "dry": -43622.0,
+        "critical": -61122.0
       },
       "bucket_polygon_years": {
         "wet": 6,
@@ -812,12 +812,12 @@
     }
   ],
   "basin_total_by_condition_AF": {
-    "wet": 269638.0,
-    "an": 20348.0,
-    "bn": -22239.0,
-    "dry": -219447.0,
-    "critical": -246394.0
+    "wet": 267224.0,
+    "an": 18956.0,
+    "bn": -20344.0,
+    "dry": -217913.0,
+    "critical": -245035.0
   },
-  "basin_total_net_AF": -198094.0,
+  "basin_total_net_AF": -197112.0,
   "notes": "Year-over-year storage deltas from each polygon's cumulative storage series; multi-year DWR gaps distributed evenly across the gap before bucketing. 26 polygons in the 2027 BC RMS network; baseline years are staggered per first Good-quality spring measurement."
 }

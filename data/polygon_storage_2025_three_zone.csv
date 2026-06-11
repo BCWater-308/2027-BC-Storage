@@ -1,5 +1,5 @@
 zone_label,mgmt_area,rms_well,area_acres,sy,sy_source,baseline_year,baseline_gwe,endpoint_year,endpoint_gwe,dgwe_endpoint_minus_baseline_ft,cumulative_storage_endpoint_AF,avg_rate_AF_per_yr,hold_steady_need_AF_per_yr,project_AF_per_yr,project_name,coverage_net_AF_per_yr
-02-Vina-Chico,Chico,22N01E28J001M,29718.3,0.0958,SVSim,1999,149.89,2025,126.82,-23.07,-65670,-2526,2526,0,,-2526
+02-Vina-Chico,Chico,22N01E28J001M,29718.3,0.0958,SVSim,1999,148.19,2025,125.47,-22.72,-64688,-2488,2488,0,,-2488
 22N01W05M001M,North,22N01W05M001M,7541.2,0.0786,SVSim,1999,140.48,2025,140.48,+0.00,0,0,0,0,,+0
 23N01E07H001M,North,23N01E07H001M,8272.2,0.0935,SVSim,2019,168.60,2025,165.20,-3.40,-2630,-438,438,0,,-438
 23N01E33A001M,North,23N01E33A001M,9962.5,0.0629,SVSim,2003,155.34,2025,140.69,-14.65,-9180,-417,417,0,,-417

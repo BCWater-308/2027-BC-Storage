@@ -906,7 +906,7 @@ def compute_method(method, wells_meta, meas, portfolio):
             "measurement."
         ),
     }
-    (DATA_DIR / f"condition_analysis_{suffix}.json").write_text(json.dumps(condition_out, indent=2))
+    (DATA_DIR / f"condition_analysis_{suffix}.json").write_text(json.dumps(condition_out, indent=2), encoding="utf-8")
 
     sustainability_out = {
         "framing": ("Hold current conditions: each polygon's sustainability "
@@ -958,7 +958,7 @@ def compute_method(method, wells_meta, meas, portfolio):
             for s in pol_summaries
         ],
     }
-    (DATA_DIR / f"sustainability_2042_{suffix}.json").write_text(json.dumps(sustainability_out, indent=2))
+    (DATA_DIR / f"sustainability_2042_{suffix}.json").write_text(json.dumps(sustainability_out, indent=2), encoding="utf-8")
 
     (DATA_DIR / f"basin_annual_{suffix}.json").write_text(json.dumps({
         "observed": basin_annual,
@@ -967,14 +967,14 @@ def compute_method(method, wells_meta, meas, portfolio):
                         "'normalized_year_type_weighted' = each polygon's avg ΔStorage per SVI "
                         "year-type (using only its own observations) applied across the basin's full "
                         "WY 2000–2025 year-type mix. See README §Year-type-weighted normalization.")
-    }, indent=2))
+    }, indent=2), encoding="utf-8")
 
     # model_data.json (for downstream / debug use)
     (DATA_DIR / f"model_data_{suffix}.json").write_text(json.dumps({
         "constants": {"start_year": START_YEAR, "end_year": END_YEAR,
                        "n_polygons": len(polygon_models), "method": method},
         "polygons": polygon_models,
-    }, indent=2))
+    }, indent=2), encoding="utf-8")
 
     # polygon_storage_2025.csv
     with (DATA_DIR / f"polygon_storage_2025_{suffix}.csv").open("w", newline="") as f:
@@ -1017,14 +1017,14 @@ def compute_method(method, wells_meta, meas, portfolio):
     # --- render SVGs ----------------------------------------------------
     polygon_map_svg = render_polygon_map(polygons, pol_summaries, well_lookup,
                                           sy_lookup, portfolio.get("projects", []))
-    (DATA_DIR / f"polygon_map_{suffix}.svg").write_text(polygon_map_svg)
+    (DATA_DIR / f"polygon_map_{suffix}.svg").write_text(polygon_map_svg, encoding="utf-8")
 
     n_by_type = {k: sum(1 for y in range(START_YEAR + 1, END_YEAR + 1)
                         if classify_year(y) == k)
                  for k in ["wet", "an", "bn", "dry", "critical"]}
     bar_svg = render_bar_chart(basin_buckets, n_by_type, basin_cumulative_2025,
                                n_polygons=len(pol_summaries))
-    (DATA_DIR / f"basin_buckets_chart_{suffix}.svg").write_text(bar_svg)
+    (DATA_DIR / f"basin_buckets_chart_{suffix}.svg").write_text(bar_svg, encoding="utf-8")
 
     cum_running = 0.0
     ts = []
@@ -1043,7 +1043,7 @@ def compute_method(method, wells_meta, meas, portfolio):
             cum_norm += basin_normalized_yoy.get(y, 0.0)
             ts_norm.append({"year": y, "cumulative_AF": round(cum_norm, 0)})
     ts_svg = render_timeseries(ts, ts_norm, n_polygons=len(pol_summaries))
-    (DATA_DIR / f"basin_cumulative_chart_{suffix}.svg").write_text(ts_svg)
+    (DATA_DIR / f"basin_cumulative_chart_{suffix}.svg").write_text(ts_svg, encoding="utf-8")
 
     trough_cum = 0.0
     trough_year = START_YEAR
@@ -1055,7 +1055,7 @@ def compute_method(method, wells_meta, meas, portfolio):
             trough_year = int(y_str)
     context_svg = render_storage_context(basin_cumulative_2025,
                                           abs(trough_cum), trough_year)
-    (DATA_DIR / f"storage_context_{suffix}.svg").write_text(context_svg)
+    (DATA_DIR / f"storage_context_{suffix}.svg").write_text(context_svg, encoding="utf-8")
 
     # --- polygon-with-meta payload for Leaflet (embedded in JS) ----------
     polygons_for_js = []

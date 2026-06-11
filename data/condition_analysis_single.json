@@ -95,7 +95,7 @@
       "name": "23N01E33A001M",
       "ma": "North",
       "ma_full": "01-Vina-North",
-      "area_ac": 10782.4,
+      "area_ac": 8877.8,
       "baseline_year": 2003,
       "endpoint_year": 2025,
       "span_years": 22,
@@ -103,14 +103,14 @@
       "endpoint_gwe": 140.69,
       "sy": 0.0791,
       "sy_source": "SVSim",
-      "endpoint_cum_storage_AF": -12495.0,
+      "endpoint_cum_storage_AF": -10288.0,
       "avg_dgwe_ft_per_yr": -0.666,
       "bucket_storage_AF": {
-        "wet": 5748.0,
-        "an": -2849.0,
-        "bn": 4947.0,
-        "dry": -3582.0,
-        "critical": -16759.0
+        "wet": 4733.0,
+        "an": -2345.0,
+        "bn": 4073.0,
+        "dry": -2949.0,
+        "critical": -13799.0
       },
       "bucket_polygon_years": {
         "wet": 6,
@@ -191,16 +191,16 @@
       "span_years": 26,
       "baseline_gwe": 163.94,
       "endpoint_gwe": 146.54,
-      "sy": 0.0861,
+      "sy": 0.0846,
       "sy_source": "basin-mean fallback",
-      "endpoint_cum_storage_AF": -5945.0,
+      "endpoint_cum_storage_AF": -5842.0,
       "avg_dgwe_ft_per_yr": -0.669,
       "bucket_storage_AF": {
-        "wet": 7944.0,
-        "an": 495.0,
-        "bn": -325.0,
-        "dry": -7158.0,
-        "critical": -6902.0
+        "wet": 7806.0,
+        "an": 487.0,
+        "bn": -319.0,
+        "dry": -7033.0,
+        "critical": -6782.0
       },
       "bucket_polygon_years": {
         "wet": 6,
@@ -365,7 +365,7 @@
       "name": "22N01E20K001M",
       "ma": "Chico",
       "ma_full": "02-Vina-Chico",
-      "area_ac": 9996.7,
+      "area_ac": 9186.3,
       "baseline_year": 2000,
       "endpoint_year": 2022,
       "span_years": 22,
@@ -373,14 +373,14 @@
       "endpoint_gwe": 118.44,
       "sy": 0.0675,
       "sy_source": "SVSim",
-      "endpoint_cum_storage_AF": -14508.0,
+      "endpoint_cum_storage_AF": -13332.0,
       "avg_dgwe_ft_per_yr": -0.977,
       "bucket_storage_AF": {
-        "wet": 11707.0,
-        "an": 2159.0,
-        "bn": 4150.0,
-        "dry": -13711.0,
-        "critical": -18813.0
+        "wet": 10758.0,
+        "an": 1984.0,
+        "bn": 3813.0,
+        "dry": -12600.0,
+        "critical": -17288.0
       },
       "bucket_polygon_years": {
         "wet": 4,
@@ -395,22 +395,22 @@
       "name": "22N01E09B001M",
       "ma": "Chico",
       "ma_full": "02-Vina-Chico",
-      "area_ac": 6788.4,
+      "area_ac": 3717.7,
       "baseline_year": 2002,
       "endpoint_year": 2025,
       "span_years": 23,
       "baseline_gwe": 148.23,
       "endpoint_gwe": 134.53,
-      "sy": 0.0861,
+      "sy": 0.0846,
       "sy_source": "basin-mean fallback",
-      "endpoint_cum_storage_AF": -8008.0,
+      "endpoint_cum_storage_AF": -4309.0,
       "avg_dgwe_ft_per_yr": -0.596,
       "bucket_storage_AF": {
-        "wet": 9147.0,
-        "an": 2484.0,
-        "bn": 1753.0,
-        "dry": -8241.0,
-        "critical": -13151.0
+        "wet": 4922.0,
+        "an": 1337.0,
+        "bn": 944.0,
+        "dry": -4435.0,
+        "critical": -7077.0
       },
       "bucket_polygon_years": {
         "wet": 6,
@@ -455,7 +455,7 @@
       "name": "21N02E18C003M",
       "ma": "South",
       "ma_full": "03-Vina-South",
-      "area_ac": 12365.2,
+      "area_ac": 6431.2,
       "baseline_year": 2011,
       "endpoint_year": 2025,
       "span_years": 14,
@@ -463,14 +463,14 @@
       "endpoint_gwe": 169.4926129032258,
       "sy": 0.1058,
       "sy_source": "SVSim",
-      "endpoint_cum_storage_AF": 16431.0,
+      "endpoint_cum_storage_AF": 8546.0,
       "avg_dgwe_ft_per_yr": 0.897,
       "bucket_storage_AF": {
-        "wet": 57661.0,
-        "an": 3588.0,
-        "bn": -23410.0,
-        "dry": -11955.0,
-        "critical": -9453.0
+        "wet": 29990.0,
+        "an": 1866.0,
+        "bn": -12175.0,
+        "dry": -6218.0,
+        "critical": -4917.0
       },
       "bucket_polygon_years": {
         "wet": 4,
@@ -575,7 +575,7 @@
       "name": "21N01E10B003M",
       "ma": "South",
       "ma_full": "03-Vina-South",
-      "area_ac": 6308.5,
+      "area_ac": 6308.7,
       "baseline_year": 1999,
       "endpoint_year": 2025,
       "span_years": 26,
@@ -586,7 +586,7 @@
       "endpoint_cum_storage_AF": -12309.0,
       "avg_dgwe_ft_per_yr": -0.838,
       "bucket_storage_AF": {
-        "wet": 12873.0,
+        "wet": 12874.0,
         "an": 4122.0,
         "bn": 1383.0,
         "dry": -16007.0,
@@ -641,16 +641,16 @@
       "span_years": 26,
       "baseline_gwe": 129.23,
       "endpoint_gwe": 106.03,
-      "sy": 0.0861,
+      "sy": 0.0846,
       "sy_source": "basin-mean fallback",
-      "endpoint_cum_storage_AF": -5489.0,
+      "endpoint_cum_storage_AF": -5394.0,
       "avg_dgwe_ft_per_yr": -0.892,
       "bucket_storage_AF": {
-        "wet": 7003.0,
-        "an": 804.0,
-        "bn": -71.0,
-        "dry": -6601.0,
-        "critical": -6625.0
+        "wet": 6882.0,
+        "an": 790.0,
+        "bn": -70.0,
+        "dry": -6486.0,
+        "critical": -6510.0
       },
       "bucket_polygon_years": {
         "wet": 6,
@@ -695,7 +695,7 @@
       "name": "21N02E26E006M",
       "ma": "South",
       "ma_full": "03-Vina-South",
-      "area_ac": 11791.0,
+      "area_ac": 11063.8,
       "baseline_year": 2008,
       "endpoint_year": 2025,
       "span_years": 17,
@@ -703,14 +703,14 @@
       "endpoint_gwe": 109.49587096774194,
       "sy": 0.1066,
       "sy_source": "SVSim",
-      "endpoint_cum_storage_AF": -9104.0,
+      "endpoint_cum_storage_AF": -8542.0,
       "avg_dgwe_ft_per_yr": -0.426,
       "bucket_storage_AF": {
-        "wet": 3588.0,
-        "an": 1739.0,
-        "bn": 4482.0,
-        "dry": -4159.0,
-        "critical": -14753.0
+        "wet": 3366.0,
+        "an": 1632.0,
+        "bn": 4206.0,
+        "dry": -3903.0,
+        "critical": -13843.0
       },
       "bucket_polygon_years": {
         "wet": 5,
@@ -785,7 +785,7 @@
       "name": "CWSCH01b",
       "ma": "Chico",
       "ma_full": "02-Vina-Chico",
-      "area_ac": 14916.2,
+      "area_ac": 4440.0,
       "baseline_year": 1999,
       "endpoint_year": 2025,
       "span_years": 26,
@@ -793,14 +793,14 @@
       "endpoint_gwe": 125.5,
       "sy": 0.0979,
       "sy_source": "SVSim",
-      "endpoint_cum_storage_AF": -27746.0,
+      "endpoint_cum_storage_AF": -8259.0,
       "avg_dgwe_ft_per_yr": -0.731,
       "bucket_storage_AF": {
-        "wet": 34317.0,
-        "an": -6571.0,
-        "bn": -3651.0,
-        "dry": -15333.0,
-        "critical": -36507.0
+        "wet": 10215.0,
+        "an": -1956.0,
+        "bn": -1087.0,
+        "dry": -4564.0,
+        "critical": -10867.0
       },
       "bucket_polygon_years": {
         "wet": 6,
@@ -809,15 +809,105 @@
         "dry": 6,
         "critical": 5
       }
+    },
+    {
+      "zone_label": "CWSCH02",
+      "name": "CWSCH02",
+      "ma": "Chico",
+      "ma_full": "02-Vina-Chico",
+      "area_ac": 3231.7,
+      "baseline_year": 2000,
+      "endpoint_year": 2025,
+      "span_years": 25,
+      "baseline_gwe": 146.0,
+      "endpoint_gwe": 133.0,
+      "sy": 0.0846,
+      "sy_source": "basin-mean fallback",
+      "endpoint_cum_storage_AF": -3554.0,
+      "avg_dgwe_ft_per_yr": -0.52,
+      "bucket_storage_AF": {
+        "wet": 1777.0,
+        "an": 1641.0,
+        "bn": 4922.0,
+        "dry": -10527.0,
+        "critical": -1367.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 3,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "CWSCH03",
+      "name": "CWSCH03",
+      "ma": "Chico",
+      "ma_full": "02-Vina-Chico",
+      "area_ac": 8658.5,
+      "baseline_year": 2000,
+      "endpoint_year": 2025,
+      "span_years": 25,
+      "baseline_gwe": 134.0,
+      "endpoint_gwe": 122.0,
+      "sy": 0.0846,
+      "sy_source": "basin-mean fallback",
+      "endpoint_cum_storage_AF": -8791.0,
+      "avg_dgwe_ft_per_yr": -0.48,
+      "bucket_storage_AF": {
+        "wet": -3296.0,
+        "an": 2198.0,
+        "bn": 5860.0,
+        "dry": 733.0,
+        "critical": -14285.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 3,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
+    },
+    {
+      "zone_label": "CWSCH07",
+      "name": "CWSCH07",
+      "ma": "Chico",
+      "ma_full": "02-Vina-Chico",
+      "area_ac": 11032.8,
+      "baseline_year": 2000,
+      "endpoint_year": 2025,
+      "span_years": 25,
+      "baseline_gwe": 126.0,
+      "endpoint_gwe": 110.0,
+      "sy": 0.0846,
+      "sy_source": "basin-mean fallback",
+      "endpoint_cum_storage_AF": -14935.0,
+      "avg_dgwe_ft_per_yr": -0.64,
+      "bucket_storage_AF": {
+        "wet": 7467.0,
+        "an": -8868.0,
+        "bn": 13068.0,
+        "dry": -10734.0,
+        "critical": -15868.0
+      },
+      "bucket_polygon_years": {
+        "wet": 6,
+        "an": 3,
+        "bn": 5,
+        "dry": 6,
+        "critical": 5
+      }
     }
   ],
   "basin_total_by_condition_AF": {
-    "wet": 282353.0,
-    "an": 36202.0,
-    "bn": -33888.0,
-    "dry": -204542.0,
-    "critical": -242022.0
+    "wet": 229858.0,
+    "an": 33117.0,
+    "bn": 1471.0,
+    "dry": -202518.0,
+    "critical": -231661.0
   },
-  "basin_total_net_AF": -161896.0,
-  "notes": "Year-over-year storage deltas from each polygon's cumulative storage series; multi-year DWR gaps distributed evenly across the gap before bucketing. 26 polygons in the 2027 BC RMS network; baseline years are staggered per first Good-quality spring measurement."
+  "basin_total_net_AF": -169733.0,
+  "notes": "Year-over-year storage deltas from each polygon's cumulative storage series; multi-year DWR gaps distributed evenly across the gap before bucketing. 29 polygons in the 2027 BC RMS network; baseline years are staggered per first Good-quality spring measurement."
 }
