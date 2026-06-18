@@ -927,7 +927,7 @@ def write_index_html(out_path, results_by_method, portfolio):
 <div class="container">
 
 <h1>Where the Losses Happen — A Drought-Conditioned Look at the 2027 BC RMS Network</h1>
-<p class="subtitle">May 2026 · Prepared by AGUBC · {n_polygons_total} polygons · polygon-by-polygon Sy from DWR SVSim Texture Data · WY 1999–2025 · ΔGWE × Sy<sub>p</sub> × Area<sub>p</sub>, sliced by hydrologic condition · observed vs. year-type-normalized cumulative storage change.</p>
+<p class="subtitle">May 2026 · Revised by Larry Walker Associates · {n_polygons_total} polygons · polygon-by-polygon Sy from DWR SVSim Texture Data · WY 1999–2025 · ΔGWE × Sy<sub>p</sub> × Area<sub>p</sub>, sliced by hydrologic condition · observed vs. year-type-normalized cumulative storage change.</p>
 
 {toggle_html}
 
@@ -938,7 +938,7 @@ def write_index_html(out_path, results_by_method, portfolio):
 <div class="footer">
 <p><strong>Files in this folder.</strong> <code>index.html</code> (this page) · <code>data/condition_analysis_{{single,three_zone}}.json</code> · <code>data/sustainability_2042_{{single,three_zone}}.json</code> · <code>data/basin_annual_{{single,three_zone}}.json</code> (observed + normalized) · <code>data/model_data_{{single,three_zone}}.json</code> · <code>data/polygon_storage_2025_{{single,three_zone}}.csv</code> · <code>data/storage_timeseries_{{single,three_zone}}.csv</code> · <code>data/polygon_sy_svsim_{{single,three_zone}}.csv</code> · <code>data/project_portfolio.json</code> (editable input) · per-method SVGs (<code>polygon_map_*.svg</code>, <code>basin_buckets_chart_*.svg</code>, <code>basin_cumulative_chart_*.svg</code>, <code>storage_context_*.svg</code>).</p>
 <p><strong>Upstream.</strong> Polygons, wells, and DWR periodic GWL measurements come from the companion <a href="https://agubc-vina.github.io/2027-BC-prop-network/">2027-BC-prop-network</a> framework — both <code>polygons-data-single.js</code> (single basin-wide tessellation) and <code>polygons-data-three-zone.js</code> (three independent tessellations per management area) are read here.</p>
-<p><strong>Status.</strong> Independent analysis prepared for AGUBC technical staff and Board. Comments and corrections welcomed.</p>
+<p><strong>Status.</strong> Independent analysis revised by Larry Walker Associates. Comments and corrections welcomed.</p>
 </div>
 
 </div>
