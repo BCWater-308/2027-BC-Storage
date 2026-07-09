@@ -14,7 +14,7 @@ framework, where every 2027 GWL RMS well drives its own Thiessen polygon.
 
 The dashboard has a **toggle at the top** to switch between two polygon
 methods. The 29 RMS wells are the same in both; only the polygon
-shapes (and therefore the area-weighted storage attribution) differ.
+shapes (and therefore the per-polygon storage attribution) differ.
 
 | Method | How polygons are built | Cells cross management-area lines? |
 |---|---|---|
@@ -95,16 +95,13 @@ Year-type classification uses DWR's official **Sacramento Valley Index**
 | Polygons | 17 LWA-authored cells | 26 Thiessen cells (three-zone) / 29 cells (single) |
 | RMS wells | 21 wells (some polygons had 2+) | 29 wells |
 | Chico | Single dissolved cell | 4 RMS primaries dissolved in three-zone; 6 individual cells in single |
-| Sy method | DWR SVSim Texture Data, area-weighted | **Uniform Sy = 0.10** (flat, all polygons) |
 | Basin net WY 2025 | −193,010 AF | **−205,743 AF** (single) / **−231,743 AF** (three-zone) |
 | Basin avg loss rate | 8,558 AF/yr | **9,173 AF/yr** (single) / **10,162 AF/yr** (three-zone) |
 | Project portfolio | 14,500 AF/yr | **15,500 AF/yr** (Rock Creek concentrated at 36P + 29P) |
 | Recovery margin | +5,942 AF/yr | **+6,327 AF/yr** (single, observed) |
 
 The observed rebuild deficit (−205,743 AF) runs somewhat larger than the
-17-polygon original (−193,010 AF), chiefly because the uniform **Sy = 0.10**
-is higher than the original SVSim area-weighted mean (≈0.087), which scales
-every polygon's storage change upward. The shape of the curve (drought
+17-polygon original (−193,010 AF). The shape of the curve (drought
 losses concentrated in Critical/Dry years, Wet/Above-Normal years
 recovering) is unchanged.
 
@@ -206,11 +203,9 @@ either basis (+6,327 AF/yr observed, +6,195 AF/yr normalized — about
 2.7% of GSP-stated sustainable yield).
 
 The normalized basin cumulative (−242k AF) runs above the original
-17-polygon analysis's −193k AF, largely because the uniform Sy = 0.10 is
-higher than that analysis's SVSim area-weighted mean (≈0.087). The
-underlying hydrologic story — late-baseline drag is real, normalization
-corrects it, drought years dominate the losses — holds across both
-polygon networks.
+17-polygon analysis's −193k AF. The underlying hydrologic story —
+late-baseline drag is real, normalization corrects it, drought years
+dominate the losses — holds across both polygon networks.
 
 ### Limitations to disclose
 
@@ -296,11 +291,7 @@ measured in 1999.
 
 - **Storage:** ΔStorage<sub>p,y</sub> = (GWE<sub>p,y</sub> − GWE<sub>p,baseline</sub>) × Sy × Area<sub>p</sub>.
 - **Specific yield:** a **uniform basin-wide constant of 0.10**, applied to
-  every polygon. This replaces the earlier per-polygon SVSim-derived Sy
-  (which ranged 0.0594 to 0.1172, basin mean ≈ 0.087). The SVSim pipeline
-  ([`scripts/build_sy_svsim.py`](scripts/build_sy_svsim.py)) and its
-  `data/polygon_sy_svsim_*.csv` outputs remain in the repo for reference
-  but are no longer read by the dashboard build.
+  every polygon.
 - **GWE:** spring composite for each polygon's 2027 GWL RMS well
   (March mean for SWN-named wells; Feb–Apr mean for CWSCH wells), Good-quality DWR
   records only.
@@ -321,10 +312,8 @@ measured in 1999.
 | File                              | Purpose                                                        |
 |-----------------------------------|----------------------------------------------------------------|
 | `index.html`                      | The dashboard — single-file HTML, ready to push to GitHub Pages |
-| `scripts/build_sy_svsim.py`       | (Legacy) Recomputes polygon Sy from DWR's SVSim Texture Data — no longer used; Sy is now uniform 0.10 |
 | `scripts/build_dashboard.py`      | Main analysis — reads polygons + measurements, computes storage |
 | `scripts/build_html.py`           | Single-file HTML/CSS/JS template (called by build_dashboard.py) |
-| `data/polygon_sy_svsim_*.csv`     | (Legacy) Per-method SVSim Sy values — retained for reference, not read by the build |
 | `data/project_portfolio.json`     | Project allocations per polygon (editable input)               |
 | `data/condition_analysis_*.json`  | Per-polygon storage attribution by SVI water-year type         |
 | `data/sustainability_2042_*.json` | Per-polygon and basin sustainability target + project coverage  |
@@ -343,11 +332,7 @@ measured in 1999.
 # 1. (one-time) Python deps
 pip install pyproj shapely markdown
 
-# 2. (OPTIONAL — no longer used by the build) recompute polygon Sy via SVSim.
-#    Sy is now a uniform 0.10 constant; this step is kept only for reference.
-# python scripts/build_sy_svsim.py
-
-# 3. Build the dashboard
+# 2. Build the dashboard
 python scripts/build_dashboard.py
 # reads polygons (both methods), wells, and measurements from 2027-BC-prop-network/,
 # applies uniform Sy = 0.10 and data/project_portfolio.json,

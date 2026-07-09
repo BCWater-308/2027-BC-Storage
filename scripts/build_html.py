@@ -731,7 +731,7 @@ def _render_method_section(method, results, portfolio):
 <h2>Method, in brief</h2>
 <p>Per polygon: ΔStorage<sub>p,y</sub> = (GWE<sub>p,y</sub> − GWE<sub>p,baseline</sub>) × Sy<sub>p</sub> × Area<sub>p</sub>. GWE<sub>p,y</sub> is the polygon's 2027 GWL RMS well's spring composite (March mean for SWN-named wells), Good-quality DWR records only. Each polygon is anchored to WY 1999 if it has a Good spring composite that year; otherwise to the polygon's first observation after 1999. We then take the per-polygon cumulative storage time series, compute year-over-year deltas (distributing multi-year DWR gaps evenly), and bucket each year by its <strong>official Sacramento Valley Index water-year type</strong>.</p>
 
-<p><strong>Specific yield is a uniform basin-wide constant of {sy_uniform:.2f}</strong>, applied to every polygon. This replaces the earlier per-polygon SVSim-derived Sy.</p>
+<p><strong>Specific yield is a uniform basin-wide constant of {sy_uniform:.2f}</strong>, applied to every polygon.</p>
 
 <p>Year-type classification uses DWR's Sacramento Valley Index (Northern Sierra 8-Station Index):</p>
 <ul>
@@ -822,7 +822,7 @@ def _render_method_section(method, results, portfolio):
 
 <details>
 <summary>Annual basin time series (2000–2025), gap-attributed</summary>
-<p style="font-size:13px;color:var(--ink-muted);">Sum of all {n_polygons} polygons' year-over-year storage change with polygon-by-polygon Sy.</p>
+<p style="font-size:13px;color:var(--ink-muted);">Sum of all {n_polygons} polygons' year-over-year storage change (uniform Sy = 0.10).</p>
 <table>
   <thead><tr><th class="num">Year</th><th>Condition</th><th class="num">ΔStor (AF)</th><th class="num">Cumulative (AF)</th></tr></thead>
   <tbody>{chr(10).join(annual_rows)}</tbody>
@@ -926,7 +926,7 @@ def write_index_html(out_path, results_by_method, portfolio):
 {readme_html}
 
 <div class="footer">
-<p><strong>Files in this folder.</strong> <code>index.html</code> (this page) · <code>data/condition_analysis_{{single,three_zone}}.json</code> · <code>data/sustainability_2042_{{single,three_zone}}.json</code> · <code>data/basin_annual_{{single,three_zone}}.json</code> (observed + normalized) · <code>data/model_data_{{single,three_zone}}.json</code> · <code>data/polygon_storage_2025_{{single,three_zone}}.csv</code> · <code>data/storage_timeseries_{{single,three_zone}}.csv</code> · <code>data/polygon_sy_svsim_{{single,three_zone}}.csv</code> · <code>data/project_portfolio.json</code> (editable input) · per-method SVGs (<code>polygon_map_*.svg</code>, <code>basin_buckets_chart_*.svg</code>, <code>basin_cumulative_chart_*.svg</code>, <code>storage_context_*.svg</code>).</p>
+<p><strong>Files in this folder.</strong> <code>index.html</code> (this page) · <code>data/condition_analysis_{{single,three_zone}}.json</code> · <code>data/sustainability_2042_{{single,three_zone}}.json</code> · <code>data/basin_annual_{{single,three_zone}}.json</code> (observed + normalized) · <code>data/model_data_{{single,three_zone}}.json</code> · <code>data/polygon_storage_2025_{{single,three_zone}}.csv</code> · <code>data/storage_timeseries_{{single,three_zone}}.csv</code> · <code>data/project_portfolio.json</code> (editable input) · per-method SVGs (<code>polygon_map_*.svg</code>, <code>basin_buckets_chart_*.svg</code>, <code>basin_cumulative_chart_*.svg</code>, <code>storage_context_*.svg</code>).</p>
 <p><strong>Upstream.</strong> Polygons, wells, and DWR periodic GWL measurements come from the companion <a href="https://agubc-vina.github.io/2027-BC-prop-network/">2027-BC-prop-network</a> framework — both <code>polygons-data-single.js</code> (single basin-wide tessellation) and <code>polygons-data-three-zone.js</code> (three independent tessellations per management area) are read here.</p>
 <p><strong>Status.</strong> Independent analysis revised by Larry Walker Associates. Comments and corrections welcomed.</p>
 </div>
