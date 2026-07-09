@@ -1,7 +1,7 @@
 # Vina Subbasin — Where the Losses Happen (2027 BC RMS Network · 29 RMS wells)
 
 A drought-conditioned look at groundwater storage in the Vina Subbasin,
-prepared by **AGUBC** for the Vina GSA technical group and AGUBC Board.
+revised by **Larry Walker Associates** for the Vina GSA technical group.
 
 This is the **29-well rebuild** of the original
 [2027-drought-analysis](https://cosmo1007.github.io/2027-drought-analysis/)
@@ -364,6 +364,5 @@ share of drawdown, project allocation, and net coverage status).
 
 ## Status
 
-Independent analysis prepared by AGUBC for internal discussion with
-Vina GSA technical staff and AGUBC Board members. Comments and corrections
-welcomed.
+Independent analysis revised by Larry Walker Associates. Comments and
+corrections welcomed.
