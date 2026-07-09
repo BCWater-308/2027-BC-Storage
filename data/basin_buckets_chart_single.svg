@@ -3,30 +3,30 @@
 <text x="440.0" y="42" text-anchor="middle" font-size="11" fill="#5b5547" font-style="italic">Sum across all 29 polygons (WY 2000–2025). Critical years remove about 1.8× per year what Wet+Above-Normal years recover.</text>
 <line x1="60" y1="200" x2="820" y2="200" stroke="#5b5547" stroke-width="0.9"/>
 <text x="828" y="204" font-size="11" fill="#5b5547">0 AF</text>
-<rect x="73.0" y="108.04935060268666" width="110" height="91.95064939731334" fill="#2e6f3f" stroke="#1a1612" stroke-width="0.6"/>
-<text x="128.0" y="94.04935060268666" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+193,649</text>
-<text x="128.0" y="106.04935060268666" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<rect x="73.0" y="108.02519756690734" width="110" height="91.97480243309266" fill="#2e6f3f" stroke="#1a1612" stroke-width="0.6"/>
+<text x="128.0" y="94.02519756690734" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+235,289</text>
+<text x="128.0" y="106.02519756690734" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
 <text x="128.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Wet</text>
 <text x="128.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(5 years)</text>
-<rect x="229.0" y="167.08136573943625" width="110" height="32.918634260563735" fill="#7eb585" stroke="#1a1612" stroke-width="0.6"/>
-<text x="284.0" y="153.08136573943625" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+69,327</text>
-<text x="284.0" y="165.08136573943625" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<rect x="229.0" y="167.3966819249751" width="110" height="32.603318075024916" fill="#7eb585" stroke="#1a1612" stroke-width="0.6"/>
+<text x="284.0" y="153.3966819249751" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+83,405</text>
+<text x="284.0" y="165.3966819249751" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
 <text x="284.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Above Normal</text>
 <text x="284.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(5 years)</text>
-<rect x="385.0" y="199.3017460372198" width="110" height="0.6982539627801962" fill="#d99a4f" stroke="#1a1612" stroke-width="0.6"/>
-<text x="440.0" y="185.3017460372198" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+1,471</text>
-<text x="440.0" y="197.3017460372198" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<rect x="385.0" y="197.65104961623607" width="110" height="2.348950383763924" fill="#d99a4f" stroke="#1a1612" stroke-width="0.6"/>
+<text x="440.0" y="183.65104961623607" text-anchor="middle" font-size="14" font-weight="800" fill="#2e6f3f">+6,009</text>
+<text x="440.0" y="195.65104961623607" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
 <text x="440.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Below Normal</text>
 <text x="440.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(5 years)</text>
-<rect x="541.0" y="200" width="110" height="96.16227690514819" fill="#c75a35" stroke="#1a1612" stroke-width="0.6"/>
-<text x="596.0" y="312.1622769051482" text-anchor="middle" font-size="14" font-weight="800" fill="#a32d2d">-202,518</text>
-<text x="596.0" y="328.1622769051482" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
+<rect x="541.0" y="200" width="110" height="97.3521286043059" fill="#c75a35" stroke="#1a1612" stroke-width="0.6"/>
+<text x="596.0" y="313.3521286043059" text-anchor="middle" font-size="14" font-weight="800" fill="#a32d2d">-249,045</text>
+<text x="596.0" y="329.3521286043059" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
 <text x="596.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Dry</text>
 <text x="596.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(6 years)</text>
 <rect x="697.0" y="200" width="110" height="110.0" fill="#a32d2d" stroke="#1a1612" stroke-width="0.6"/>
-<text x="752.0" y="326.0" text-anchor="middle" font-size="14" font-weight="800" fill="#a32d2d">-231,661</text>
+<text x="752.0" y="326.0" text-anchor="middle" font-size="14" font-weight="800" fill="#a32d2d">-281,401</text>
 <text x="752.0" y="342.0" text-anchor="middle" font-size="11" fill="#5b5547">AF</text>
 <text x="752.0" y="358" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1612">Critical</text>
 <text x="752.0" y="376" text-anchor="middle" font-size="11" fill="#5b5547">(5 years)</text>
-<text x="440.0" y="406" text-anchor="middle" font-size="13" fill="#5b5547">Net basin total since baseline: <tspan font-weight="800" fill="#a32d2d">-169,733 AF</tspan></text>
+<text x="440.0" y="406" text-anchor="middle" font-size="13" fill="#5b5547">Net basin total since baseline: <tspan font-weight="800" fill="#a32d2d">-205,743 AF</tspan></text>
 </svg>

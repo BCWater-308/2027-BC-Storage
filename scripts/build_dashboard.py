@@ -9,13 +9,15 @@ Reads (from sibling 2027-BC-prop-network/, never modifies):
   - js/measurements-data.js        DWR periodic GWL records, keyed by site_code
 
 Reads (local):
-  - data/polygon_sy_svsim.csv  Polygon-by-polygon Sy (from build_sy_svsim.py)
   - data/project_portfolio.json (optional) Project allocations per polygon
+
+Specific yield is a uniform basin-wide constant (SY_UNIFORM = 0.10) applied
+to every polygon; the earlier per-polygon SVSim Sy is no longer used.
 
 Computes per polygon:
     GWE_p,y      = spring composite of the polygon's RMS well
                    (March mean for SWN; Feb–Apr mean for CWSCH; Good QA)
-    Cum_p,y      = (GWE_p,y - GWE_p,baseline) × Sy_p × Area_p
+    Cum_p,y      = (GWE_p,y - GWE_p,baseline) × Sy × Area_p   (Sy = 0.10 uniform)
                    where baseline = first year with Good spring data
     ΔStorage_p,y = year-over-year delta, gap-attributed evenly across DWR gaps
     Bucket attribution by Sacramento Valley Index water-year type
@@ -74,7 +76,8 @@ SUSTAINABLE_YIELD_AFY = 233_500       # GSP p. ES-5
 TOTAL_FRESH_STORAGE_AF = 16_000_000   # GSP, 16+ MAF estimate (BBGM-2020)
 SOURCE_GSP_LABEL = "Vina Subbasin GSP (Dec 15, 2021), p. ES-5"
 
-SY_DEFAULT = 0.10  # fallback only — see Sy lookup loader
+SY_UNIFORM = 0.10  # flat specific yield applied to every polygon
+SY_SOURCE_LABEL = "uniform (0.10)"  # replaces per-polygon SVSim-derived Sy
 
 # Sacramento Valley Index water-year types (DWR Northern Sierra 8-Station Index).
 SVI_YEAR_TYPE = {
@@ -224,36 +227,15 @@ def yoy_deltas(cumulative: dict) -> dict:
     return deltas
 
 
-# --- Sy loader with fallback ---------------------------------------------
-def load_sy(csv_path: Path, polygons_meta: list) -> dict:
+# --- Sy loader ------------------------------------------------------------
+def load_sy(polygons_meta: list) -> dict:
     """Returns {zone_label: Sy}.
 
-    Polygons missing from polygon_sy_svsim.csv (or with empty Sy) get the
-    basin area-weighted mean of the polygons that DID resolve.  Prints which
-    polygons fell back so the user knows.
+    Specific yield is a uniform basin-wide constant (SY_UNIFORM). The prior
+    per-polygon SVSim-derived Sy (data/polygon_sy_svsim_*.csv) is no longer
+    used.
     """
-    out = {}
-    if not csv_path.exists():
-        print(f"WARNING: {csv_path} missing — falling back to uniform Sy={SY_DEFAULT}")
-        return {p["zone_label"]: SY_DEFAULT for p in polygons_meta}
-    with csv_path.open() as f:
-        for row in csv.DictReader(f):
-            if row.get("sy"):
-                out[row["zone_label"]] = float(row["sy"])
-    # Compute basin area-weighted mean for fallback.
-    area_lookup = {p["zone_label"]: p.get("area_acres") or polygon_area_acres(p["rings"])
-                   for p in polygons_meta}
-    sum_sy_area = sum(out[z] * area_lookup[z] for z in out)
-    sum_area = sum(area_lookup[z] for z in out)
-    basin_mean = sum_sy_area / sum_area if sum_area else SY_DEFAULT
-    missing = [p["zone_label"] for p in polygons_meta if p["zone_label"] not in out]
-    if missing:
-        print(f"  fallback Sy={basin_mean:.4f} (area-weighted basin mean) for "
-              f"{len(missing)} polygons w/o SVSim borehole coverage:")
-        for z in missing:
-            print(f"    - {z}")
-            out[z] = basin_mean
-    return out
+    return {p["zone_label"]: SY_UNIFORM for p in polygons_meta}
 
 
 # --- color ramp -----------------------------------------------------------
@@ -679,14 +661,9 @@ def compute_method(method, wells_meta, meas, portfolio):
                     for w in wells_meta}
     well_lookup = {w["well_name"]: w for w in wells_meta}
 
-    sy_csv = DATA_DIR / f"polygon_sy_svsim_{suffix}.csv"
-    sy_svsim_set = set()
-    if sy_csv.exists():
-        with sy_csv.open() as f:
-            for row in csv.DictReader(f):
-                if row.get("sy"):
-                    sy_svsim_set.add(row["zone_label"])
-    sy_lookup = load_sy(sy_csv, polygons)
+    # Specific yield is now a uniform basin-wide constant (SY_UNIFORM); the
+    # per-polygon SVSim Sy CSV is no longer read.
+    sy_lookup = load_sy(polygons)
 
     project_by_zone = {p["polygon"]: p for p in portfolio.get("projects", [])}
     project_total_afy = sum(p["af_per_yr"] for p in portfolio.get("projects", []))
@@ -827,7 +804,7 @@ def compute_method(method, wells_meta, meas, portfolio):
             "baseline_gwe": baseline_gwe,
             "endpoint_gwe": endpoint_gwe,
             "sy": round(sy_p, 4),
-            "sy_source": "SVSim" if zone in sy_svsim_set else "basin-mean fallback",
+            "sy_source": SY_SOURCE_LABEL,
             "endpoint_cum_storage_AF": round(endpoint_cum, 0),
             "avg_dgwe_ft_per_yr": round(avg_dgwe, 3),
             "avg_rate_AF_per_yr": round(avg_rate, 1),

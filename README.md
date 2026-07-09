@@ -39,18 +39,19 @@ their physical locations on the map.
 |  | Single basin-wide (29 polys) | Three-zone (26 polys) |
 |---|---:|---:|
 | Polygons in North / Chico / South | 11 / 6 / 12 | 13 / 1 / 12 |
-| Basin cumulative WY 2025 (observed, AF) | −169,733 | **−197,112** |
-| Basin cumulative WY 2025 (normalized, AF) | −203,650 | **−229,492** |
-| Basin avg loss rate (observed, AF/yr) | 7,627 | **8,663** |
-| Basin avg loss rate (normalized, AF/yr) | 7,833 | **8,827** |
-| Recovery margin vs. 15,500 AF/yr portfolio (observed) | +7,873 | **+6,837** |
-| Recovery margin vs. 15,500 AF/yr portfolio (normalized) | +7,667 | **+6,673** |
+| Basin cumulative WY 2025 (observed, AF) | −205,743 | **−231,743** |
+| Basin cumulative WY 2025 (normalized, AF) | −241,935 | **−267,289** |
+| Basin avg loss rate (observed, AF/yr) | 9,173 | **10,162** |
+| Basin avg loss rate (normalized, AF/yr) | 9,305 | **10,280** |
+| Recovery margin vs. 15,500 AF/yr portfolio (observed) | +6,327 | **+5,338** |
+| Recovery margin vs. 15,500 AF/yr portfolio (normalized) | +6,195 | **+5,220** |
 
 Both methods show the basin in deficit and the portfolio comfortably
-covering the average loss rate. The three-zone method reports a larger
-deficit primarily because the Chico dissolved aggregate and the
-management-area-clipped polygons carry different Sy values and polygon
-areas after the SVSim recompute against the new shapes.
+covering the average loss rate. Specific yield is a uniform basin-wide
+constant of **0.10** in both methods, so the difference between them comes
+only from polygon shape and area — the three-zone method reports a larger
+deficit because the management-area-clipped polygons attribute more
+drawdown to the drought-heavy zones.
 
 ## The two questions this dashboard answers
 
@@ -60,29 +61,29 @@ areas after the SVSim recompute against the new shapes.
 ## Headline finding
 
 Loss is concentrated in drought years, not uniform. **Critical and Dry years
-remove about 434k AF** across WY 1999–2025; **Wet and Above-Normal years
-recover about 263k AF**. Two basin totals (see [Year-type-weighted normalization](#year-type-weighted-normalization) below for why both):
+remove about 530k AF** across WY 1999–2025; **Wet and Above-Normal years
+recover about 319k AF**. Two basin totals (see [Year-type-weighted normalization](#year-type-weighted-normalization) below for why both):
 
-- **Observed** basin net deficit through WY 2025: **−169,733 AF** — what the
+- **Observed** basin net deficit through WY 2025: **−205,743 AF** — what the
   data show directly, with late-baseline polygons contributing only the
   years they observed.
-- **Normalized** basin net deficit through WY 2025: **−203,650 AF** — what
+- **Normalized** basin net deficit through WY 2025: **−241,935 AF** — what
   the basin would show if every polygon had a full WY 1999–2025 record,
   computed by year-type-weighted backcast from each polygon's own data.
 
 Both are small relative to the **16+ MAF** of fresh groundwater storage in
-the subbasin (2022 Vina GSP, p. ES-5): observed is **1.06%** of total
-storage; normalized is **1.27%**. The observed WY 2022 trough reaches
-**−301,026 AF** (≈1.88% of total storage).
+the subbasin (2022 Vina GSP, p. ES-5): observed is **1.29%** of total
+storage; normalized is **1.51%**. The observed WY 2022 trough reaches
+**−365,037 AF** (≈2.28% of total storage).
 
 | Condition                    | Years | Total ΔStorage (AF) | Avg per year |
 |------------------------------|------:|--------------------:|-------------:|
-| Wet                          | 5     | **+193,649**        | +38,730      |
-| Above Normal                 | 5     | **+69,327**         | +13,865      |
-| Below Normal                 | 5     | **+1,471**          | +294         |
-| Dry                          | 6     | **−202,518**        | −33,753      |
-| Critical                     | 5     | **−231,661**        | −46,332      |
-| Net basin (WY 1999–2025)     | 26    | **−169,733**        | —            |
+| Wet                          | 5     | **+235,289**        | +47,058      |
+| Above Normal                 | 5     | **+83,405**         | +16,681      |
+| Below Normal                 | 5     | **+6,009**          | +1,202       |
+| Dry                          | 6     | **−249,045**        | −41,508      |
+| Critical                     | 5     | **−281,401**        | −56,280      |
+| Net basin (WY 1999–2025)     | 26    | **−205,743**        | —            |
 
 Year-type classification uses DWR's official **Sacramento Valley Index**
 (Northern Sierra 8-Station Index).
@@ -94,24 +95,18 @@ Year-type classification uses DWR's official **Sacramento Valley Index**
 | Polygons | 17 LWA-authored cells | 26 Thiessen cells (three-zone) / 29 cells (single) |
 | RMS wells | 21 wells (some polygons had 2+) | 29 wells |
 | Chico | Single dissolved cell | 4 RMS primaries dissolved in three-zone; 6 individual cells in single |
-| Sy method | DWR SVSim Texture Data, area-weighted | Same — recomputed against new polygon geometry |
-| Basin net WY 2025 | −193,010 AF | **−169,733 AF** (single) / **−197,112 AF** (three-zone) |
-| Basin avg loss rate | 8,558 AF/yr | **7,627 AF/yr** (single) / **8,663 AF/yr** (three-zone) |
+| Sy method | DWR SVSim Texture Data, area-weighted | **Uniform Sy = 0.10** (flat, all polygons) |
+| Basin net WY 2025 | −193,010 AF | **−205,743 AF** (single) / **−231,743 AF** (three-zone) |
+| Basin avg loss rate | 8,558 AF/yr | **9,173 AF/yr** (single) / **10,162 AF/yr** (three-zone) |
 | Project portfolio | 14,500 AF/yr | **15,500 AF/yr** (Rock Creek concentrated at 36P + 29P) |
-| Recovery margin | +5,942 AF/yr | **+7,873 AF/yr** (single, observed) |
+| Recovery margin | +5,942 AF/yr | **+6,327 AF/yr** (single, observed) |
 
-The basin deficit comes out smaller in the single-method rebuild for three
-reasons:
-
-1. **`21N02E18C003M` is larger** in the new tessellation and posts a
-   +23,569 AF surplus.
-2. **The Chico cells are smaller** in the single method than the old
-   dissolved Chico polygon, capturing less area-weighted drawdown.
-3. **More late-baseline polygons** means more years where some polygons
-   can't yet contribute to the basin sum.
-
-The shape of the curve (drought losses concentrated in Critical/Dry years,
-Wet/Above-Normal years recovering) is unchanged.
+The observed rebuild deficit (−205,743 AF) runs somewhat larger than the
+17-polygon original (−193,010 AF), chiefly because the uniform **Sy = 0.10**
+is higher than the original SVSim area-weighted mean (≈0.087), which scales
+every polygon's storage change upward. The shape of the curve (drought
+losses concentrated in Critical/Dry years, Wet/Above-Normal years
+recovering) is unchanged.
 
 ## Year-type-weighted normalization
 
@@ -139,7 +134,7 @@ their pre-baseline drawdown.
 This creates a real bias: the basin's observed 1999–2025 cumulative
 *understates* the deficit because polygons that started drawing down before
 their first measurement get a "free pass" on their pre-baseline losses.
-The 18C surplus of +23,569 AF, for example, is partly an artifact of
+The 18C surplus of +8,078 AF, for example, is partly an artifact of
 starting after the 2007–09 dry stretch.
 
 ### The normalization method (Option A — year-type-weighted backcast)
@@ -201,19 +196,21 @@ is small (~70 AF/yr at most).
 
 | | Observed | Normalized | Delta |
 |---|---:|---:|---:|
-| Basin cumulative WY 2025 | −169,733 AF | **−203,650 AF** | +33,917 AF more deficit |
-| Basin avg loss rate | 7,627 AF/yr | **7,833 AF/yr** | +206 AF/yr more loss |
-| Polygon-summed hold-steady need | 8,374 AF/yr | **8,400 AF/yr** | ~unchanged |
-| Recovery margin (vs. 15,500 AF/yr portfolio) | +7,873 AF/yr | **+7,667 AF/yr** | −206 AF/yr |
+| Basin cumulative WY 2025 | −205,743 AF | **−241,935 AF** | +36,192 AF more deficit |
+| Basin avg loss rate | 9,173 AF/yr | **9,305 AF/yr** | +132 AF/yr more loss |
+| Polygon-summed hold-steady need | 9,890 AF/yr | **9,858 AF/yr** | ~unchanged |
+| Recovery margin (vs. 15,500 AF/yr portfolio) | +6,327 AF/yr | **+6,195 AF/yr** | −132 AF/yr |
 
 The portfolio's recovery margin remains comfortably positive against
-either basis (+7,873 AF/yr observed, +7,667 AF/yr normalized — about
-3.4% of GSP-stated sustainable yield).
+either basis (+6,327 AF/yr observed, +6,195 AF/yr normalized — about
+2.7% of GSP-stated sustainable yield).
 
-The normalized basin cumulative (−204k AF) is close to the original
-17-polygon analysis's −193k AF — consistent validation that the
-late-baseline drag is real, that the normalization corrects it, and that
-the underlying hydrologic story holds across both polygon networks.
+The normalized basin cumulative (−242k AF) runs above the original
+17-polygon analysis's −193k AF, largely because the uniform Sy = 0.10 is
+higher than that analysis's SVSim area-weighted mean (≈0.087). The
+underlying hydrologic story — late-baseline drag is real, normalization
+corrects it, drought years dominate the losses — holds across both
+polygon networks.
 
 ### Limitations to disclose
 
@@ -244,9 +241,9 @@ back upward.
 
 | Metric                                                 | AF/yr        | % of 233,500 AF/yr SY |
 |--------------------------------------------------------|-------------:|----------------------:|
-| Basin avg loss rate (hold-steady need)                 | **7,627**    | 3.3%                  |
+| Basin avg loss rate (hold-steady need)                 | **9,173**    | 3.9%                  |
 | Project portfolio (online by 2032)                     | **15,500**   | 6.6%                  |
-| **Recovery margin** (portfolio − loss)                 | **+7,873**   | **+3.4%**             |
+| **Recovery margin** (portfolio − loss)                 | **+6,327**   | **+2.7%**             |
 
 Sustainable yield = 233,500 AF/yr per the 2022 Vina GSP (Dec 15, 2021),
 p. ES-5: 243,500 AFY historical pumping minus 10,000 AFY decrease in
@@ -270,11 +267,11 @@ refresh allocations.
 | **Total** |  | **15,500** |
 
 After the portfolio is online, the largest residual shortfalls are:
-**`21N01E13L004M`** (~1,000 AF/yr), **`22N01E20K001M`** (~606),
-**`CWSCH07`** (~597), **`21N01E27D001M`** (~581), and
-**`21N02E26E006M`** (~502) — combined ~3,286 AF/yr deficit not covered by
+**`21N01E13L004M`** (~1,086 AF/yr), **`22N01E20K001M`** (~898),
+**`21N01E27D001M`** (~832), **`CWSCH07`** (~706), and
+**`23N01E33A001M`** (~591) — combined ~4,100 AF/yr deficit not covered by
 any current project. The
-project portfolio's basin-level recovery margin of **+7,873 AF/yr** means
+project portfolio's basin-level recovery margin of **+6,327 AF/yr** means
 surplus capacity in over-allocated polygons more than offsets these
 shortfalls at basin scale; whether that holds at each RMS well depends on
 lateral hydraulic connectivity that this dashboard does not model.
@@ -297,17 +294,13 @@ measured in 1999.
 
 ## Method, in brief
 
-- **Storage:** ΔStorage<sub>p,y</sub> = (GWE<sub>p,y</sub> − GWE<sub>p,baseline</sub>) × Sy<sub>p</sub> × Area<sub>p</sub>.
-- **Specific yield:** polygon-by-polygon, derived from DWR's SVSim
-  Texture Data (Sacramento Valley Simulation Model v1.0, CKAN resource
-  `544623e2-0cd5-4c5b-827f-affa4abf4e16`). Coarse-grained sediments →
-  0.15, fine-grained → 0.05, area-weighted by borehole lithology in the
-  0–500 ft below ground surface analysis window. Polygon Sy values for
-  the 29-polygon single-method network range **0.0594 to 0.1172**; basin
-  area-weighted mean ≈ 0.087. Three polygons with insufficient SVSim
-  borehole density (`23N01E29P002M`, `22N01E09B001M`, `21N01E25K001M`)
-  use the basin area-weighted mean (0.0856) as a fallback. See
-  [`scripts/build_sy_svsim.py`](scripts/build_sy_svsim.py) for the full pipeline.
+- **Storage:** ΔStorage<sub>p,y</sub> = (GWE<sub>p,y</sub> − GWE<sub>p,baseline</sub>) × Sy × Area<sub>p</sub>.
+- **Specific yield:** a **uniform basin-wide constant of 0.10**, applied to
+  every polygon. This replaces the earlier per-polygon SVSim-derived Sy
+  (which ranged 0.0594 to 0.1172, basin mean ≈ 0.087). The SVSim pipeline
+  ([`scripts/build_sy_svsim.py`](scripts/build_sy_svsim.py)) and its
+  `data/polygon_sy_svsim_*.csv` outputs remain in the repo for reference
+  but are no longer read by the dashboard build.
 - **GWE:** spring composite for each polygon's 2027 GWL RMS well
   (March mean for SWN-named wells; Feb–Apr mean for CWSCH wells), Good-quality DWR
   records only.
@@ -328,10 +321,10 @@ measured in 1999.
 | File                              | Purpose                                                        |
 |-----------------------------------|----------------------------------------------------------------|
 | `index.html`                      | The dashboard — single-file HTML, ready to push to GitHub Pages |
-| `scripts/build_sy_svsim.py`       | Recomputes polygon Sy from DWR's SVSim Texture Data            |
+| `scripts/build_sy_svsim.py`       | (Legacy) Recomputes polygon Sy from DWR's SVSim Texture Data — no longer used; Sy is now uniform 0.10 |
 | `scripts/build_dashboard.py`      | Main analysis — reads polygons + measurements, computes storage |
 | `scripts/build_html.py`           | Single-file HTML/CSS/JS template (called by build_dashboard.py) |
-| `data/polygon_sy_svsim_*.csv`     | Polygon-by-polygon Sy values per method (output of build_sy_svsim.py) |
+| `data/polygon_sy_svsim_*.csv`     | (Legacy) Per-method SVSim Sy values — retained for reference, not read by the build |
 | `data/project_portfolio.json`     | Project allocations per polygon (editable input)               |
 | `data/condition_analysis_*.json`  | Per-polygon storage attribution by SVI water-year type         |
 | `data/sustainability_2042_*.json` | Per-polygon and basin sustainability target + project coverage  |
@@ -350,15 +343,14 @@ measured in 1999.
 # 1. (one-time) Python deps
 pip install pyproj shapely markdown
 
-# 2. (one-time per Sy refresh) recompute polygon Sy via SVSim for BOTH methods
-python scripts/build_sy_svsim.py
-# downloads /tmp/svsim/svsim_texture_data.csv (~9 MB) on first run,
-# writes data/polygon_sy_svsim_single.csv and data/polygon_sy_svsim_three_zone.csv
+# 2. (OPTIONAL — no longer used by the build) recompute polygon Sy via SVSim.
+#    Sy is now a uniform 0.10 constant; this step is kept only for reference.
+# python scripts/build_sy_svsim.py
 
 # 3. Build the dashboard
 python scripts/build_dashboard.py
 # reads polygons (both methods), wells, and measurements from 2027-BC-prop-network/,
-# reads the per-method Sy CSVs and data/project_portfolio.json,
+# applies uniform Sy = 0.10 and data/project_portfolio.json,
 # writes per-method JSON/CSV/SVG outputs and the single-file index.html with toggle
 ```
 

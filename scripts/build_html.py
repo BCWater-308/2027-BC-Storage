@@ -310,8 +310,7 @@ MAP_JS = r"""
     html += `<div class="popup-row"><span class="k">Below Normal</span><span class="v ${gainLossClass(p.buckets.bn)}">${fmtSigned(p.buckets.bn)} AF</span></div>`;
     html += `<div class="popup-row"><span class="k">Dry</span><span class="v ${gainLossClass(p.buckets.dry)}">${fmtSigned(p.buckets.dry)} AF</span></div>`;
     html += `<div class="popup-row"><span class="k">Critical</span><span class="v ${gainLossClass(p.buckets.critical)}">${fmtSigned(p.buckets.critical)} AF</span></div>`;
-    const syExtra = p.sy_source === 'SVSim' ? '' : ' <span style="color:#8a5a18;font-style:italic;font-size:11px;">(basin-mean fallback)</span>';
-    html += `<div class="popup-row"><span class="k">Specific yield</span><span class="v">${p.sy.toFixed(4)}${syExtra}</span></div>`;
+    html += `<div class="popup-row"><span class="k">Specific yield</span><span class="v">${p.sy.toFixed(2)} (uniform)</span></div>`;
     if (p.late_baseline) {
       html += `<div class="popup-late">Late baseline: this polygon's RMS well wasn't measured in 1999, so its record starts at ${p.baseline_year}. Pre-${p.baseline_year} drawdown is not captured.</div>`;
     }
@@ -552,9 +551,7 @@ def _render_method_section(method, results, portfolio):
         late_marker = (' <span class="late" title="Baseline year > 1999">'
                        f'(record starts {s["baseline_year"]})</span>'
                        if s["baseline_year"] > START_YEAR else "")
-        sy_marker = (f' <span class="fallback" title="Insufficient SVSim borehole '
-                     f'coverage — using basin area-weighted mean">(mean)</span>'
-                     if s.get("sy_source", "") != "SVSim" else "")
+        sy_marker = ""  # Sy is a uniform constant; no per-polygon source flag
         cum = s["endpoint_cum_storage_AF"]
         avg = s["avg_rate_AF_per_yr"]
         norm_cum = s.get("normalized_cum_2025_AF", 0)
@@ -647,16 +644,11 @@ def _render_method_section(method, results, portfolio):
     late_polys = [s for s in pol_summaries if s["baseline_year"] > START_YEAR]
     late_summary = "; ".join(f"{s['zone_label']} ({s['baseline_year']})" for s in late_polys)
 
-    fallback_polys = [s for s in pol_summaries if s.get("sy_source", "") != "SVSim"]
-    fallback_summary = (", ".join(s["zone_label"] for s in fallback_polys)
-                        if fallback_polys else "none")
-
     n_north = sum(1 for s in pol_summaries if s["ma"] == "North")
     n_chico = sum(1 for s in pol_summaries if s["ma"] == "Chico")
     n_south = sum(1 for s in pol_summaries if s["ma"] == "South")
 
-    sy_min = min(sy_lookup.values())
-    sy_max = max(sy_lookup.values())
+    sy_uniform = next(iter(sy_lookup.values())) if sy_lookup else 0.10
 
     # Reassignment notice — only for three-zone method
     reassigned_polys = [s for s in pol_summaries
@@ -739,9 +731,7 @@ def _render_method_section(method, results, portfolio):
 <h2>Method, in brief</h2>
 <p>Per polygon: ΔStorage<sub>p,y</sub> = (GWE<sub>p,y</sub> − GWE<sub>p,baseline</sub>) × Sy<sub>p</sub> × Area<sub>p</sub>. GWE<sub>p,y</sub> is the polygon's 2027 GWL RMS well's spring composite (March mean for SWN-named wells), Good-quality DWR records only. Each polygon is anchored to WY 1999 if it has a Good spring composite that year; otherwise to the polygon's first observation after 1999. We then take the per-polygon cumulative storage time series, compute year-over-year deltas (distributing multi-year DWR gaps evenly), and bucket each year by its <strong>official Sacramento Valley Index water-year type</strong>.</p>
 
-<p><strong>Specific yield is polygon-by-polygon</strong>, derived from DWR's SVSim Texture Data (Sacramento Valley Simulation Model v1.0). Coarse-grained sediments → Sy = 0.15, fine-grained → Sy = 0.05, area-weighted by borehole lithology in the 0–500 ft below ground surface analysis window. Polygon Sy values range <strong>{sy_min:.4f}</strong> to <strong>{sy_max:.4f}</strong>; basin area-weighted mean ≈ 0.087.</p>
-
-<p style="font-size:13px;color:var(--ink-muted);">{len(fallback_polys)} polygon{"s" if len(fallback_polys) != 1 else ""} ({fallback_summary}) have insufficient SVSim borehole coverage and use the basin area-weighted mean as a Sy fallback. Flagged with "(mean)" in the table.</p>
+<p><strong>Specific yield is a uniform basin-wide constant of {sy_uniform:.2f}</strong>, applied to every polygon. This replaces the earlier per-polygon SVSim-derived Sy.</p>
 
 <p>Year-type classification uses DWR's Sacramento Valley Index (Northern Sierra 8-Station Index):</p>
 <ul>
@@ -927,7 +917,7 @@ def write_index_html(out_path, results_by_method, portfolio):
 <div class="container">
 
 <h1>Where the Losses Happen — A Drought-Conditioned Look at the 2027 BC RMS Network</h1>
-<p class="subtitle">May 2026 · Revised by Larry Walker Associates · {n_polygons_total} polygons · polygon-by-polygon Sy from DWR SVSim Texture Data · WY 1999–2025 · ΔGWE × Sy<sub>p</sub> × Area<sub>p</sub>, sliced by hydrologic condition · observed vs. year-type-normalized cumulative storage change.</p>
+<p class="subtitle">May 2026 · Revised by Larry Walker Associates · {n_polygons_total} polygons · uniform Sy = 0.10 · WY 1999–2025 · ΔGWE × Sy × Area<sub>p</sub>, sliced by hydrologic condition · observed vs. year-type-normalized cumulative storage change.</p>
 
 {toggle_html}
 
